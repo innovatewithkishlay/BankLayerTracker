@@ -6,3 +6,5 @@ const caseSchema = new mongoose.Schema({
   transactions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Transaction" }],
   linkedCases: [{ type: mongoose.Schema.Types.ObjectId, ref: "Case" }],
 });
+
+module.exports = mongoose.model("Case", caseSchema);
