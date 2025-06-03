@@ -8,3 +8,4 @@ const transactionSchema = new mongoose.Schema({
   caseId: { type: mongoose.Schema.Types.ObjectId, ref: "Case" },
   isSuspicious: { type: Boolean, default: false },
 });
+module.exports = mongoose.model("Transaction", transactionSchema);
