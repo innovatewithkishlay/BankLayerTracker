@@ -23,3 +23,10 @@ const helmetConfig = helmet({
     },
   },
 });
+
+module.exports = {
+  helmet: helmetConfig,
+  limiter,
+  cors,
+  corsOptions,
+};
