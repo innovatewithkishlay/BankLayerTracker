@@ -121,7 +121,7 @@ const detectAnomalies = async (caseId) => {
   }
 };
 
-// Helper: Detect circular transactions
+// Detect circular transactions
 const detectCircularTransactions = (transactions) => {
   const graph = {};
   transactions.forEach((txn) => {
