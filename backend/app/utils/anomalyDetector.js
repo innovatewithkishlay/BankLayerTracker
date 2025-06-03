@@ -164,4 +164,5 @@ const isTransactionFlagged = (txn, anomalies) => {
     anomalies.circular.some((c) => c.accounts.includes(txn.fromAccount))
   );
 };
+
 module.exports = { detectAnomalies };
