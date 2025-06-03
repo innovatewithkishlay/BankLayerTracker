@@ -13,3 +13,6 @@ app.use(express.json());
 
 // Database
 connectDB();
+
+// Routes
+app.use("/api/cases", caseRoutes);
