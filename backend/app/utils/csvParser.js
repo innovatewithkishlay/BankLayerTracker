@@ -9,3 +9,4 @@ const parseCSV = (filePath) => {
       .on("error", (err) => reject(err));
   });
 };
+module.exports = parseCSV;
