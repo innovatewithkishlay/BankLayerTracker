@@ -121,4 +121,40 @@ const detectAnomalies = async (caseId) => {
   }
 };
 
+// Helper: Detect circular transactions
+const detectCircularTransactions = (transactions) => {
+  const graph = {};
+  transactions.forEach((txn) => {
+    if (!graph[txn.fromAccount]) graph[txn.fromAccount] = [];
+    graph[txn.fromAccount].push(txn.toAccount);
+  });
+
+  const circular = [];
+  for (const startAccount in graph) {
+    const visited = new Set();
+    const stack = [{ account: startAccount, path: [startAccount] }];
+
+    while (stack.length > 0) {
+      const { account, path } = stack.pop();
+      if (visited.has(account)) continue;
+      visited.add(account);
+
+      for (const nextAccount of graph[account] || []) {
+        if (path.includes(nextAccount)) {
+          const cycle = path
+            .slice(path.indexOf(nextAccount))
+            .concat(nextAccount);
+          circular.push({
+            accounts: cycle,
+            reason: "Circular transaction path",
+          });
+        } else {
+          stack.push({ account: nextAccount, path: [...path, nextAccount] });
+        }
+      }
+    }
+  }
+  return circular;
+};
+
 module.exports = { detectAnomalies };
