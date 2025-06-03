@@ -15,14 +15,15 @@ const corsOptions = {
   optionsSuccessStatus: 200,
 };
 
-const helmetConfig = helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "trusted-cdn.com"],
+const helmetConfig = () =>
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "trusted-cdn.com"],
+      },
     },
-  },
-});
+  });
 
 module.exports = {
   helmet: helmetConfig,
