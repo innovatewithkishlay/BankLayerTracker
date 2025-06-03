@@ -156,5 +156,12 @@ const detectCircularTransactions = (transactions) => {
   }
   return circular;
 };
-
+// Helper: Check if transaction is flagged
+const isTransactionFlagged = (txn, anomalies) => {
+  return (
+    anomalies.highValue.some((t) => t.transactionId.equals(txn._id)) ||
+    anomalies.rapidSuccessive.some((t) => t.transactions.includes(txn._id)) ||
+    anomalies.circular.some((c) => c.accounts.includes(txn.fromAccount))
+  );
+};
 module.exports = { detectAnomalies };
