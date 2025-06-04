@@ -63,3 +63,12 @@ const findTransactionLinks = (case1, case2) => {
   });
   return links;
 };
+
+// Helper: Compare anomalies by type
+const compareAnomalyType = (case1, case2, type) => ({
+  case1: case1.anomalies[type].length,
+  case2: case2.anomalies[type].length,
+  sharedPatterns: case1.anomalies[type].filter((a1) =>
+    case2.anomalies[type].some((a2) => a1.reason === a2.reason)
+  ).length,
+});
