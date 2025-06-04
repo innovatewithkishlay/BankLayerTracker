@@ -180,10 +180,14 @@ const assessCombinedRisk = (case1, case2) => {
       case1.accounts.filter((a) =>
         case2.accounts.some((a2) => a2.accountNumber === a.accountNumber)
       ).length * 15,
+
     highValueOverlap:
       case1.anomalies.highValue.filter((hv1) =>
-        case2.anomalies.highValue.some((hv2) => hv2.amount >= hv1.amount * 0.8)
+        case2.anomalies.highValue.some(
+          (hv2) => Math.abs(hv2.amount - hv1.amount) <= 0.2 * hv1.amount
+        )
       ).length * 20,
+
     geographicRisk:
       [
         ...new Set([
@@ -198,6 +202,7 @@ const assessCombinedRisk = (case1, case2) => {
     (sum, val) => sum + val,
     0
   );
+
   return {
     riskFactors,
     totalRisk,
