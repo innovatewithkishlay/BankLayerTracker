@@ -29,6 +29,11 @@ const detectAnomalies = async (caseId) => {
       structuring: [],
       geographic: [],
       circular: [],
+      smurfing: [],
+      unusualTime: [],
+      rapidMovement: [],
+      newAccountLargeTxn: [],
+      frequentTransactions: [],
     };
 
     // 1. High-Value Transactions
