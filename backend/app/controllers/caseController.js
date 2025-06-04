@@ -120,3 +120,15 @@ exports.processInterlinkCases = async (req, res) => {
     res.status(500).json({ error: "Interlink failed: " + err.message });
   }
 };
+
+exports.compareCases = async (req, res) => {
+  try {
+    const comparisonResult = await compareCaseData(
+      req.params.caseId1,
+      req.params.caseId2
+    );
+    res.status(200).json(comparisonResult);
+  } catch (err) {
+    res.status(500).json({ error: "Comparison failed: " + err.message });
+  }
+};
