@@ -190,4 +190,13 @@ const compareCircularPatterns = (circular1, circular2) => {
   );
 };
 
+// Helper: Calculate time difference between two dates
+const timeDifference = (date1, date2) => {
+  const d1 = new Date(date1);
+  const d2 = new Date(date2);
+  const diffMs = Math.abs(d2 - d1);
+  return `${Math.floor(diffMs / 3600000)}h ${Math.floor(
+    (diffMs % 3600000) / 60000
+  )}m`;
+};
 module.exports = { compareCases };
