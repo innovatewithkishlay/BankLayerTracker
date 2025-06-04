@@ -255,21 +255,20 @@ const compareGeographicData = (case1, case2) => {
   const case1Countries = getTransactionCountries(case1);
   const case2Countries = getTransactionCountries(case2);
 
-  const commonCountries = [
-    ...new Set(case1Countries.filter((c) => case2Countries.includes(c))),
-  ];
-
-  const newHighRisk = [
-    ...new Set(
-      case2Countries.filter(
-        (c) =>
-          !case1Countries.includes(c) &&
-          ANOMALY_THRESHOLDS.HIGH_RISK_COUNTRIES.includes(c)
-      )
-    ),
-  ];
-
-  return { commonCountries, newHighRisk };
+  return {
+    commonCountries: [
+      ...new Set(case1Countries.filter((c) => case2Countries.includes(c))),
+    ],
+    newHighRisk: [
+      ...new Set(
+        case2Countries.filter(
+          (c) =>
+            !case1Countries.includes(c) &&
+            ANOMALY_THRESHOLDS.HIGH_RISK_COUNTRIES.includes(c)
+        )
+      ),
+    ],
+  };
 };
 
 // Helper: Cosine Similarity Implementation
