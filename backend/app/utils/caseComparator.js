@@ -243,10 +243,34 @@ const compareTemporalPatterns = (case1, case2) => {
 };
 
 // 6. Geographic Analysis
-const compareGeographicData = (case1, case2) => ({
-  commonCountries: findCommonCountries(case1, case2),
-  newHighRisk: findNewHighRiskCountries(case1, case2),
-});
+const getTransactionCountries = (caseData) => [
+  ...new Set(
+    caseData.transactions
+      .map((t) => t.metadata?.ipCountry)
+      .filter((c) => c !== undefined)
+  ),
+];
+
+const compareGeographicData = (case1, case2) => {
+  const case1Countries = getTransactionCountries(case1);
+  const case2Countries = getTransactionCountries(case2);
+
+  const commonCountries = [
+    ...new Set(case1Countries.filter((c) => case2Countries.includes(c))),
+  ];
+
+  const newHighRisk = [
+    ...new Set(
+      case2Countries.filter(
+        (c) =>
+          !case1Countries.includes(c) &&
+          ANOMALY_THRESHOLDS.HIGH_RISK_COUNTRIES.includes(c)
+      )
+    ),
+  ];
+
+  return { commonCountries, newHighRisk };
+};
 
 // Helper: Cosine Similarity Implementation
 const cosineSimilarity = (a, b) => {
