@@ -110,7 +110,7 @@ const findDirectLinks = async (case1, case2) => {
   );
   const sharedMetadata = {
     emails: findCommonMetadata(case1, case2, "email"),
-    phones: findCommonMetadata(case2, case2, "mobile"),
+    phones: findCommonMetadata(case1, case2, "mobile"),
     ips: findCommonMetadata(case1, case2, "ipAddress"),
   };
 
