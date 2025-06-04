@@ -3,9 +3,18 @@ const Account = require("../models/Account");
 
 const ANOMALY_THRESHOLDS = {
   HIGH_VALUE: 50000, // $50,000+ transactions
-  RAPID_SUCCESSIVE: { count: 5, minutes: 10 }, // 5+ transactions in 10 mins
-  STRUCTURING_LIMIT: 10000, // Multiple just-below-$10k transactions
-  RISKY_COUNTRIES: ["XX", "YY", "ZZ"], // High-risk country codes
+  RAPID_SUCCESSIVE: {
+    // 5+ transactions in 10 mins
+    count: 5,
+    minutes: 10,
+  },
+  STRUCTURING_LIMIT: 10000, // Just below $10k transactions
+  SMURFING_COUNT: 10, // >10 small txns in 24h
+  NEW_ACCOUNT_DAYS: 7, // Accounts <7 days old
+  NEW_ACCOUNT_HIGH_VALUE: 20000, // $20k+ from new accounts
+  FREQUENT_SAME_ACCOUNTS: 5, // >5 txns between same accounts
+  UNUSUAL_HOURS: [0, 4], // 12 AM - 4 AM
+  HIGH_RISK_COUNTRIES: ["XX", "YY", "ZZ"],
 };
 
 // Main anomaly detection function
