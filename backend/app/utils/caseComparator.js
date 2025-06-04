@@ -26,6 +26,24 @@ const timeDifference = (date1, date2) => {
     (diffMs % 3600000) / 60000
   )}m`;
 };
+// Helper: Get overlapping period between two arrays of dates
+const getOverlappingPeriod = (datesA, datesB) => {
+  if (!datesA.length || !datesB.length) return null;
+
+  const minA = new Date(Math.min(...datesA.map((d) => new Date(d).getTime())));
+  const maxA = new Date(Math.max(...datesA.map((d) => new Date(d).getTime())));
+  const minB = new Date(Math.min(...datesB.map((d) => new Date(d).getTime())));
+  const maxB = new Date(Math.max(...datesB.map((d) => new Date(d).getTime())));
+
+  if (minA > maxB || minB > maxA) return null;
+
+  const overlapStart = new Date(Math.max(minA.getTime(), minB.getTime()));
+  const overlapEnd = new Date(Math.min(maxA.getTime(), maxB.getTime()));
+
+  return `${overlapStart.toISOString().split("T")[0]} to ${
+    overlapEnd.toISOString().split("T")[0]
+  }`;
+};
 const compareCases = async (caseId1, caseId2) => {
   const [case1, case2] = await Promise.all([
     Case.findById(caseId1).populate("accounts transactions").lean(),
