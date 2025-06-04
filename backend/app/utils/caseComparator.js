@@ -175,6 +175,19 @@ const performNetworkAnalysis = (case1, case2) => {
 
 // 4. Risk Assessment
 const assessCombinedRisk = (case1, case2) => {
+  // Helper to get unique countries from transactions
+  const getCountries = (caseData) => [
+    ...new Set(
+      caseData.transactions
+        .map((t) => t.metadata?.ipCountry)
+        .filter((c) => c !== undefined)
+    ),
+  ];
+
+  // Get all countries from both cases
+  const case1Countries = getCountries(case1);
+  const case2Countries = getCountries(case2);
+
   const riskFactors = {
     sharedAccounts:
       case1.accounts.filter((a) =>
@@ -184,18 +197,16 @@ const assessCombinedRisk = (case1, case2) => {
     highValueOverlap:
       case1.anomalies.highValue.filter((hv1) =>
         case2.anomalies.highValue.some(
-          (hv2) => Math.abs(hv2.amount - hv1.amount) <= 0.2 * hv1.amount
+          (hv2) =>
+            Math.abs(hv2.amount - hv1.amount) <=
+            0.2 * Math.max(hv1.amount, hv2.amount)
         )
       ).length * 20,
 
     geographicRisk:
-      [
-        ...new Set([
-          ...case1.anomalies.geographic.map((g) => g.country),
-          ...case2.anomalies.geographic.map((g) => g.country),
-        ]),
-      ].filter((c) => ANOMALY_THRESHOLDS.HIGH_RISK_COUNTRIES.includes(c))
-        .length * 25,
+      [...new Set([...case1Countries, ...case2Countries])].filter((c) =>
+        ANOMALY_THRESHOLDS.HIGH_RISK_COUNTRIES.includes(c)
+      ).length * 25,
   };
 
   const totalRisk = Object.values(riskFactors).reduce(
@@ -239,14 +250,18 @@ const compareGeographicData = (case1, case2) => ({
 
 // Helper: Cosine Similarity Implementation
 const cosineSimilarity = (a, b) => {
+  // Handle empty vectors
   if (a.length === 0 || b.length === 0) return 0;
 
+  // Handle single-transaction comparisons
   if (a.length === 1 && b.length === 1) {
-    return a[0] === b[0] ? 1 : 0.5;
+    return Math.abs(a[0] - b[0]) <= 0.2 * Math.max(a[0], b[0]) ? 1 : 0;
   }
 
-  const vecA = Array.isArray(a) ? a : Object.values(a);
-  const vecB = Array.isArray(b) ? b : Object.values(b);
+  // Normalize amounts between 0-1 for better comparison
+  const maxAmount = Math.max(...a, ...b);
+  const vecA = a.map((x) => x / maxAmount);
+  const vecB = b.map((x) => (b.includes(x) ? x : 0) / maxAmount);
 
   const dotProduct = vecA.reduce(
     (sum, val, i) => sum + val * (vecB[i] || 0),
