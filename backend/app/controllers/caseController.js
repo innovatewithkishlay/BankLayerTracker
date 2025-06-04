@@ -100,6 +100,51 @@ exports.getCaseAnomalies = async (req, res) => {
   }
 };
 
+// Helper: Process a single CSV file
+const processSingleCSV = async (file) => {
+  try {
+    const data = await parseCSV(file.path);
+
+    const newCase = await Case.create({
+      caseId: `CASE-${Date.now()}`,
+      description: "Interlink Case",
+    });
+
+    for (const row of data) {
+      // Create Account
+      const account = await Account.create({
+        accountNumber: row.accountNumber,
+        accountHolder: row.accountHolder,
+        accountType: row.accountType,
+        metadata: {
+          mobile: row.mobile,
+          ipAddress: row.ipAddress,
+          email: row.email,
+        },
+        caseId: newCase._id,
+      });
+
+      // Create Transaction
+      const transaction = await Transaction.create({
+        fromAccount: row.fromAccount,
+        toAccount: row.toAccount,
+        amount: row.amount,
+        date: row.date || new Date(),
+        caseId: newCase._id,
+      });
+
+      newCase.accounts.push(account._id);
+      newCase.transactions.push(transaction._id);
+    }
+
+    await newCase.save();
+    await detectAnomalies(newCase._id); // Populate anomalies
+    return newCase;
+  } catch (err) {
+    throw new Error(`CSV processing failed: ${err.message}`);
+  }
+};
+
 exports.processInterlinkCases = async (req, res) => {
   try {
     if (!req.files || req.files.length !== 2) {
