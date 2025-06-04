@@ -8,6 +8,7 @@ const {
   getCaseTransactions,
   getCaseAnomalies,
   processInterlinkCases,
+  compareCases,
 } = require("../controllers/caseController");
 const fileUploadCheck = require("../middlewares/fileUploadCheck");
 const upload = require("../../config/multer");
