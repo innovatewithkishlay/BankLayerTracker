@@ -44,6 +44,12 @@ const getOverlappingPeriod = (datesA, datesB) => {
     overlapEnd.toISOString().split("T")[0]
   }`;
 };
+// Helper: Find countries common to both cases
+const findCommonCountries = (case1, case2) => {
+  const countries1 = case1.anomalies.geographic.map((g) => g.country) || [];
+  const countries2 = case2.anomalies.geographic.map((g) => g.country) || [];
+  return [...new Set(countries1.filter((c) => countries2.includes(c)))];
+};
 const compareCases = async (caseId1, caseId2) => {
   const [case1, case2] = await Promise.all([
     Case.findById(caseId1).populate("accounts transactions").lean(),
