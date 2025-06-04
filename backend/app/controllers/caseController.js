@@ -81,3 +81,12 @@ exports.deleteCase = async (req, res) => {
     res.status(500).json({ error: "Server error: " + err.message });
   }
 };
+
+exports.getCaseTransactions = async (req, res) => {
+  try {
+    const transactions = await Transaction.find({ caseId: req.params.caseId });
+    res.status(200).json(transactions);
+  } catch (err) {
+    res.status(500).json({ error: "Server error: " + err.message });
+  }
+};
