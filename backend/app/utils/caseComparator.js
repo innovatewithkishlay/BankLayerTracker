@@ -75,11 +75,11 @@ const findDirectLinks = async (case1, case2) => {
 
 // 2. Pattern Similarity Analysis
 const calculatePatternSimilarity = (case1, case2) => ({
-  highValue: calculateSimilarity(
+  highValue: cosineSimilarity(
     case1.anomalies.highValue.map((hv) => hv.amount),
     case2.anomalies.highValue.map((hv) => hv.amount)
   ),
-  structuring: calculateSimilarity(
+  structuring: cosineSimilarity(
     case1.anomalies.structuring.map((s) => s.count),
     case2.anomalies.structuring.map((s) => s.count)
   ),
