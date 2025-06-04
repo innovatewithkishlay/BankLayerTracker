@@ -3,6 +3,7 @@ const Account = require("../models/Account");
 const Transaction = require("../models/Transaction");
 const parseCSV = require("../utils/csvParser");
 const { detectAnomalies } = require("../utils/anomalyDetector");
+const { compareCases } = require("../utils/caseComparator");
 
 exports.processSingleCase = async (req, res) => {
   try {
@@ -154,8 +155,7 @@ exports.processInterlinkCases = async (req, res) => {
     const case1 = await processSingleCSV(req.files[0]);
     const case2 = await processSingleCSV(req.files[1]);
 
-    const comparisonResult = await compareCaseData(case1._id, case2._id);
-
+    const comparisonResult = await compareCases(case1._id, case2._id);
     res.status(200).json({
       case1: case1._id,
       case2: case2._id,
@@ -168,7 +168,7 @@ exports.processInterlinkCases = async (req, res) => {
 
 exports.compareCases = async (req, res) => {
   try {
-    const comparisonResult = await compareCaseData(
+    const comparisonResult = await compareCases(
       req.params.caseId1,
       req.params.caseId2
     );
