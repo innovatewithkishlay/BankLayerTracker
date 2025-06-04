@@ -43,6 +43,27 @@ const caseSchema = new mongoose.Schema(
           transactionCount: Number,
         },
       ],
+      network: {
+        nodes: {
+          type: [
+            {
+              account: String,
+              riskScore: Number,
+            },
+          ],
+          default: [],
+        },
+        edges: {
+          type: [
+            {
+              from: String,
+              to: String,
+              totalAmount: Number,
+            },
+          ],
+          default: [],
+        },
+      },
     },
     metadataPatterns: {
       commonEmails: [String],
@@ -51,6 +72,6 @@ const caseSchema = new mongoose.Schema(
     },
   },
   { timestamps: true }
-); // Adds createdAt/updatedAt fields
+);
 
 module.exports = mongoose.model("Case", caseSchema);
