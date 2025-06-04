@@ -8,6 +8,7 @@ const {
   getCaseTransactions,
   getCaseAnomalies,
 } = require("../controllers/caseController");
+const fileUploadCheck = require("../middleware/fileUploadCheck");
 const upload = require("../../config/multer");
 
 // CSV Upload
