@@ -3,9 +3,29 @@ const { ANOMALY_THRESHOLDS } = require("./anomalyDetector");
 
 // Helper: Find Common Metadata
 const findCommonMetadata = (case1, case2, field) => {
-  const values1 = case1.accounts.flatMap((a) => a.metadata[field] || []);
-  const values2 = case2.accounts.flatMap((a) => a.metadata[field] || []);
-  return [...new Set(values1.filter((v) => values2.includes(v)))];
+  const accounts1 = case1.accounts.map((a) => ({
+    accountNumber: a.accountNumber,
+    value: a.metadata?.[field],
+  }));
+  const accounts2 = case2.accounts.map((a) => ({
+    accountNumber: a.accountNumber,
+    value: a.metadata?.[field],
+  }));
+
+  const shared = [];
+  for (const acc1 of accounts1) {
+    for (const acc2 of accounts2) {
+      if (
+        acc1.accountNumber === acc2.accountNumber &&
+        acc1.value &&
+        acc2.value &&
+        acc1.value === acc2.value
+      ) {
+        shared.push(acc1.value);
+      }
+    }
+  }
+  return [...new Set(shared)];
 };
 
 // Helper: Compare Circular Patterns
