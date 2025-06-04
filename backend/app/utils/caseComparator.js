@@ -1,6 +1,31 @@
 const Case = require("../models/Case");
 const { ANOMALY_THRESHOLDS } = require("./anomalyDetector");
 
+// Helper: Find Common Metadata
+const findCommonMetadata = (case1, case2, field) => {
+  const values1 = case1.accounts.flatMap((a) => a.metadata[field] || []);
+  const values2 = case2.accounts.flatMap((a) => a.metadata[field] || []);
+  return [...new Set(values1.filter((v) => values2.includes(v)))];
+};
+
+// Helper: Compare Circular Patterns
+const compareCircularPatterns = (circular1, circular2) => {
+  const paths1 = circular1.map((c) => c.path.join("-"));
+  const paths2 = circular2.map((c) => c.path.join("-"));
+  return (
+    paths1.filter((p) => paths2.includes(p)).length / Math.max(paths1.length, 1)
+  );
+};
+
+// Helper: Calculate time difference between two dates
+const timeDifference = (date1, date2) => {
+  const d1 = new Date(date1);
+  const d2 = new Date(date2);
+  const diffMs = Math.abs(d2 - d1);
+  return `${Math.floor(diffMs / 3600000)}h ${Math.floor(
+    (diffMs % 3600000) / 60000
+  )}m`;
+};
 const compareCases = async (caseId1, caseId2) => {
   const [case1, case2] = await Promise.all([
     Case.findById(caseId1).populate("accounts transactions").lean(),
@@ -174,29 +199,4 @@ const getHourlyDistribution = (transactions) => {
   return distribution;
 };
 
-// Helper: Find Common Metadata
-const findCommonMetadata = (case1, case2, field) => {
-  const values1 = case1.accounts.flatMap((a) => a.metadata[field] || []);
-  const values2 = case2.accounts.flatMap((a) => a.metadata[field] || []);
-  return [...new Set(values1.filter((v) => values2.includes(v)))];
-};
-
-// Helper: Compare Circular Patterns
-const compareCircularPatterns = (circular1, circular2) => {
-  const paths1 = circular1.map((c) => c.path.join("-"));
-  const paths2 = circular2.map((c) => c.path.join("-"));
-  return (
-    paths1.filter((p) => paths2.includes(p)).length / Math.max(paths1.length, 1)
-  );
-};
-
-// Helper: Calculate time difference between two dates
-const timeDifference = (date1, date2) => {
-  const d1 = new Date(date1);
-  const d2 = new Date(date2);
-  const diffMs = Math.abs(d2 - d1);
-  return `${Math.floor(diffMs / 3600000)}h ${Math.floor(
-    (diffMs % 3600000) / 60000
-  )}m`;
-};
 module.exports = { compareCases };
