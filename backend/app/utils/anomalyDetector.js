@@ -1,6 +1,6 @@
 const Transaction = require("../models/Transaction");
 const Account = require("../models/Account");
-
+const Case = require("../models/Case");
 const ANOMALY_THRESHOLDS = {
   HIGH_VALUE: 50000, // $50,000+ transactions
   RAPID_SUCCESSIVE: {
@@ -21,6 +21,7 @@ const detectAnomalies = async (caseId) => {
   try {
     const transactions = await Transaction.find({ caseId }).lean();
     const accounts = await Account.find({ caseId }).lean();
+    const now = new Date();
 
     const anomalies = {
       highValue: [],
@@ -33,6 +34,7 @@ const detectAnomalies = async (caseId) => {
       rapidMovement: [],
       newAccountLargeTxn: [],
       frequentTransactions: [],
+      network: { nodes: [], edges: [] }, // Explicit initialization
     };
 
     // 1. High-Value Transactions
@@ -41,38 +43,45 @@ const detectAnomalies = async (caseId) => {
         anomalies.highValue.push({
           transactionId: txn._id,
           amount: txn.amount,
-          reason: `High-value transaction ($${txn.amount})`,
+          fromAccount: txn.fromAccount,
+          toAccount: txn.toAccount,
+          date: txn.date,
         });
       }
     });
 
     // 2. Rapid Successive Transactions
-    const accountTxns = {};
-    transactions.forEach((txn) => {
-      accountTxns[txn.fromAccount] = [
-        ...(accountTxns[txn.fromAccount] || []),
-        txn,
-      ];
-    });
+    const accountTxnsMap = transactions.reduce((acc, txn) => {
+      acc[txn.fromAccount] = [...(acc[txn.fromAccount] || []), txn];
+      return acc;
+    }, {});
 
-    for (const [account, txns] of Object.entries(accountTxns)) {
+    Object.entries(accountTxnsMap).forEach(([account, txns]) => {
       txns.sort((a, b) => new Date(a.date) - new Date(b.date));
-      for (let i = 1; i < txns.length; i++) {
-        const diffMinutes =
-          (new Date(txns[i].date) - new Date(txns[i - 1].date)) / (1000 * 60);
-        if (
-          i >= ANOMALY_THRESHOLDS.RAPID_SUCCESSIVE.count &&
-          diffMinutes <= ANOMALY_THRESHOLDS.RAPID_SUCCESSIVE.minutes
-        ) {
+      for (
+        let i = ANOMALY_THRESHOLDS.RAPID_SUCCESSIVE.count;
+        i < txns.length;
+        i++
+      ) {
+        const timeDiff =
+          (new Date(txns[i].date) -
+            new Date(
+              txns[i - ANOMALY_THRESHOLDS.RAPID_SUCCESSIVE.count].date
+            )) /
+          60000;
+        if (timeDiff <= ANOMALY_THRESHOLDS.RAPID_SUCCESSIVE.minutes) {
           anomalies.rapidSuccessive.push({
             account,
-            transactions: txns.slice(0, i + 1).map((t) => t._id),
-            reason: `${i + 1} txns in ${diffMinutes.toFixed(1)} mins`,
+            transactions: txns
+              .slice(i - ANOMALY_THRESHOLDS.RAPID_SUCCESSIVE.count, i + 1)
+              .map((t) => t._id),
+            reason: `Rapid successive transactions: ${
+              ANOMALY_THRESHOLDS.RAPID_SUCCESSIVE.count + 1
+            } txns in ${timeDiff.toFixed(1)} mins`,
           });
-          break;
         }
       }
-    }
+    });
 
     // 3. Structuring Detection
     const structuringAccounts = new Set();
@@ -84,44 +93,62 @@ const detectAnomalies = async (caseId) => {
         structuringAccounts.add(txn.fromAccount);
       }
     });
-    anomalies.structuring = [...structuringAccounts].map((acc) => ({
-      account: acc,
-      reason: "Multiple just-below-$10k txns",
+    anomalies.structuring = [...structuringAccounts].map((account) => ({
+      account,
+      reason: "Structuring pattern detected",
     }));
 
     // 4. Geographic Risk
-    accounts.forEach((acc) => {
-      if (
+    anomalies.geographic = accounts
+      .filter((acc) =>
         ANOMALY_THRESHOLDS.HIGH_RISK_COUNTRIES.includes(acc.metadata?.ipCountry)
-      ) {
-        anomalies.geographic.push({
-          account: acc.accountNumber,
-          country: acc.metadata.ipCountry,
-          reason: "High-risk jurisdiction",
-        });
-      }
-    });
+      )
+      .map((acc) => ({
+        account: acc.accountNumber,
+        country: acc.metadata.ipCountry,
+        reason: "High-risk jurisdiction",
+      }));
 
     // 5. Circular Transactions
-    anomalies.circular = detectCircularTransactions(transactions);
+    const graph = {};
+    const circularPaths = [];
+    transactions.forEach((txn) => {
+      if (!graph[txn.fromAccount]) graph[txn.fromAccount] = [];
+      graph[txn.fromAccount].push(txn.toAccount);
+    });
+
+    const findCycles = (account, path = []) => {
+      if (path.includes(account)) {
+        const cycleStart = path.indexOf(account);
+        circularPaths.push({
+          path: path.slice(cycleStart).concat(account),
+          reason: "Circular transaction path",
+        });
+        return;
+      }
+      graph[account]?.forEach((nextAccount) => {
+        findCycles(nextAccount, [...path, account]);
+      });
+    };
+    Object.keys(graph).forEach((account) => findCycles(account));
+    anomalies.circular = circularPaths;
 
     // 6. Smurfing Detection
-    const smurfingMap = {};
-    transactions.forEach((txn) => {
+    const smurfingCounts = transactions.reduce((acc, txn) => {
       if (txn.amount < ANOMALY_THRESHOLDS.STRUCTURING_LIMIT) {
-        const key = txn.fromAccount;
-        smurfingMap[key] = (smurfingMap[key] || 0) + 1;
+        acc[txn.fromAccount] = (acc[txn.fromAccount] || 0) + 1;
       }
-    });
-    for (const [account, count] of Object.entries(smurfingMap)) {
+      return acc;
+    }, {});
+    Object.entries(smurfingCounts).forEach(([account, count]) => {
       if (count > ANOMALY_THRESHOLDS.SMURFING_COUNT) {
         anomalies.smurfing.push({
           account,
           count,
-          reason: `${count} small txns in 24h`,
+          reason: `Smurfing detected: ${count} small transactions`,
         });
       }
-    }
+    });
 
     // 7. Unusual Time Transactions
     transactions.forEach((txn) => {
@@ -133,26 +160,45 @@ const detectAnomalies = async (caseId) => {
         anomalies.unusualTime.push({
           transactionId: txn._id,
           hour,
-          reason: "Txn between 12AM-4AM",
+          reason: "Unusual time transaction (12AM-4AM)",
         });
       }
     });
 
     // 8. Rapid Fund Movement
-    const movementPaths = detectRapidMovement(transactions);
-    anomalies.rapidMovement = movementPaths;
+    const accountPaths = transactions.reduce((acc, txn) => {
+      acc[txn.fromAccount] = [...(acc[txn.fromAccount] || []), txn];
+      return acc;
+    }, {});
+    Object.values(accountPaths).forEach((txns) => {
+      txns.sort((a, b) => new Date(a.date) - new Date(b.date));
+      for (let i = 2; i < txns.length; i++) {
+        const timeDiffHours =
+          (new Date(txns[i].date) - new Date(txns[i - 2].date)) / 3600000;
+        if (timeDiffHours <= 1) {
+          anomalies.rapidMovement.push({
+            path: [
+              txns[i - 2].fromAccount,
+              txns[i - 1].toAccount,
+              txns[i].toAccount,
+            ],
+            reason: `Rapid movement: 3 accounts in ${timeDiffHours.toFixed(
+              2
+            )} hours`,
+          });
+        }
+      }
+    });
 
     // 9. New Account Large Transactions
-    const now = new Date();
-    const accountMap = accounts.reduce((map, acc) => {
-      map[acc.accountNumber] = acc;
-      return map;
+    const accountCreationMap = accounts.reduce((accumulator, account) => {
+      accumulator[account.accountNumber] = account.createdAt;
+      return accumulator;
     }, {});
-
     transactions.forEach((txn) => {
-      const acc = accountMap[txn.fromAccount];
-      if (acc?.createdAt) {
-        const ageDays = (now - new Date(acc.createdAt)) / (1000 * 60 * 60 * 24);
+      const accCreationDate = accountCreationMap[txn.fromAccount];
+      if (accCreationDate) {
+        const ageDays = (now - new Date(accCreationDate)) / (1000 * 3600 * 24);
         if (
           ageDays <= ANOMALY_THRESHOLDS.NEW_ACCOUNT_DAYS &&
           txn.amount > ANOMALY_THRESHOLDS.NEW_ACCOUNT_HIGH_VALUE
@@ -160,27 +206,59 @@ const detectAnomalies = async (caseId) => {
           anomalies.newAccountLargeTxn.push({
             account: txn.fromAccount,
             amount: txn.amount,
-            reason: `New account (${ageDays.toFixed(1)} days) large txn`,
+            reason: `New account (${ageDays.toFixed(
+              1
+            )} days) large transaction`,
           });
         }
       }
     });
 
     // 10. Frequent Same-Account Transactions
-    const pairCounts = {};
-    transactions.forEach((txn) => {
+    const pairCounts = transactions.reduce((acc, txn) => {
       const key = `${txn.fromAccount}-${txn.toAccount}`;
-      pairCounts[key] = (pairCounts[key] || 0) + 1;
-    });
-    for (const [pair, count] of Object.entries(pairCounts)) {
+      acc[key] = (acc[key] || 0) + 1;
+      return acc;
+    }, {});
+    Object.entries(pairCounts).forEach(([pair, count]) => {
       if (count > ANOMALY_THRESHOLDS.FREQUENT_SAME_ACCOUNTS) {
         anomalies.frequentTransactions.push({
           accounts: pair.split("-"),
           count,
-          reason: `Frequent txns (${count} times)`,
+          reason: `Frequent transactions between accounts (${count}x)`,
         });
       }
-    }
+    });
+
+    // Network Analysis
+    anomalies.network.nodes = accounts.map((acc) => ({
+      account: acc.accountNumber,
+      riskScore: calculateRiskScore(acc, transactions),
+    }));
+
+    anomalies.network.edges = transactions.map((txn) => ({
+      from: txn.fromAccount,
+      to: txn.toAccount,
+      totalAmount: txn.amount,
+      transactionCount: 1,
+    }));
+
+    // Merge duplicate edges
+    const edgeMap = anomalies.network.edges.reduce((acc, edge) => {
+      const key = `${edge.from}-${edge.to}`;
+      if (acc[key]) {
+        acc[key].totalAmount += edge.totalAmount;
+        acc[key].transactionCount++;
+      } else {
+        acc[key] = { ...edge };
+      }
+      return acc;
+    }, {});
+    anomalies.network.edges = Object.values(edgeMap);
+
+    await Case.findByIdAndUpdate(caseId, {
+      $set: { anomalies },
+    });
 
     await Transaction.bulkWrite(
       transactions.map((txn) => ({
@@ -188,7 +266,16 @@ const detectAnomalies = async (caseId) => {
           filter: { _id: txn._id },
           update: {
             $set: {
-              isSuspicious: isTransactionFlagged(txn, anomalies),
+              isSuspicious: [
+                anomalies.highValue,
+                anomalies.rapidSuccessive,
+                anomalies.structuring,
+                anomalies.smurfing,
+                anomalies.unusualTime,
+                anomalies.rapidMovement,
+                anomalies.newAccountLargeTxn,
+                anomalies.frequentTransactions,
+              ].some((arr) => arr.some((a) => a.transactionId === txn._id)),
             },
           },
         },
@@ -200,6 +287,29 @@ const detectAnomalies = async (caseId) => {
     console.error("Detection failed:", err);
     throw new Error("Anomaly detection failed");
   }
+};
+
+// Helper function
+const calculateRiskScore = (account, transactions) => {
+  let score = 50;
+  const accTxns = transactions.filter(
+    (t) => t.fromAccount === account.accountNumber
+  );
+
+  const ageDays =
+    (new Date() - new Date(account.createdAt)) / (1000 * 3600 * 24);
+  if (ageDays < 7) score += 20;
+
+  if (
+    ANOMALY_THRESHOLDS.HIGH_RISK_COUNTRIES.includes(account.metadata?.ipCountry)
+  )
+    score += 30;
+
+  if (accTxns.length > 10) score += 10;
+  if (accTxns.some((t) => t.amount >= ANOMALY_THRESHOLDS.HIGH_VALUE))
+    score += 20;
+
+  return Math.min(score, 100);
 };
 
 // Detect circular transactions (A→B→C→A)

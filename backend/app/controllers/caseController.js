@@ -105,14 +105,12 @@ exports.getCaseAnomalies = async (req, res) => {
 const processSingleCSV = async (file) => {
   try {
     const data = await parseCSV(file.path);
-
     const newCase = await Case.create({
       caseId: `CASE-${Date.now()}`,
-      description: "Interlink Case",
+      description: "CSV Upload",
     });
 
     for (const row of data) {
-      // Create Account
       const account = await Account.create({
         accountNumber: row.accountNumber,
         accountHolder: row.accountHolder,
@@ -121,16 +119,16 @@ const processSingleCSV = async (file) => {
           mobile: row.mobile,
           ipAddress: row.ipAddress,
           email: row.email,
+          ipCountry: row.metadata?.ipCountry,
         },
         caseId: newCase._id,
       });
 
-      // Create Transaction
       const transaction = await Transaction.create({
         fromAccount: row.fromAccount,
         toAccount: row.toAccount,
-        amount: row.amount,
-        date: row.date || new Date(),
+        amount: parseFloat(row.amount),
+        date: new Date(row.date || Date.now()),
         caseId: newCase._id,
       });
 
@@ -139,8 +137,9 @@ const processSingleCSV = async (file) => {
     }
 
     await newCase.save();
-    await detectAnomalies(newCase._id); // Populate anomalies
-    return newCase;
+    await detectAnomalies(newCase._id);
+
+    return Case.findById(newCase._id).populate("accounts transactions").lean();
   } catch (err) {
     throw new Error(`CSV processing failed: ${err.message}`);
   }
