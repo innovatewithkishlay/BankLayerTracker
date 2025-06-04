@@ -17,6 +17,7 @@ connectDB();
 
 // Routes
 app.use("/api/cases", caseRoutes);
+app.use("/api/transactions", transactionRoutes);
 
 // Error Handling
 app.use((err, req, res, next) => {
