@@ -182,7 +182,6 @@ const detectAnomalies = async (caseId) => {
       }
     }
 
-    // Update transaction flags
     await Transaction.bulkWrite(
       transactions.map((txn) => ({
         updateOne: {
@@ -201,6 +200,107 @@ const detectAnomalies = async (caseId) => {
     console.error("Detection failed:", err);
     throw new Error("Anomaly detection failed");
   }
+};
+
+// Detect circular transactions (A→B→C→A)
+const detectCircularTransactions = (transactions) => {
+  const graph = {};
+  const visited = new Set();
+  const circularPaths = new Set();
+
+  // 1. Build transaction graph
+  transactions.forEach((txn) => {
+    if (!graph[txn.fromAccount]) graph[txn.fromAccount] = [];
+    graph[txn.fromAccount].push(txn.toAccount);
+  });
+
+  // 2. Depth-First Search (DFS) to find cycles
+  const dfs = (account, path = []) => {
+    if (path.includes(account)) {
+      const cycleStart = path.indexOf(account);
+      const cycle = path.slice(cycleStart).concat(account);
+
+      const sortedCycle = [...new Set(cycle)].sort().join("-");
+      if (!circularPaths.has(sortedCycle)) {
+        circularPaths.add(sortedCycle);
+        return [{ accounts: cycle, reason: "Circular transaction path" }];
+      }
+      return [];
+    }
+
+    if (visited.has(account)) return [];
+    visited.add(account);
+
+    let cycles = [];
+    for (const neighbor of graph[account] || []) {
+      cycles = cycles.concat(dfs(neighbor, [...path, account]));
+    }
+
+    visited.delete(account);
+    return cycles;
+  };
+
+  // 3. Check cycles for all accounts
+  return Object.keys(graph).reduce((acc, account) => {
+    return acc.concat(dfs(account));
+  }, []);
+};
+
+// Detect rapid fund movement (A→B→C in <1 hour)
+const detectRapidMovement = (transactions) => {
+  const accountPaths = {};
+  const anomalies = [];
+
+  // 1. Group transactions by initial account and sort by time
+  transactions.forEach((txn) => {
+    const key = txn.fromAccount;
+    if (!accountPaths[key]) accountPaths[key] = [];
+    accountPaths[key].push({
+      toAccount: txn.toAccount,
+      timestamp: new Date(txn.date).getTime(),
+    });
+  });
+
+  // 2. Check paths for rapid movement
+  Object.entries(accountPaths).forEach(([startAccount, txns]) => {
+    txns.sort((a, b) => a.timestamp - b.timestamp);
+
+    let paths = {};
+    txns.forEach((txn) => {
+      const newPaths = {};
+
+      Object.entries(paths).forEach(([currentAccount, { path, startTime }]) => {
+        if (currentAccount === txn.toAccount) return;
+
+        const newPath = [...path, txn.toAccount];
+        const timeDiffHours = (txn.timestamp - startTime) / (1000 * 60 * 60);
+
+        if (timeDiffHours <= 1) {
+          if (newPath.length >= 3) {
+            anomalies.push({
+              path: newPath,
+              duration: timeDiffHours.toFixed(2),
+              reason: `Funds moved through ${
+                newPath.length
+              } accounts in ${timeDiffHours.toFixed(2)}h`,
+            });
+          }
+          newPaths[txn.toAccount] = { path: newPath, startTime };
+        }
+      });
+
+      if (!paths[txn.toAccount]) {
+        newPaths[txn.toAccount] = {
+          path: [startAccount, txn.toAccount],
+          startTime: txn.timestamp,
+        };
+      }
+
+      paths = { ...paths, ...newPaths };
+    });
+  });
+
+  return anomalies;
 };
 
 const isTransactionFlagged = (txn, anomalies) => {
