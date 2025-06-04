@@ -234,6 +234,12 @@ const compareGeographicData = (case1, case2) => ({
 
 // Helper: Cosine Similarity Implementation
 const cosineSimilarity = (a, b) => {
+  if (a.length === 0 || b.length === 0) return 0;
+
+  if (a.length === 1 && b.length === 1) {
+    return a[0] === b[0] ? 1 : 0.5;
+  }
+
   const vecA = Array.isArray(a) ? a : Object.values(a);
   const vecB = Array.isArray(b) ? b : Object.values(b);
 
