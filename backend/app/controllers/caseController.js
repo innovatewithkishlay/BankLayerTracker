@@ -55,3 +55,15 @@ exports.getAllCases = async (req, res) => {
     res.status(500).json({ error: "Server error: " + err.message });
   }
 };
+
+exports.getCaseById = async (req, res) => {
+  try {
+    const caseData = await Case.findById(req.params.caseId).populate(
+      "accounts transactions linkedCases"
+    );
+    if (!caseData) return res.status(404).json({ error: "Case not found" });
+    res.status(200).json(caseData);
+  } catch (err) {
+    res.status(500).json({ error: "Server error: " + err.message });
+  }
+};
