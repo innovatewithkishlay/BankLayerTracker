@@ -20,10 +20,7 @@ const ANOMALY_THRESHOLDS = {
 // Main anomaly detection function
 const detectAnomalies = async (caseId) => {
   try {
-    const transactions = await Transaction.find({ caseId })
-      .populate("caseId")
-      .lean();
-
+    const transactions = await Transaction.find({ caseId }).lean();
     const accounts = await Account.find({ caseId }).lean();
 
     const anomalies = {
