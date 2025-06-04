@@ -190,4 +190,4 @@ const compareCircularPatterns = (circular1, circular2) => {
   );
 };
 
-module.exports = { compareCases };
+module.exports = { compareCaseData: compareCases };
