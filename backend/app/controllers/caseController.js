@@ -46,3 +46,12 @@ exports.processSingleCase = async (req, res) => {
     res.status(500).json({ error: "Server error: " + err.message });
   }
 };
+
+exports.getAllCases = async (req, res) => {
+  try {
+    const cases = await Case.find().populate("accounts transactions");
+    res.status(200).json(cases);
+  } catch (err) {
+    res.status(500).json({ error: "Server error: " + err.message });
+  }
+};
