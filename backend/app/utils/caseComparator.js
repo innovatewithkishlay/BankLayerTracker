@@ -1,5 +1,5 @@
 const Case = require("../models/Case");
-const { ANOMALY_THRESHOLDS } = require("./anomalyDetector");
+const ANOMALY_THRESHOLDS = require("../../config/thresholds");
 
 // Helper: Find Common Metadata
 const findCommonMetadata = (case1, case2, field) => {
