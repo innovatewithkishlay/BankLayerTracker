@@ -45,3 +45,21 @@ const findCommonMetadata = (case1, case2, field) => {
   const values2 = case2.accounts.flatMap((a) => a.metadata[field] || []);
   return [...new Set(values1.filter((v) => values2.includes(v)))];
 };
+
+// Helper: Find transaction chains across cases
+const findTransactionLinks = (case1, case2) => {
+  const links = [];
+  case1.transactions.forEach((t1) => {
+    case2.transactions.forEach((t2) => {
+      if (t1.toAccount === t2.fromAccount) {
+        links.push({
+          path: [t1.fromAccount, t1.toAccount, t2.toAccount],
+          amount: t1.amount + t2.amount,
+          case1Transaction: t1._id,
+          case2Transaction: t2._id,
+        });
+      }
+    });
+  });
+  return links;
+};
