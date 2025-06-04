@@ -12,7 +12,12 @@ const fileUploadCheck = require("../middleware/fileUploadCheck");
 const upload = require("../../config/multer");
 
 // CSV Upload
-router.post("/upload/plugin", upload.single("csvFile"), processSingleCase);
+router.post(
+  "/upload/plugin",
+  upload.single("csvFile"),
+  fileUploadCheck,
+  processSingleCase
+);
 
 // Case Management
 router.get("/", getAllCases);
