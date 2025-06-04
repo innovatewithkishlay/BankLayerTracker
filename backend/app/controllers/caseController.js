@@ -99,3 +99,24 @@ exports.getCaseAnomalies = async (req, res) => {
     res.status(500).json({ error: "Server error: " + err.message });
   }
 };
+
+exports.processInterlinkCases = async (req, res) => {
+  try {
+    if (!req.files || req.files.length !== 2) {
+      return res.status(400).json({ error: "Exactly 2 CSV files required" });
+    }
+
+    const case1 = await processSingleCSV(req.files[0]);
+    const case2 = await processSingleCSV(req.files[1]);
+
+    const comparisonResult = await compareCaseData(case1._id, case2._id);
+
+    res.status(200).json({
+      case1: case1._id,
+      case2: case2._id,
+      comparison: comparisonResult,
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Interlink failed: " + err.message });
+  }
+};
