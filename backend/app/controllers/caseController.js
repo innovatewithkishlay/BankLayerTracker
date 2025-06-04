@@ -90,3 +90,12 @@ exports.getCaseTransactions = async (req, res) => {
     res.status(500).json({ error: "Server error: " + err.message });
   }
 };
+
+exports.getCaseAnomalies = async (req, res) => {
+  try {
+    const anomalies = await detectAnomalies(req.params.caseId);
+    res.status(200).json(anomalies);
+  } catch (err) {
+    res.status(500).json({ error: "Server error: " + err.message });
+  }
+};
