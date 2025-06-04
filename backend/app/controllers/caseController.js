@@ -130,6 +130,9 @@ const processSingleCSV = async (file) => {
         amount: parseFloat(row.amount),
         date: new Date(row.date || Date.now()),
         caseId: newCase._id,
+        metadata: {
+          ipCountry: row["metadata.ipCountry"],
+        },
       });
 
       newCase.accounts.push(account._id);
