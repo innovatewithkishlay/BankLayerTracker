@@ -38,3 +38,10 @@ const compareCaseData = async (caseId1, caseId2) => {
     sharedAnomalies,
   };
 };
+
+// Helper: Find common metadata values
+const findCommonMetadata = (case1, case2, field) => {
+  const values1 = case1.accounts.flatMap((a) => a.metadata[field] || []);
+  const values2 = case2.accounts.flatMap((a) => a.metadata[field] || []);
+  return [...new Set(values1.filter((v) => values2.includes(v)))];
+};
