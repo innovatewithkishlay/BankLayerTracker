@@ -4,6 +4,7 @@ import { Home } from "./pages/Home";
 import { PluginAnalysis } from "./pages/PluginAnalysis";
 import { InterlinkAnalysis } from "./pages/InterlinkAnalysis";
 import { Results } from "./pages/Results";
+import { CompareResults } from "./pages/CompareResults";
 // import { CyberLoader } from "./components/UI/CyberLoader";
 
 export const App = () => {
