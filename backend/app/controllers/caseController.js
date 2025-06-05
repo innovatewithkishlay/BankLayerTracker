@@ -42,7 +42,10 @@ exports.processSingleCase = async (req, res) => {
     await newCase.save();
 
     const anomalies = await detectAnomalies(newCase._id);
-    res.status(200).json({ case: newCase, anomalies });
+    res.status(200).json({
+      caseId: newCase._id,
+      anomalies,
+    });
   } catch (err) {
     res.status(500).json({ error: "Server error: " + err.message });
   }
