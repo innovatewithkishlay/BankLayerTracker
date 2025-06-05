@@ -3,6 +3,7 @@ import { FileUpload } from "../components/Input/FileUpload";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { FiHome } from "react-icons/fi";
 
 export const PluginAnalysis = () => {
   const { uploadCase } = useAML();
@@ -30,8 +31,23 @@ export const PluginAnalysis = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a0a] via-[#111111] to-[#0a0a0a] p-6"
+      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a0a] via-[#111111] to-[#0a0a0a] p-6 relative"
     >
+      {/* Unique Back Button - Top Left */}
+      <motion.button
+        onClick={() => navigate("/")}
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.3 }}
+        className="absolute top-6 left-6 flex items-center space-x-2 text-[#00ff9d] hover:text-[#00ff9d]/80 transition-colors group"
+      >
+        <FiHome className="group-hover:rotate-[-10deg] transition-transform" />
+        <span className="font-mono opacity-80 group-hover:opacity-100">
+          Return
+        </span>
+      </motion.button>
+
+      {/* Main Content */}
       <div className="w-full max-w-2xl">
         {/* Header */}
         <motion.div
