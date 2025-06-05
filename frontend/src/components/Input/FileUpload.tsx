@@ -3,6 +3,12 @@ import { useDropzone } from "react-dropzone";
 import { FiUploadCloud, FiX } from "react-icons/fi";
 import { motion } from "framer-motion";
 
+const formatFileSize = (bytes: number) => {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(2)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+};
+
 interface FileUploadProps {
   onUpload: (
     files: File[],
@@ -87,7 +93,7 @@ export const FileUpload = ({ onUpload, multiple = false }: FileUploadProps) => {
                   {file.name}
                 </span>
                 <span className="text-gray-400 text-sm">
-                  {(file.size / 1024 / 1024).toFixed(2)} MB
+                  {formatFileSize(file.size)}
                 </span>
               </div>
             ))}
