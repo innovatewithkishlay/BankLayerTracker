@@ -34,7 +34,6 @@ export const InterlinkAnalysis = () => {
       ]);
 
       alert(`Cases uploaded! IDs: ${case1Id}, ${case2Id}`);
-      // Navigate to comparison page here if needed
     } catch (err) {
       alert(
         "Upload failed: " +
@@ -50,7 +49,6 @@ export const InterlinkAnalysis = () => {
       transition={{ duration: 0.5 }}
       className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a0a] via-[#111111] to-[#0a0a0a] p-6 relative"
     >
-      {/* Back Button */}
       <motion.button
         onClick={() => navigate("/")}
         className="absolute top-6 left-6 flex items-center space-x-2 text-[#00ff9d] hover:text-[#00ff9d]/80 transition-colors group"
@@ -61,9 +59,7 @@ export const InterlinkAnalysis = () => {
         </span>
       </motion.button>
 
-      {/* Main Content */}
       <div className="w-full max-w-2xl">
-        {/* Header */}
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -80,7 +76,6 @@ export const InterlinkAnalysis = () => {
           </p>
         </motion.div>
 
-        {/* Upload Card */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -94,7 +89,6 @@ export const InterlinkAnalysis = () => {
           />
         </motion.div>
 
-        {/* Instructions */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

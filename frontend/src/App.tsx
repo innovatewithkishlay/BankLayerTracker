@@ -33,6 +33,10 @@ export const App = () => {
         <Route path="/plugin" element={<PluginAnalysis />} />
         <Route path="/interlink" element={<InterlinkAnalysis />} />
         <Route path="/results/:caseId" element={<Results />} />
+        <Route
+          path="/compare-results/:case1Id/:case2Id"
+          element={<CompareResults />}
+        />
       </Routes>
       {/* // )} */}
     </Router>
