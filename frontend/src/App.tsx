@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Home } from "./pages/Home";
 import { PluginAnalysis } from "./pages/PluginAnalysis";
 import { InterlinkAnalysis } from "./pages/InterlinkAnalysis";
-import { Results } from "./pages/Results"; // Add this import
+import { Results } from "./pages/results";
 import { CyberLoader } from "./components/UI/CyberLoader";
 
 export const App = () => {
