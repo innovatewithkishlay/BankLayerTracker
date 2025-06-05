@@ -1,2 +1,3 @@
-import ReactFlow, { Background, Controls, Node, Edge } from "reactflow";
+import ReactFlow, { Background, Controls } from "reactflow";
+import type { Edge, Node } from "reactflow";
 import "reactflow/dist/style.css";
