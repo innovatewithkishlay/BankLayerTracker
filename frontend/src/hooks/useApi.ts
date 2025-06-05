@@ -4,12 +4,24 @@ import type { CaseComparison, Transaction } from "../types/apiTypes";
 const API_URL = "http://localhost:5000/api";
 
 export const useAML = () => {
-  const uploadCase = async (file: File) => {
+  const uploadCase = async (
+    file: File,
+    onProgress?: (progress: number) => void
+  ) => {
     const formData = new FormData();
     formData.append("csvFile", file);
+
     const { data } = await axios.post<{ caseId: string }>(
       `${API_URL}/cases/upload/plugin`,
-      formData
+      formData,
+      {
+        onUploadProgress: (progressEvent) => {
+          const percent = Math.round(
+            (progressEvent.loaded * 100) / (progressEvent.total || 1)
+          );
+          onProgress?.(percent);
+        },
+      }
     );
     return data.caseId;
   };
