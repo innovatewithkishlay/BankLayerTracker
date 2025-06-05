@@ -1,7 +1,7 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import { FiUploadCloud, FiX } from "react-icons/fi";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 const formatFileSize = (bytes: number) => {
   if (bytes < 1024) return `${bytes} B`;
@@ -15,15 +15,29 @@ interface FileUploadProps {
     onProgress: (progress: number) => void
   ) => Promise<void>;
   multiple?: boolean;
+  maxFiles?: number;
 }
 
-export const FileUpload = ({ onUpload, multiple = false }: FileUploadProps) => {
+export const FileUpload = ({
+  onUpload,
+  multiple = false,
+  maxFiles,
+}: FileUploadProps) => {
   const [files, setFiles] = useState<File[]>([]);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => setError(null), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
+
+  const onDrop = useCallback((acceptedFiles: File[]) => {
     setFiles(acceptedFiles);
+    setError(null);
   }, []);
 
   const handleCancel = () => {
@@ -32,11 +46,17 @@ export const FileUpload = ({ onUpload, multiple = false }: FileUploadProps) => {
   };
 
   const handleSubmit = async () => {
-    if (files.length === 0) return;
+    if (maxFiles && files.length !== maxFiles) {
+      setError(`Please select exactly ${maxFiles} files`);
+      return;
+    }
     setIsProcessing(true);
     try {
       await onUpload(files, (progress) => setUploadProgress(progress));
+      setFiles([]);
+      setUploadProgress(0);
     } catch (err) {
+      setError(err instanceof Error ? err.message : "Upload failed");
       setFiles([]);
       setUploadProgress(0);
     } finally {
@@ -52,6 +72,22 @@ export const FileUpload = ({ onUpload, multiple = false }: FileUploadProps) => {
 
   return (
     <div className="space-y-4 w-full">
+      {/* Error Toast */}
+      <AnimatePresence>
+        {error && (
+          <motion.div
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 200 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 flex items-center space-x-3 bg-red-900/80 backdrop-blur-sm border border-red-500/30 px-6 py-3 rounded-xl z-50"
+          >
+            <FiAlertTriangle className="text-red-400" />
+            <span className="font-mono text-red-300">{error}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {files.length === 0 ? (
         <motion.div
           {...getRootProps()}
@@ -82,6 +118,13 @@ export const FileUpload = ({ onUpload, multiple = false }: FileUploadProps) => {
           animate={{ opacity: 1, y: 0 }}
           className="space-y-4"
         >
+          {/* File Count */}
+          {maxFiles && (
+            <p className="text-gray-400 text-sm text-center">
+              {files.length}/{maxFiles} files selected
+            </p>
+          )}
+
           {/* Selected Files */}
           <div className="border border-[#00ff9d]/30 rounded-xl p-4 bg-[#111111]/50">
             {files.map((file, index) => (
@@ -120,8 +163,12 @@ export const FileUpload = ({ onUpload, multiple = false }: FileUploadProps) => {
             </button>
             <button
               onClick={handleSubmit}
-              className="px-6 py-2 bg-[#00ff9d] text-black rounded-lg font-semibold hover:bg-[#00ff9d]/90 transition-all flex-1"
-              disabled={isProcessing}
+              className={`px-6 py-2 bg-[#00ff9d] text-black rounded-lg font-semibold hover:bg-[#00ff9d]/90 transition-all flex-1 ${
+                maxFiles && files.length !== maxFiles
+                  ? "opacity-50 cursor-not-allowed"
+                  : ""
+              }`}
+              disabled={isProcessing || (maxFiles && files.length !== maxFiles)}
             >
               {isProcessing ? "Uploading..." : "Start Analysis"}
             </button>
