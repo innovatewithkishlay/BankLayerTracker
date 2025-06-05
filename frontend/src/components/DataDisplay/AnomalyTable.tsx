@@ -3,6 +3,7 @@ import {
   getCoreRowModel,
   flexRender,
 } from "@tanstack/react-table";
+import type { ColumnDef } from "@tanstack/react-table";
 import { motion } from "framer-motion";
 
 interface Anomaly {
@@ -11,7 +12,7 @@ interface Anomaly {
 }
 
 export const AnomalyTable = ({ data }: { data: Anomaly[] }) => {
-  const columns = [
+  const columns: ColumnDef<Anomaly>[] = [
     {
       accessorKey: "type",
       header: "Anomaly Type",
@@ -19,12 +20,13 @@ export const AnomalyTable = ({ data }: { data: Anomaly[] }) => {
     {
       accessorKey: "count",
       header: "Count",
+      cell: (info) => info.getValue(),
     },
   ];
 
   const table = useReactTable({
-    columns,
     data,
+    columns,
     getCoreRowModel: getCoreRowModel(),
   });
 
