@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Home } from "./pages/Home";
 import { PluginAnalysis } from "./pages/PluginAnalysis";
 import { InterlinkAnalysis } from "./pages/InterlinkAnalysis";
+import { Results } from "./pages/Results"; // Add this import
 import { CyberLoader } from "./components/UI/CyberLoader";
 
 export const App = () => {
@@ -31,6 +32,7 @@ export const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/plugin" element={<PluginAnalysis />} />
           <Route path="/interlink" element={<InterlinkAnalysis />} />
+          <Route path="/results/:caseId" element={<Results />} />
         </Routes>
       )}
     </Router>
