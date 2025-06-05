@@ -33,7 +33,7 @@ export const Home = () => {
         transition={{ delay: 0.6, duration: 0.6 }}
         className="flex flex-col md:flex-row gap-6 w-full max-w-xl justify-center"
       >
-        <GlowingButton onClick={() => navigate("/plugin")}>
+        <GlowingButton variant="primary" onClick={() => navigate("/plugin")}>
           <TerminalText text="Single Case Analysis" />
         </GlowingButton>
 
