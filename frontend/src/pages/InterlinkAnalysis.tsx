@@ -7,7 +7,6 @@ import { motion } from "framer-motion";
 export const InterlinkAnalysis = () => {
   const { uploadCase } = useAML();
   const [isProcessing, setIsProcessing] = useState(false);
-  const [files, setFiles] = useState<File[]>([]);
   const navigate = useNavigate();
 
   const handleUpload = async (files: File[]) => {
