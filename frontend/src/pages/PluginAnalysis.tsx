@@ -1,13 +1,11 @@
 import { useAML } from "../hooks/useApi";
 import { FileUpload } from "../components/Input/FileUpload";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FiHome } from "react-icons/fi";
 
 export const PluginAnalysis = () => {
   const { uploadCase } = useAML();
-  const [isProcessing, setIsProcessing] = useState(false);
   const navigate = useNavigate();
 
   const handleUpload = async (
@@ -33,17 +31,14 @@ export const PluginAnalysis = () => {
       transition={{ duration: 0.5 }}
       className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a0a] via-[#111111] to-[#0a0a0a] p-6 relative"
     >
-      {/* Unique Back Button - Top Left */}
+      {/* Back Button */}
       <motion.button
         onClick={() => navigate("/")}
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.3 }}
         className="absolute top-6 left-6 flex items-center space-x-2 text-[#00ff9d] hover:text-[#00ff9d]/80 transition-colors group"
       >
         <FiHome className="group-hover:rotate-[-10deg] transition-transform" />
         <span className="font-mono opacity-80 group-hover:opacity-100">
-          Return
+          Return to Hub
         </span>
       </motion.button>
 
@@ -53,7 +48,6 @@ export const PluginAnalysis = () => {
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.2 }}
           className="text-center mb-12"
         >
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
@@ -67,49 +61,24 @@ export const PluginAnalysis = () => {
           </p>
         </motion.div>
 
-        {/* Main Card */}
+        {/* Upload Card */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.4 }}
           className="p-8 rounded-2xl border border-[#00ff9d]/30 bg-[#111111]/90 backdrop-blur-lg shadow-xl shadow-[#00ff9d]/10"
         >
-          <FileUpload onUpload={handleUpload} />
-
-          {/* Processing Indicator */}
-          {isProcessing && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="mt-6 flex items-center justify-center space-x-3"
-            >
-              <div className="flex space-x-2">
-                {[0, 1, 2].map((i) => (
-                  <motion.div
-                    key={i}
-                    animate={{ y: [0, -8, 0] }}
-                    transition={{
-                      repeat: Infinity,
-                      duration: 0.8,
-                      repeatDelay: 0.2,
-                      delay: i * 0.2,
-                    }}
-                    className="h-2 w-2 bg-[#00ff9d] rounded-full"
-                  />
-                ))}
-              </div>
-              <span className="font-mono text-[#00ff9d]">
-                Analyzing transaction data...
-              </span>
-            </motion.div>
-          )}
+          <FileUpload
+            onUpload={handleUpload}
+            multiple={false}
+            maxFiles={1}
+            enableAddMore={false}
+          />
         </motion.div>
 
-        {/* Optional: Tips or Instructions */}
+        {/* Instructions */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
           className="mt-8 text-center text-gray-500 text-sm"
         >
           <p>Supported formats: CSV</p>

@@ -1,32 +1,18 @@
 import { useAML } from "../hooks/useApi";
 import { FileUpload } from "../components/Input/FileUpload";
 import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import { FiHome, FiAlertTriangle } from "react-icons/fi";
-import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { FiHome } from "react-icons/fi";
 
 export const InterlinkAnalysis = () => {
   const { uploadCase } = useAML();
   const navigate = useNavigate();
-  const [error, setError] = useState<string | null>(null);
-
-  // Auto-dismiss error after 5 seconds
-  useEffect(() => {
-    if (error) {
-      const timer = setTimeout(() => setError(null), 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [error]);
 
   const handleUpload = async (
     files: File[],
     onProgress: (progress: number) => void
   ) => {
-    if (files.length < 2) {
-      setError("Please select exactly 2 case files");
-      return;
-    }
-
+    if (files.length < 2) return;
     try {
       let progress1 = 0;
       let progress2 = 0;
@@ -48,8 +34,12 @@ export const InterlinkAnalysis = () => {
       ]);
 
       alert(`Cases uploaded! IDs: ${case1Id}, ${case2Id}`);
+      // Navigate to comparison page here if needed
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to process files");
+      alert(
+        "Upload failed: " +
+          (err instanceof Error ? err.message : "Unknown error")
+      );
     }
   };
 
@@ -60,22 +50,6 @@ export const InterlinkAnalysis = () => {
       transition={{ duration: 0.5 }}
       className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a0a] via-[#111111] to-[#0a0a0a] p-6 relative"
     >
-      {/* Error Toast */}
-      <AnimatePresence>
-        {error && (
-          <motion.div
-            initial={{ y: 100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 100, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 200 }}
-            className="fixed bottom-6 left-1/2 -translate-x-1/2 flex items-center space-x-3 bg-red-900/80 backdrop-blur-sm border border-red-500/30 px-6 py-3 rounded-xl"
-          >
-            <FiAlertTriangle className="text-red-400" />
-            <span className="font-mono text-red-300">{error}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Back Button */}
       <motion.button
         onClick={() => navigate("/")}
@@ -101,7 +75,8 @@ export const InterlinkAnalysis = () => {
             </span>
           </h1>
           <p className="text-gray-400 text-lg max-w-xl mx-auto">
-            Analyze and compare transaction data from two cases
+            Analyze and compare transaction data from two cases to uncover
+            hidden connections.
           </p>
         </motion.div>
 
@@ -111,7 +86,22 @@ export const InterlinkAnalysis = () => {
           animate={{ y: 0, opacity: 1 }}
           className="p-8 rounded-2xl border border-[#00ff9d]/30 bg-[#111111]/90 backdrop-blur-lg shadow-xl shadow-[#00ff9d]/10"
         >
-          <FileUpload onUpload={handleUpload} multiple maxFiles={2} />
+          <FileUpload
+            onUpload={handleUpload}
+            multiple={false}
+            maxFiles={2}
+            enableAddMore={true}
+          />
+        </motion.div>
+
+        {/* Instructions */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="mt-8 text-center text-gray-500 text-sm"
+        >
+          <p>Supported formats: CSV</p>
+          <p>Maximum file size: 10MB</p>
         </motion.div>
       </div>
     </motion.div>

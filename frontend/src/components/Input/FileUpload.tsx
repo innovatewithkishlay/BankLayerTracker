@@ -1,8 +1,9 @@
-import { useCallback, useState, useEffect } from "react";
+import { useCallback, useState, useEffect, useRef } from "react";
 import { useDropzone } from "react-dropzone";
-import { FiUploadCloud, FiX } from "react-icons/fi";
+import { FiUploadCloud, FiX, FiPlus } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 
+// Helper to format file size (B, KB, MB)
 const formatFileSize = (bytes: number) => {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(2)} KB`;
@@ -16,29 +17,55 @@ interface FileUploadProps {
   ) => Promise<void>;
   multiple?: boolean;
   maxFiles?: number;
+  enableAddMore?: boolean;
 }
 
 export const FileUpload = ({
   onUpload,
   multiple = false,
-  maxFiles,
+  maxFiles = 1,
+  enableAddMore = false,
 }: FileUploadProps) => {
   const [files, setFiles] = useState<File[]>([]);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  // Auto-dismiss error after 5 seconds
   useEffect(() => {
     if (error) {
-      const timer = setTimeout(() => setError(null), 5000);
+      const timer = setTimeout(() => setError(null), 4000);
       return () => clearTimeout(timer);
     }
   }, [error]);
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    setFiles(acceptedFiles);
-    setError(null);
-  }, []);
+  // Only allow adding one file at a time (unless multiple is true)
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      if (acceptedFiles.length === 0) return;
+      if (files.length + acceptedFiles.length > maxFiles) {
+        setError(`You can only upload ${maxFiles} files.`);
+        return;
+      }
+      // Only accept .csv files
+      const validFiles = acceptedFiles.filter((file) =>
+        file.name.toLowerCase().endsWith(".csv")
+      );
+      if (validFiles.length !== acceptedFiles.length) {
+        setError("Only CSV files are allowed.");
+        return;
+      }
+      setFiles((prev) => [...prev, ...validFiles].slice(0, maxFiles));
+      setError(null);
+    },
+    [files, maxFiles]
+  );
+
+  const handleRemove = (index: number) => {
+    setFiles((prev) => prev.filter((_, i) => i !== index));
+    setUploadProgress(0);
+  };
 
   const handleCancel = () => {
     setFiles([]);
@@ -46,8 +73,8 @@ export const FileUpload = ({
   };
 
   const handleSubmit = async () => {
-    if (maxFiles && files.length !== maxFiles) {
-      setError(`Please select exactly ${maxFiles} files`);
+    if (files.length !== maxFiles) {
+      setError(`Please select exactly ${maxFiles} files.`);
       return;
     }
     setIsProcessing(true);
@@ -64,10 +91,20 @@ export const FileUpload = ({
     }
   };
 
+  // For "Add another file" button
+  const handleManualFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      onDrop(Array.from(e.target.files));
+      e.target.value = ""; // reset so user can select same file again if needed
+    }
+  };
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: { "text/csv": [".csv"] },
-    multiple,
+    multiple: enableAddMore, // Allow multiple only if enableAddMore is true
+    noClick: files.length >= maxFiles,
+    noDrag: files.length >= maxFiles,
   });
 
   return (
@@ -82,12 +119,13 @@ export const FileUpload = ({
             transition={{ type: "spring", stiffness: 200 }}
             className="fixed bottom-6 left-1/2 -translate-x-1/2 flex items-center space-x-3 bg-red-900/80 backdrop-blur-sm border border-red-500/30 px-6 py-3 rounded-xl z-50"
           >
-            <FiAlertTriangle className="text-red-400" />
+            <FiX className="text-red-400" />
             <span className="font-mono text-red-300">{error}</span>
           </motion.div>
         )}
       </AnimatePresence>
 
+      {/* File selection UI */}
       {files.length === 0 ? (
         <motion.div
           {...getRootProps()}
@@ -106,10 +144,8 @@ export const FileUpload = ({
           <FiUploadCloud className="text-[#00ff9d] text-6xl mb-6" />
           <p className="text-gray-400 font-mono text-lg">
             {isDragActive
-              ? "Drop CSV files here"
-              : `Drag & drop ${
-                  multiple ? "files" : "a file"
-                } or click to browse`}
+              ? "Drop CSV file here"
+              : `Drag & drop a CSV file or click to browse`}
           </p>
         </motion.div>
       ) : (
@@ -119,7 +155,7 @@ export const FileUpload = ({
           className="space-y-4"
         >
           {/* File Count */}
-          {maxFiles && (
+          {maxFiles > 1 && (
             <p className="text-gray-400 text-sm text-center">
               {files.length}/{maxFiles} files selected
             </p>
@@ -130,7 +166,7 @@ export const FileUpload = ({
             {files.map((file, index) => (
               <div
                 key={index}
-                className="flex items-center justify-between py-2"
+                className="flex items-center justify-between py-2 gap-2"
               >
                 <span className="font-mono text-gray-300 truncate">
                   {file.name}
@@ -138,9 +174,39 @@ export const FileUpload = ({
                 <span className="text-gray-400 text-sm">
                   {formatFileSize(file.size)}
                 </span>
+                <button
+                  onClick={() => handleRemove(index)}
+                  className="ml-2 text-red-400 hover:text-red-600"
+                  aria-label="Remove file"
+                  disabled={isProcessing}
+                >
+                  <FiX />
+                </button>
               </div>
             ))}
           </div>
+
+          {/* Add another file button */}
+          {enableAddMore && files.length < maxFiles && (
+            <div className="flex justify-center">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="flex items-center px-4 py-2 rounded-lg border border-[#00ff9d]/40 text-[#00ff9d] hover:bg-[#00ff9d]/10 font-mono transition-all"
+                disabled={isProcessing}
+              >
+                <FiPlus className="mr-2" /> Add another file
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".csv"
+                className="hidden"
+                onChange={handleManualFileInput}
+                disabled={isProcessing}
+              />
+            </div>
+          )}
 
           {/* Progress Bar */}
           {uploadProgress > 0 && (
@@ -164,11 +230,9 @@ export const FileUpload = ({
             <button
               onClick={handleSubmit}
               className={`px-6 py-2 bg-[#00ff9d] text-black rounded-lg font-semibold hover:bg-[#00ff9d]/90 transition-all flex-1 ${
-                maxFiles && files.length !== maxFiles
-                  ? "opacity-50 cursor-not-allowed"
-                  : ""
+                files.length !== maxFiles ? "opacity-50 cursor-not-allowed" : ""
               }`}
-              disabled={isProcessing || (maxFiles && files.length !== maxFiles)}
+              disabled={isProcessing || files.length !== maxFiles}
             >
               {isProcessing ? "Uploading..." : "Start Analysis"}
             </button>
