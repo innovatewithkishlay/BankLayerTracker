@@ -7,7 +7,7 @@ import {
 } from "react-simple-maps";
 import { scaleSequential } from "d3-scale";
 import { interpolateYlOrRd } from "d3-scale-chromatic";
-import type { GeoJsonObject } from "geojson";
+import { GeoJsonObject } from "geojson";
 import { motion } from "framer-motion";
 
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";

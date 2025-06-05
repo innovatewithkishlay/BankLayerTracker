@@ -1,6 +1,7 @@
+// src/types/react-simple-maps.d.ts
 declare module "react-simple-maps" {
   import React from "react";
-  import { GeoJsonObject } from "geojson";
+  import { GeoJsonObject, Geometry } from "geojson";
 
   export interface GeographyProps {
     geography: GeoJsonObject;
@@ -12,29 +13,33 @@ declare module "react-simple-maps" {
       hover?: React.CSSProperties;
       pressed?: React.CSSProperties;
     };
-    onMouseEnter?: () => void;
-    onMouseLeave?: () => void;
-    onClick?: () => void;
   }
 
-  export interface MarkerProps {
-    coordinates: [number, number];
-    children?: React.ReactNode;
-  }
+  type GeoFeature = GeoJsonObject & {
+    rsmKey: string;
+    properties: {
+      isoA2: string;
+      [key: string]: any;
+    };
+  };
 
   export const ComposableMap: React.FC<{
     projection?: string | object;
     width?: number;
     height?: number;
+    children?: React.ReactNode;
   }>;
 
   export const Geographies: React.FC<{
     geography: string | GeoJsonObject | undefined;
-    children?: (props: { geographies: GeoJsonObject[] }) => React.ReactNode;
+    children: (props: { geographies: GeoFeature[] }) => React.ReactNode;
   }>;
 
   export const Geography: React.FC<GeographyProps>;
-  export const Marker: React.FC<MarkerProps>;
+  export const Marker: React.FC<{
+    coordinates: [number, number];
+    children?: React.ReactNode;
+  }>;
   export const ZoomableGroup: React.FC<{
     center?: [number, number];
     zoom?: number;
