@@ -26,7 +26,6 @@ interface GeographicMapProps {
 }
 
 export const GeographicMap = ({ transactions }: GeographicMapProps) => {
-  // Process transaction data
   const countryCounts = transactions.reduce((acc, tx) => {
     const country = tx.metadata?.ipCountry?.toUpperCase();
     if (country) {
@@ -69,7 +68,6 @@ export const GeographicMap = ({ transactions }: GeographicMapProps) => {
               }
             </Geographies>
 
-            {/* Transaction markers */}
             {Object.entries(countryCounts).map(([countryCode, count]) => (
               <Marker
                 key={countryCode}
@@ -103,10 +101,8 @@ export const GeographicMap = ({ transactions }: GeographicMapProps) => {
   );
 };
 
-// Sample country coordinates - extend this list as needed
 const geoCodes: Record<string, { lat: number; lng: number }> = {
   US: { lat: 37.0902, lng: -95.7129 },
   IN: { lat: 20.5937, lng: 78.9629 },
   CN: { lat: 35.8617, lng: 104.1954 },
-  // Add more countries as needed
 };
