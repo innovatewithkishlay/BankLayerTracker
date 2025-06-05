@@ -1,112 +1,80 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { GlowingButton } from "../components/UI/GlowingButton";
-import {
-  FiActivity,
-  FiMapPin,
-  FiClock,
-  FiShield,
-  FiTrendingUp,
-  FiUsers,
-  FiArrowRight,
-  FiPlay,
-} from "react-icons/fi";
+import { FiActivity, FiMapPin, FiShield, FiUsers } from "react-icons/fi";
 
 export const Home = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] via-[#111111] to-[#0a0a0a] text-white overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] to-[#0d0d0d] text-white overflow-hidden flex flex-col">
       {/* Navigation Bar */}
-      <nav className="flex items-center justify-between p-6 relative z-50">
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="flex items-center space-x-3"
-        >
-          <div className="w-8 h-8 bg-gradient-to-r from-[#00ff9d] to-[#00d4ff] rounded-lg" />
-          <span className="text-xl font-bold">THREATLENS</span>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="flex items-center space-x-4"
-        >
-          <button className="px-4 py-2 text-gray-300 hover:text-white transition-colors">
-            Login
-          </button>
-          <button className="px-6 py-2 bg-gradient-to-r from-[#00ff9d] to-[#00d4ff] text-black rounded-lg font-semibold hover:shadow-lg hover:shadow-[#00ff9d]/25 transition-all">
-            Sign Up
-          </button>
-        </motion.div>
-      </nav>
-
-      {/* Hero Section */}
-      <div className="relative px-6 py-20">
-        {/* Background Elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-[#00ff9d]/10 rounded-full blur-[100px]" />
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#00d4ff]/10 rounded-full blur-[100px]" />
+      <nav className="flex items-center justify-between p-6">
+        <div className="flex items-center space-x-3">
+          <div className="w-8 h-8 bg-[#00ff9d] rounded-lg" />
+          <span className="text-xl font-bold font-mono">THREATLENS</span>
         </div>
 
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="text-center mb-16">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="mb-6"
-            >
-              <span className="px-4 py-2 bg-gradient-to-r from-[#00ff9d]/20 to-[#00d4ff]/20 border border-[#00ff9d]/30 rounded-full text-sm text-[#00ff9d] font-medium">
-                ✨ Next-Gen Financial Intelligence
-              </span>
-            </motion.div>
+        <div className="flex items-center space-x-4">
+          <button
+            onClick={() => navigate("/login")}
+            className="px-4 py-2 text-gray-300 hover:text-[#00ff9d] transition-colors"
+          >
+            Login
+          </button>
+          <button
+            onClick={() => navigate("/signup")}
+            className="px-6 py-2 bg-[#00ff9d] text-black rounded-lg font-semibold hover:bg-[#00ff9d]/90 transition-all"
+          >
+            Sign Up
+          </button>
+        </div>
+      </nav>
 
+      {/* Main Content */}
+      <div className="flex-1 flex items-center">
+        <div className="max-w-7xl mx-auto px-6 py-20 w-full">
+          {/* Hero Section */}
+          <div className="text-center mb-16">
             <motion.h1
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.1 }}
-              className="text-6xl md:text-8xl font-bold bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent mb-6"
+              className="text-5xl md:text-7xl font-bold mb-6"
             >
-              THREAT
-              <span className="bg-gradient-to-r from-[#00ff9d] to-[#00d4ff] bg-clip-text text-transparent">
-                LENS
-              </span>
+              <span className="text-[#00ff9d]">AML</span> Investigation
+              <br />
+              Made <span className="text-[#00ff9d]">Precise</span>
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto mb-8 leading-relaxed"
+              transition={{ delay: 0.1 }}
+              className="text-xl text-gray-400 max-w-3xl mx-auto mb-8"
             >
-              Uncover hidden financial threats with AI-powered analysis.
-              <br />
-              <span className="text-[#00ff9d]">
-                Visualize, analyze, and act
-              </span>{" "}
-              on suspicious patterns.
+              Analyze transaction patterns, detect suspicious activities, and
+              visualize financial networks with forensic precision.
             </motion.p>
 
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+              transition={{ delay: 0.2 }}
+              className="flex flex-col md:flex-row gap-6 justify-center"
             >
-              <button
+              <GlowingButton
+                variant="primary"
                 onClick={() => navigate("/plugin")}
-                className="group px-8 py-4 bg-gradient-to-r from-[#00ff9d] to-[#00d4ff] text-black rounded-xl font-semibold text-lg hover:shadow-2xl hover:shadow-[#00ff9d]/25 transition-all duration-300 flex items-center space-x-2"
               >
-                <span>Start Analysis</span>
-                <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
-              </button>
+                <TerminalText text="Single Case Analysis" />
+              </GlowingButton>
 
-              <button className="flex items-center space-x-2 px-8 py-4 border border-gray-600 rounded-xl text-gray-300 hover:border-[#00ff9d] hover:text-[#00ff9d] transition-all duration-300">
-                <FiPlay />
-                <span>Watch Demo</span>
-              </button>
+              <GlowingButton
+                variant="danger"
+                onClick={() => navigate("/interlink")}
+              >
+                <TerminalText text="Cross-Case Investigation" />
+              </GlowingButton>
             </motion.div>
           </div>
 
@@ -114,111 +82,62 @@ export const Home = () => {
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20"
+            transition={{ delay: 0.3 }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
           >
             <FeatureCard
-              icon={<FiActivity />}
-              title="Network Intelligence"
-              description="Visualize complex transaction relationships with interactive network graphs"
-              gradient="from-[#00ff9d]/20 to-[#00ff9d]/5"
-              iconColor="text-[#00ff9d]"
+              icon={<FiActivity className="text-3xl" />}
+              title="Network Visualization"
+              description="Map transaction flows between accounts and entities"
             />
             <FeatureCard
-              icon={<FiMapPin />}
-              title="Geographic Tracking"
-              description="Map transaction origins and identify cross-border suspicious activity"
-              gradient="from-[#00d4ff]/20 to-[#00d4ff]/5"
-              iconColor="text-[#00d4ff]"
+              icon={<FiMapPin className="text-3xl" />}
+              title="Geographic Analysis"
+              description="Track transaction origins across jurisdictions"
             />
             <FeatureCard
-              icon={<FiShield />}
-              title="AI Threat Detection"
-              description="Machine learning algorithms identify patterns humans might miss"
-              gradient="from-[#ff6b6b]/20 to-[#ff6b6b]/5"
-              iconColor="text-[#ff6b6b]"
+              icon={<FiShield className="text-3xl" />}
+              title="Anomaly Detection"
+              description="Identify unusual transaction patterns"
             />
             <FeatureCard
-              icon={<FiClock />}
-              title="Real-time Analysis"
-              description="Process and analyze transaction data in seconds, not hours"
-              gradient="from-[#ffd93d]/20 to-[#ffd93d]/5"
-              iconColor="text-[#ffd93d]"
+              icon={<FiUsers className="text-3xl" />}
+              title="Cross-Case Linking"
+              description="Connect related cases for deeper insights"
             />
-            <FeatureCard
-              icon={<FiTrendingUp />}
-              title="Risk Scoring"
-              description="Dynamic risk assessment with actionable threat levels"
-              gradient="from-[#a78bfa]/20 to-[#a78bfa]/5"
-              iconColor="text-[#a78bfa]"
-            />
-            <FeatureCard
-              icon={<FiUsers />}
-              title="Cross-Case Intel"
-              description="Connect seemingly unrelated cases to reveal hidden networks"
-              gradient="from-[#f97316]/20 to-[#f97316]/5"
-              iconColor="text-[#f97316]"
-            />
-          </motion.div>
-
-          {/* Stats Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center"
-          >
-            <div>
-              <div className="text-4xl font-bold text-[#00ff9d] mb-2">
-                99.7%
-              </div>
-              <div className="text-gray-400">Detection Accuracy</div>
-            </div>
-            <div>
-              <div className="text-4xl font-bold text-[#00d4ff] mb-2">2.3s</div>
-              <div className="text-gray-400">Average Analysis Time</div>
-            </div>
-            <div>
-              <div className="text-4xl font-bold text-[#ffd93d] mb-2">1M+</div>
-              <div className="text-gray-400">Transactions Analyzed</div>
-            </div>
           </motion.div>
         </div>
       </div>
 
       {/* Footer */}
-      <div className="absolute bottom-0 left-0 right-0 p-6 text-center">
-        <div className="text-gray-600 text-sm">
-          Cybercrime Intelligence Suite — v2.0 | Powered by AI
+      <div className="p-6 text-center border-t border-[#00ff9d]/20">
+        <div className="text-gray-400 text-sm">
+          Transaction Analysis System — v1.0
         </div>
       </div>
     </div>
   );
 };
 
+const TerminalText = ({ text }: { text: string }) => (
+  <span className="font-mono tracking-wide">{`> ${text}`}</span>
+);
+
 const FeatureCard = ({
   icon,
   title,
   description,
-  gradient,
-  iconColor,
 }: {
   icon: React.ReactNode;
   title: string;
   description: string;
-  gradient: string;
-  iconColor: string;
 }) => (
   <motion.div
-    whileHover={{ y: -8, scale: 1.02 }}
-    className={`p-6 rounded-2xl bg-gradient-to-br ${gradient} border border-white/10 backdrop-blur-sm hover:border-white/20 transition-all duration-300 group`}
+    whileHover={{ y: -5 }}
+    className="p-6 border border-[#00ff9d]/20 rounded-xl bg-[#0d0d0d] hover:border-[#00ff9d]/40 transition-colors"
   >
-    <div
-      className={`${iconColor} text-3xl mb-4 group-hover:scale-110 transition-transform duration-300`}
-    >
-      {icon}
-    </div>
-    <h3 className="text-xl font-semibold mb-3 text-white">{title}</h3>
-    <p className="text-gray-400 leading-relaxed">{description}</p>
+    <div className="text-[#00ff9d] mb-4">{icon}</div>
+    <h3 className="text-xl font-semibold mb-2">{title}</h3>
+    <p className="text-gray-400">{description}</p>
   </motion.div>
 );
