@@ -10,16 +10,16 @@ export const Home = () => {
     <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] to-[#0d0d0d] text-white overflow-hidden flex flex-col">
       {/* Navigation Bar */}
       <nav className="flex items-center justify-between p-6">
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-3 pl-6 md:pl-8">
           <motion.img
             src="/src/assets/threatlens.png"
             alt="ThreatLens Logo"
-            className="h-12 w-12 md:h-14 md:w-14 object-contain rounded-lg shadow-lg"
-            style={{ boxShadow: "0 2px 16px #00ff9d33" }}
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             whileHover={{ scale: 1.05 }}
+            className="h-16 w-16 md:h-20 md:w-20 object-contain rounded-lg shadow-lg"
+            style={{ boxShadow: "0 2px 20px #00ff9daa" }}
           />
         </div>
 
