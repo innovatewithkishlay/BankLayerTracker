@@ -1,32 +1,50 @@
 import { useAML } from "../hooks/useApi";
 import { FileUpload } from "../components/Input/FileUpload";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FiHome } from "react-icons/fi";
 
 export const InterlinkAnalysis = () => {
   const { uploadCase } = useAML();
-  const [isProcessing, setIsProcessing] = useState(false);
   const navigate = useNavigate();
 
-  const handleUpload = async (files: File[]) => {
+  const handleUpload = async (
+    files: File[],
+    onProgress: (progress: number) => void
+  ) => {
     if (files.length < 2) {
       alert("Please upload exactly 2 files");
       return;
     }
-    setIsProcessing(true);
+
     try {
-      const case1Id = await uploadCase(files[0]);
-      const case2Id = await uploadCase(files[1]);
+      let progress1 = 0;
+      let progress2 = 0;
+
+      const updateProgress = () => {
+        const total = (progress1 + progress2) / 2;
+        onProgress(total);
+      };
+
+      const [case1Id, case2Id] = await Promise.all([
+        uploadCase(files[0], (p) => {
+          progress1 = p;
+          updateProgress();
+        }),
+        uploadCase(files[1], (p) => {
+          progress2 = p;
+          updateProgress();
+        }),
+      ]);
+
       alert(`Cases uploaded! IDs: ${case1Id}, ${case2Id}`);
+      // Navigate to comparison page here if needed
     } catch (err) {
       alert(
         "Upload failed: " +
           (err instanceof Error ? err.message : "Unknown error")
       );
-    } finally {
-      setIsProcessing(false);
+      throw err;
     }
   };
 
@@ -37,7 +55,7 @@ export const InterlinkAnalysis = () => {
       transition={{ duration: 0.5 }}
       className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a0a] via-[#111111] to-[#0a0a0a] p-6 relative"
     >
-      {/* Unique Back Button - Top Left */}
+      {/* Back Button */}
       <motion.button
         onClick={() => navigate("/")}
         initial={{ opacity: 0, x: -20 }}
@@ -71,7 +89,7 @@ export const InterlinkAnalysis = () => {
           </p>
         </motion.div>
 
-        {/* Main Card */}
+        {/* Upload Card */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -79,37 +97,9 @@ export const InterlinkAnalysis = () => {
           className="p-8 rounded-2xl border border-[#00ff9d]/30 bg-[#111111]/90 backdrop-blur-lg shadow-xl shadow-[#00ff9d]/10"
         >
           <FileUpload onUpload={handleUpload} multiple />
-
-          {/* Processing Indicator */}
-          {isProcessing && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="mt-6 flex items-center justify-center space-x-3"
-            >
-              <div className="flex space-x-2">
-                {[0, 1, 2].map((i) => (
-                  <motion.div
-                    key={i}
-                    animate={{ y: [0, -8, 0] }}
-                    transition={{
-                      repeat: Infinity,
-                      duration: 0.8,
-                      repeatDelay: 0.2,
-                      delay: i * 0.2,
-                    }}
-                    className="h-2 w-2 bg-[#00ff9d] rounded-full"
-                  />
-                ))}
-              </div>
-              <span className="font-mono text-[#00ff9d]">
-                Analyzing transaction data...
-              </span>
-            </motion.div>
-          )}
         </motion.div>
 
-        {/* Optional: Tips or Instructions */}
+        {/* Instructions */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
