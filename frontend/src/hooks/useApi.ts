@@ -21,5 +21,10 @@ export const useAML = () => {
     return data;
   };
 
-  return { uploadCase, compareCases };
+  const getCase = async (caseId: string) => {
+    const { data } = await axios.get(`${API_URL}/cases/${caseId}`);
+    return data;
+  };
+
+  return { uploadCase, compareCases, getCase };
 };
