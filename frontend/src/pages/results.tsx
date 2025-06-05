@@ -1,126 +1,309 @@
-import React from "react";
 import { useParams } from "react-router-dom";
 import { useAML } from "../hooks/useApi";
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import {
+  FiShield,
+  FiAlertTriangle,
+  FiActivity,
+  FiUsers,
+  FiTrendingUp,
+  FiMapPin,
+  FiClock,
+} from "react-icons/fi";
 import { NetworkGraph } from "../components/DataDisplay/NetworkGraph";
-import { AnomalyTable } from "../components/DataDisplay/AnomalyTable";
-import type { Node, Edge } from "reactflow";
-const generateLayout = (transactions: any[]) => {
-  const accounts = new Set<string>();
-  transactions.forEach((tx) => {
-    accounts.add(tx.fromAccount);
-    accounts.add(tx.toAccount);
-  });
-
-  const nodes: Node[] = Array.from(accounts).map((account, index) => ({
-    id: account,
-    data: { label: account },
-    position: { x: index * 200, y: 100 },
-    style: {
-      background: "#00ff9d20",
-      border: "2px solid #00ff9d",
-      borderRadius: "8px",
-      padding: "16px",
-      color: "#00ff9d",
-      fontFamily: "'Space Mono', monospace",
-    },
-  }));
-
-  const edges: Edge[] = transactions.map((tx, index) => ({
-    id: `e${index}`,
-    source: tx.fromAccount,
-    target: tx.toAccount,
-    label: `$${tx.amount}`,
-    style: { stroke: "#00ff9d", strokeWidth: 2 },
-    labelStyle: { fill: "#00ff9d", fontSize: 12 },
-  }));
-
-  return { nodes, edges };
-};
+import { RiskMeter } from "../components/DataDisplay/RiskMeter";
+import { AnomalySparkline } from "../components/DataDisplay/AnomalySparkline";
+import { TransactionTimeline } from "../components/DataDisplay/TransactionTimeline";
+import { GeographicMap } from "../components/DataDisplay/GeographicMap";
 
 export const Results = () => {
   const { caseId } = useParams();
   const { getCase } = useAML();
   const [caseData, setCaseData] = useState<any>(null);
-  const [networkData, setNetworkData] = useState<{
-    nodes: Node[];
-    edges: Edge[];
-  }>({ nodes: [], edges: [] });
+  const [riskScore, setRiskScore] = useState(0);
 
   useEffect(() => {
     const loadData = async () => {
       if (caseId) {
         const data = await getCase(caseId);
         setCaseData(data);
-        // Generate network layout from transactions
-        const { nodes, edges } = generateLayout(data.transactions || []);
-        setNetworkData({ nodes, edges });
+        // Calculate overall risk score
+        const score = calculateRiskScore(data);
+        setRiskScore(score);
       }
     };
     loadData();
   }, [caseId]);
 
-  if (!caseData)
-    return (
-      <div className="text-cyber-green font-mono p-6">
-        Initializing threat analysis...
-      </div>
+  const calculateRiskScore = (data: any) => {
+    if (!data.transactions) return 0;
+
+    let score = 0;
+    const highValueTransactions = data.transactions.filter(
+      (t: any) => t.amount > 50000
+    );
+    const structuringTransactions = data.transactions.filter(
+      (t: any) => t.amount >= 9000 && t.amount <= 10000
     );
 
+    score += highValueTransactions.length * 25;
+    score += structuringTransactions.length * 15;
+
+    return Math.min(score, 100);
+  };
+
+  if (!caseData) {
+    return (
+      <div className="h-screen bg-[#0A001A] flex items-center justify-center">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+          className="w-16 h-16 border-4 border-[#00ff9d] border-t-transparent rounded-full"
+        />
+        <span className="ml-4 text-[#00ff9d] font-mono">
+          Analyzing threat patterns...
+        </span>
+      </div>
+    );
+  }
+
   return (
-    <div className="max-w-7xl mx-auto p-6 bg-cyber-background min-h-screen">
-      {/* Header */}
-      <h1 className="text-4xl font-orbitron text-cyber-green mb-8 cyber-glow">
-        CASE ANALYSIS: {caseData.caseId}
-      </h1>
-
-      {/* Network Graph Section */}
-      <div className="mb-12 border-2 border-cyber-green rounded-xl p-4 shadow-cyber">
-        <h2 className="text-2xl font-orbitron text-cyber-green mb-4">
-          TRANSACTION NETWORK MAP
-        </h2>
-        <div className="h-[600px]">
-          <NetworkGraph nodes={networkData.nodes} edges={networkData.edges} />
+    <div className="min-h-screen bg-[#0A001A] text-[#00ff9d] p-6">
+      {/* Header Section */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-8"
+      >
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold font-orbitron mb-2">
+              THREAT ANALYSIS REPORT
+            </h1>
+            <p className="text-xl opacity-80">Case ID: {caseData.caseId}</p>
+          </div>
+          <div className="flex items-center space-x-4">
+            <RiskMeter score={riskScore} />
+            <div className="text-right">
+              <p className="text-sm opacity-60">Risk Level</p>
+              <p
+                className={`text-2xl font-bold ${
+                  riskScore > 75
+                    ? "text-red-400"
+                    : riskScore > 50
+                    ? "text-yellow-400"
+                    : "text-green-400"
+                }`}
+              >
+                {riskScore > 75
+                  ? "CRITICAL"
+                  : riskScore > 50
+                  ? "HIGH"
+                  : riskScore > 25
+                  ? "MEDIUM"
+                  : "LOW"}
+              </p>
+            </div>
+          </div>
         </div>
+      </motion.div>
+
+      {/* Key Metrics Cards */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2 }}
+        className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8"
+      >
+        <MetricCard
+          icon={<FiActivity />}
+          title="Total Transactions"
+          value={caseData.transactions?.length || 0}
+          trend="+12%"
+        />
+        <MetricCard
+          icon={<FiUsers />}
+          title="Accounts Involved"
+          value={
+            new Set([
+              ...(caseData.transactions?.map((t: any) => t.fromAccount) || []),
+              ...(caseData.transactions?.map((t: any) => t.toAccount) || []),
+            ]).size
+          }
+          trend="+5%"
+        />
+        <MetricCard
+          icon={<FiAlertTriangle />}
+          title="Anomalies Detected"
+          value={
+            caseData.anomalies?.reduce(
+              (sum: number, a: any) => sum + a.count,
+              0
+            ) || 0
+          }
+          trend="+23%"
+          isAlert
+        />
+        <MetricCard
+          icon={<FiTrendingUp />}
+          title="Total Volume"
+          value={`$${
+            caseData.transactions
+              ?.reduce((sum: number, t: any) => sum + t.amount, 0)
+              .toLocaleString() || 0
+          }`}
+          trend="+18%"
+        />
+      </motion.div>
+
+      {/* Main Analysis Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        {/* Network Visualization */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.3 }}
+          className="lg:col-span-2 bg-[#17002E] border border-[#00ff9d] rounded-xl p-6"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold flex items-center">
+              <FiMapPin className="mr-2" />
+              Transaction Network Analysis
+            </h2>
+            <div className="flex space-x-2">
+              <button className="px-3 py-1 bg-[#00ff9d] text-[#0A001A] rounded text-sm">
+                Force Layout
+              </button>
+              <button className="px-3 py-1 border border-[#00ff9d] rounded text-sm">
+                Hierarchical
+              </button>
+            </div>
+          </div>
+          <NetworkGraph
+            transactions={caseData.transactions || []}
+            height={400}
+          />
+        </motion.div>
+
+        {/* Anomaly Breakdown */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.4 }}
+          className="bg-[#17002E] border border-[#00ff9d] rounded-xl p-6"
+        >
+          <h2 className="text-xl font-bold mb-4 flex items-center">
+            <FiShield className="mr-2" />
+            Threat Patterns
+          </h2>
+          <div className="space-y-4">
+            {caseData.anomalies?.map((anomaly: any, index: number) => (
+              <AnomalyCard key={index} anomaly={anomaly} />
+            )) || <p className="text-gray-400">No anomalies detected</p>}
+          </div>
+        </motion.div>
       </div>
 
-      {/* Anomaly Table */}
-      <div className="mb-12 border-2 border-cyber-green rounded-xl p-4 shadow-cyber">
-        <h2 className="text-2xl font-orbitron text-cyber-green mb-4">
-          DETECTED THREAT PATTERNS
-        </h2>
-        <AnomalyTable data={caseData.anomalies || []} />
-      </div>
+      {/* Timeline and Geographic Analysis */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="bg-[#17002E] border border-[#00ff9d] rounded-xl p-6"
+        >
+          <h2 className="text-xl font-bold mb-4 flex items-center">
+            <FiClock className="mr-2" />
+            Transaction Timeline
+          </h2>
+          <TransactionTimeline transactions={caseData.transactions || []} />
+        </motion.div>
 
-      {/* Transaction Log */}
-      <div className="border-2 border-cyber-green rounded-xl p-4 shadow-cyber">
-        <h2 className="text-2xl font-orbitron text-cyber-green mb-4">
-          TRANSACTION LOG
-        </h2>
-        <div className="grid grid-cols-4 gap-4 font-mono text-cyber-green">
-          <div className="col-span-1 font-bold">FROM</div>
-          <div className="col-span-1 font-bold">TO</div>
-          <div className="col-span-1 font-bold">AMOUNT</div>
-          <div className="col-span-1 font-bold">DATE</div>
-
-          {caseData.transactions?.map((t: any, index: number) => (
-            <React.Fragment key={index}>
-              <div className="col-span-1">{t.fromAccount}</div>
-              <div className="col-span-1">{t.toAccount}</div>
-              <div className="col-span-1">${t.amount.toLocaleString()}</div>
-              <div className="col-span-1">
-                {new Date(t.date).toLocaleDateString("en-IN", {
-                  day: "2-digit",
-                  month: "short",
-                  year: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </div>
-            </React.Fragment>
-          ))}
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="bg-[#17002E] border border-[#00ff9d] rounded-xl p-6"
+        >
+          <h2 className="text-xl font-bold mb-4">Transaction Details</h2>
+          <div className="max-h-80 overflow-y-auto">
+            <table className="w-full text-sm">
+              <thead className="sticky top-0 bg-[#17002E]">
+                <tr className="border-b border-[#00ff9d]/30">
+                  <th className="text-left py-2">From</th>
+                  <th className="text-left py-2">To</th>
+                  <th className="text-left py-2">Amount</th>
+                  <th className="text-left py-2">Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                {caseData.transactions?.map((tx: any, index: number) => (
+                  <tr
+                    key={index}
+                    className="border-b border-[#00ff9d]/10 hover:bg-[#00ff9d]/5"
+                  >
+                    <td className="py-2">{tx.fromAccount}</td>
+                    <td className="py-2">{tx.toAccount}</td>
+                    <td
+                      className={`py-2 font-bold ${
+                        tx.amount > 50000 ? "text-red-400" : ""
+                      }`}
+                    >
+                      ${tx.amount.toLocaleString()}
+                    </td>
+                    <td className="py-2">
+                      {new Date(tx.date).toLocaleTimeString()}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </motion.div>
       </div>
     </div>
   );
 };
+
+// Metric Card Component
+const MetricCard = ({ icon, title, value, trend, isAlert = false }: any) => (
+  <div
+    className={`bg-[#17002E] border ${
+      isAlert ? "border-red-400" : "border-[#00ff9d]"
+    } rounded-xl p-6`}
+  >
+    <div className="flex items-center justify-between mb-2">
+      <div
+        className={`text-2xl ${isAlert ? "text-red-400" : "text-[#00ff9d]"}`}
+      >
+        {icon}
+      </div>
+      <span className="text-xs text-green-400">{trend}</span>
+    </div>
+    <h3 className="text-sm opacity-80 mb-1">{title}</h3>
+    <p
+      className={`text-2xl font-bold ${
+        isAlert ? "text-red-400" : "text-[#00ff9d]"
+      }`}
+    >
+      {value}
+    </p>
+  </div>
+);
+
+// Anomaly Card Component
+const AnomalyCard = ({ anomaly }: any) => (
+  <div className="border border-[#00ff9d]/30 rounded-lg p-4 hover:border-[#00ff9d] transition-colors">
+    <div className="flex items-center justify-between mb-2">
+      <h3 className="font-semibold">{anomaly.type.replace("_", " ")}</h3>
+      <span className="text-red-400 font-bold">{anomaly.count}</span>
+    </div>
+    <div className="w-full bg-[#0A001A] rounded-full h-2">
+      <div
+        className="bg-gradient-to-r from-[#00ff9d] to-red-400 h-2 rounded-full"
+        style={{ width: `${Math.min(anomaly.count * 20, 100)}%` }}
+      />
+    </div>
+  </div>
+);
