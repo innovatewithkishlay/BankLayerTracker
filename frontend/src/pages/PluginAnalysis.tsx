@@ -9,10 +9,11 @@ export const PluginAnalysis = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const navigate = useNavigate();
 
-  const handleUpload = async (file: File) => {
+  const handleUpload = async (files: File[]) => {
+    if (files.length === 0) return;
     setIsProcessing(true);
     try {
-      const caseId = await uploadCase(file);
+      const caseId = await uploadCase(files[0]);
       alert(`Case uploaded! ID: ${caseId}`);
     } catch (err) {
       alert(
