@@ -10,8 +10,23 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@nivo/bar": "^0.99.0",
+    "@nivo/core": "^0.99.0",
+    "@nivo/line": "^0.99.0",
+    "@nivo/pie": "^0.99.0",
+    "@tanstack/react-table": "^8.21.3",
+    "@types/d3": "^7.4.3",
+    "axios": "^1.9.0",
+    "d3": "^7.9.0",
+    "framer-motion": "^12.16.0",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "react-icons": "^5.5.0",
+    "react-router-dom": "^7.6.2",
+    "reactflow": "^11.11.4",
+    "recharts": "^2.15.3",
+    "styled-components": "^6.1.18",
+    "victory": "^37.3.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
