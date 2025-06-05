@@ -3,7 +3,6 @@ import { useDropzone } from "react-dropzone";
 import { FiUploadCloud, FiX, FiPlus } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Helper to format file size (B, KB, MB)
 const formatFileSize = (bytes: number) => {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(2)} KB`;
@@ -32,7 +31,6 @@ export const FileUpload = ({
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  // Auto-dismiss error after 5 seconds
   useEffect(() => {
     if (error) {
       const timer = setTimeout(() => setError(null), 4000);
@@ -40,7 +38,6 @@ export const FileUpload = ({
     }
   }, [error]);
 
-  // Only allow adding one file at a time (unless multiple is true)
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       if (acceptedFiles.length === 0) return;
@@ -91,25 +88,23 @@ export const FileUpload = ({
     }
   };
 
-  // For "Add another file" button
   const handleManualFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       onDrop(Array.from(e.target.files));
-      e.target.value = ""; // reset so user can select same file again if needed
+      e.target.value = "";
     }
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: { "text/csv": [".csv"] },
-    multiple: enableAddMore, // Allow multiple only if enableAddMore is true
+    multiple: enableAddMore,
     noClick: files.length >= maxFiles,
     noDrag: files.length >= maxFiles,
   });
 
   return (
     <div className="space-y-4 w-full">
-      {/* Error Toast */}
       <AnimatePresence>
         {error && (
           <motion.div
@@ -125,7 +120,6 @@ export const FileUpload = ({
         )}
       </AnimatePresence>
 
-      {/* File selection UI */}
       {files.length === 0 ? (
         <motion.div
           {...getRootProps()}
@@ -154,14 +148,12 @@ export const FileUpload = ({
           animate={{ opacity: 1, y: 0 }}
           className="space-y-4"
         >
-          {/* File Count */}
           {maxFiles > 1 && (
             <p className="text-gray-400 text-sm text-center">
               {files.length}/{maxFiles} files selected
             </p>
           )}
 
-          {/* Selected Files */}
           <div className="border border-[#00ff9d]/30 rounded-xl p-4 bg-[#111111]/50">
             {files.map((file, index) => (
               <div
@@ -186,7 +178,6 @@ export const FileUpload = ({
             ))}
           </div>
 
-          {/* Add another file button */}
           {enableAddMore && files.length < maxFiles && (
             <div className="flex justify-center">
               <button
@@ -208,7 +199,6 @@ export const FileUpload = ({
             </div>
           )}
 
-          {/* Progress Bar */}
           {uploadProgress > 0 && (
             <div className="w-full bg-gray-800 rounded-full h-2">
               <div
@@ -218,7 +208,6 @@ export const FileUpload = ({
             </div>
           )}
 
-          {/* Action Buttons */}
           <div className="flex gap-4">
             <button
               onClick={handleCancel}
