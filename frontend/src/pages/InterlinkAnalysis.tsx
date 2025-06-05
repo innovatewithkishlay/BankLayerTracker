@@ -33,7 +33,7 @@ export const InterlinkAnalysis = () => {
         }),
       ]);
 
-      alert(`Cases uploaded! IDs: ${case1Id}, ${case2Id}`);
+      navigate(`/compare-results/${case1Id}/${case2Id}`);
     } catch (err) {
       alert(
         "Upload failed: " +
@@ -51,6 +51,9 @@ export const InterlinkAnalysis = () => {
     >
       <motion.button
         onClick={() => navigate("/")}
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.3 }}
         className="absolute top-6 left-6 flex items-center space-x-2 text-[#00ff9d] hover:text-[#00ff9d]/80 transition-colors group"
       >
         <FiHome className="group-hover:rotate-[-10deg] transition-transform" />
@@ -63,6 +66,7 @@ export const InterlinkAnalysis = () => {
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
           className="text-center mb-12"
         >
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
@@ -79,6 +83,7 @@ export const InterlinkAnalysis = () => {
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.4 }}
           className="p-8 rounded-2xl border border-[#00ff9d]/30 bg-[#111111]/90 backdrop-blur-lg shadow-xl shadow-[#00ff9d]/10"
         >
           <FileUpload
@@ -92,6 +97,7 @@ export const InterlinkAnalysis = () => {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
           className="mt-8 text-center text-gray-500 text-sm"
         >
           <p>Supported formats: CSV</p>
