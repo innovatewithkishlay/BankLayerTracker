@@ -3,18 +3,23 @@ import { useDropzone } from "react-dropzone";
 import { FiUploadCloud } from "react-icons/fi";
 import { motion } from "framer-motion";
 
-export const FileUpload = ({
-  onUpload,
-}: {
-  onUpload: (file: File) => Promise<void>;
-}) => {
+interface FileUploadProps {
+  onUpload: (files: File[]) => Promise<void>;
+  multiple?: boolean;
+}
+
+export const FileUpload = ({ onUpload, multiple = false }: FileUploadProps) => {
   const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const onDrop = useCallback(
     async (files: File[]) => {
-      setIsProcessing(true);
       try {
-        await onUpload(files[0]);
+        setIsProcessing(true);
+        await onUpload(files);
+        setError(null);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Upload failed");
       } finally {
         setIsProcessing(false);
       }
@@ -24,41 +29,35 @@ export const FileUpload = ({
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    multiple: false,
     accept: { "text/csv": [".csv"] },
+    multiple,
   });
 
   return (
-    <motion.div
-      className={`p-8 border-2 border-dashed rounded-lg ${
-        isDragActive ? "border-cyber-green" : "border-cyber-secondary"
-      }`}
-      whileHover={{ scale: 1.02 }}
-    >
-      <div {...getRootProps()} className="text-center cursor-pointer">
+    <div className="relative border-2 border-dashed border-primary rounded-lg p-8">
+      <div
+        {...getRootProps()}
+        className={`text-center cursor-pointer ${
+          isDragActive ? "opacity-75" : ""
+        }`}
+      >
         <input {...getInputProps()} />
-
-        <FiUploadCloud className="mx-auto text-4xl text-cyber-green mb-4" />
+        <FiUploadCloud className="mx-auto text-4xl text-primary mb-4" />
 
         {isProcessing ? (
-          <div className="text-cyber-green">
-            <p>DECRYPTING TRANSACTION DATA...</p>
-            <div className="mt-4 h-1 bg-cyber-secondary rounded-full overflow-hidden">
-              <motion.div
-                className="h-full bg-cyber-green"
-                animate={{ width: ["0%", "100%"] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              />
-            </div>
-          </div>
+          <p className="text-terminalText">Decrypting transaction data...</p>
         ) : (
-          <p className="text-cyber-green font-mono">
+          <p className="text-terminalText">
             {isDragActive
-              ? "RELEASE TO INITIATE SCAN"
-              : "DRAG CSV HERE OR CLICK TO BROWSE"}
+              ? "Release to initiate scan"
+              : `Drag CSV ${
+                  multiple ? "files" : "file"
+                } here or click to browse`}
           </p>
         )}
+
+        {error && <p className="text-danger mt-2">{error}</p>}
       </div>
-    </motion.div>
+    </div>
   );
 };
