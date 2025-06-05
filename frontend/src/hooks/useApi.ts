@@ -1,2 +1,2 @@
 import axios from "axios";
-import { CaseComparison, Transaction } from "../types/apiTypes";
+import type { CaseComparison, Transaction } from "../types/apiTypes";
