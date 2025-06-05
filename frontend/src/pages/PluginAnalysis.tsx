@@ -14,7 +14,8 @@ export const PluginAnalysis = () => {
     setIsProcessing(true);
     try {
       const caseId = await uploadCase(files[0]);
-      alert(`Case uploaded! ID: ${caseId}`);
+
+      navigate(`/results/${caseId}`);
     } catch (err) {
       alert(
         "Upload failed: " +
