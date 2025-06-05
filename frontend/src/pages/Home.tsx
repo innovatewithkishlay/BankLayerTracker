@@ -11,8 +11,16 @@ export const Home = () => {
       {/* Navigation Bar */}
       <nav className="flex items-center justify-between p-6">
         <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-[#00ff9d] rounded-lg" />
-          <span className="text-xl font-bold font-mono">THREATLENS</span>
+          <motion.img
+            src="/src/assets/threatlens.png"
+            alt="ThreatLens Logo"
+            className="h-12 w-12 md:h-14 md:w-14 object-contain rounded-lg shadow-lg"
+            style={{ boxShadow: "0 2px 16px #00ff9d33" }}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            whileHover={{ scale: 1.05 }}
+          />
         </div>
 
         <div className="flex items-center space-x-4">
