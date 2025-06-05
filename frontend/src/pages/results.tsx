@@ -31,7 +31,6 @@ export const Results = () => {
     edges: [],
   });
 
-  // Process transactions into network nodes/edges
   const generateNetworkData = (transactions: any[]) => {
     const accounts = new Set<string>();
     transactions.forEach((tx) => {
@@ -168,10 +167,12 @@ export const Results = () => {
           </div>
           <h3 className="text-sm opacity-80 mb-1">Anomalies Detected</h3>
           <p className="text-2xl font-bold text-red-400">
-            {caseData.anomalies?.reduce(
-              (sum: number, a: any) => sum + a.count,
-              0
-            ) || 0}
+            {Array.isArray(caseData.anomalies)
+              ? caseData.anomalies.reduce(
+                  (sum: number, a: any) => sum + a.count,
+                  0
+                )
+              : 0}
           </p>
         </div>
         <div className="bg-[#17002E] border border-[#00ff9d] rounded-xl p-6">
