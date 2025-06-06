@@ -13,11 +13,14 @@ import {
 } from "react-icons/fi";
 import { useAuth } from "../contexts/AuthContext";
 import { toast } from "react-hot-toast";
+import { useClickOutside } from "../hooks/useClickOutside";
 
 export const Home = () => {
   const navigate = useNavigate();
   const { user, loading, logout } = useAuth();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+  const dropdownRef = useClickOutside(() => setIsProfileOpen(false));
 
   useEffect(() => {
     if (user) {
@@ -63,7 +66,7 @@ export const Home = () => {
 
         <div className="flex items-center space-x-4 pr-6">
           {user ? (
-            <div className="relative">
+            <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                 className="flex items-center gap-2 px-4 py-2 bg-[#00ff9d]/10 hover:bg-[#00ff9d]/20 rounded-lg transition-all"
