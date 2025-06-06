@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const checkAuth = async () => {
       try {
         const { data } = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/profile`,
+          `${import.meta.env.VITE_API_BASE_URL}/auth/profile`,
           { withCredentials: true }
         );
         setUser(data.user);
