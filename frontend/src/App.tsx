@@ -5,7 +5,7 @@ import { PluginAnalysis } from "./pages/PluginAnalysis";
 import { InterlinkAnalysis } from "./pages/InterlinkAnalysis";
 import { Results } from "./pages/Results";
 import { CompareResults } from "./pages/CompareResults";
-
+import { CyberToast } from "./components/UI/CyberToast";
 export const App = () => {
   return (
     <AuthProvider>
