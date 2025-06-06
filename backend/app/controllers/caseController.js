@@ -8,21 +8,37 @@ const { compareCases } = require("../utils/caseComparator");
 exports.processSingleCase = async (req, res) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ error: "No CSV file uploaded" });
+      return res.status(400).json({
+        error: "No file uploaded. Please select a CSV file.",
+      });
     }
 
-    const requiredColumns = ["fromaccount", "toaccount", "amount", "date"];
     const csvData = await parseCSV(req.file.path);
-    const headers = Object.keys(csvData[0] || {}).map((h) => h.toLowerCase());
 
-    const missingColumns = requiredColumns.filter(
-      (col) => !headers.includes(col)
-    );
-    if (missingColumns.length > 0) {
+    if (!csvData || csvData.length === 0) {
       return res.status(400).json({
-        error: "Invalid CSV format",
-        required: requiredColumns,
+        error: "The CSV file is empty or contains no valid data.",
+        suggestion:
+          "Please check your file and ensure it contains transaction data.",
+      });
+    }
+
+    const firstRow = csvData[0];
+    const headers = Object.keys(firstRow).map((h) => h.toLowerCase());
+
+    const requiredFields = ["fromaccount", "toaccount", "amount"];
+    const missingFields = requiredFields.filter(
+      (field) =>
+        !headers.some((header) => header.includes(field.replace("account", "")))
+    );
+
+    if (missingFields.length > 0) {
+      return res.status(400).json({
+        error: "Your CSV file is missing required columns.",
+        missing: missingFields,
         found: headers,
+        suggestion:
+          "Please ensure your CSV contains columns for transaction data: fromAccount, toAccount, and amount.",
       });
     }
 
@@ -33,16 +49,35 @@ exports.processSingleCase = async (req, res) => {
         Object.entries(row).map(([k, v]) => [k.toLowerCase(), v])
       );
 
+      if (formattedRow.accountnumber || formattedRow.accountholder) {
+        try {
+          const account = await Account.create({
+            accountNumber: formattedRow.accountnumber,
+            accountHolder: formattedRow.accountholder || "Unknown",
+            accountType: formattedRow.accounttype || "Unknown",
+            metadata: {
+              mobile: formattedRow.mobile,
+              ipAddress: formattedRow.ipaddress,
+              email: formattedRow.email,
+            },
+            caseId: newCase._id,
+          });
+          newCase.accounts.push(account._id);
+        } catch (accountErr) {
+          console.log("Skipping account creation:", accountErr.message);
+        }
+      }
+
       const transaction = await Transaction.create({
-        fromAccount: formattedRow.fromaccount,
-        toAccount: formattedRow.toaccount,
+        fromAccount: formattedRow.fromaccount || formattedRow.from,
+        toAccount: formattedRow.toaccount || formattedRow.to,
         amount: parseFloat(formattedRow.amount),
-        date: new Date(formattedRow.date),
+        date: new Date(formattedRow.date || Date.now()),
         caseId: newCase._id,
         metadata: {
           email: formattedRow.email,
           phone: formattedRow.phone,
-          ipAddress: formattedRow.ipaddress,
+          ipAddress: formattedRow.ipaddress || formattedRow.ip,
           ipCountry: formattedRow["metadata.ipcountry"],
         },
       });
@@ -58,8 +93,21 @@ exports.processSingleCase = async (req, res) => {
       anomalies,
     });
   } catch (err) {
+    if (err.name === "ValidationError") {
+      const errors = Object.values(err.errors).map((e) => e.message);
+      return res.status(400).json({
+        error: "There are issues with your CSV data format.",
+        details: errors,
+        suggestion:
+          "Please check that your amounts are numbers and dates are in valid format (YYYY-MM-DD).",
+      });
+    }
+
     res.status(500).json({
-      error: "CSV processing failed: " + err.message,
+      error:
+        "Failed to process your CSV file. Please check the file format and try again.",
+      technical:
+        process.env.NODE_ENV === "development" ? err.message : undefined,
     });
   }
 };
