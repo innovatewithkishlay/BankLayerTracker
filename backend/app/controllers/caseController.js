@@ -35,7 +35,7 @@ exports.processSingleCase = async (req, res) => {
     if (missingFields.length > 0) {
       return res.status(400).json({
         error: "Your CSV file is missing required columns.",
-        missing: missingFields,
+        details: missingFields.map((field) => `Missing column: ${field}`),
         found: headers,
         suggestion:
           "Please ensure your CSV contains columns for transaction data: fromAccount, toAccount, and amount.",
@@ -106,6 +106,7 @@ exports.processSingleCase = async (req, res) => {
     res.status(500).json({
       error:
         "Failed to process your CSV file. Please check the file format and try again.",
+      details: err.details || [],
       technical:
         process.env.NODE_ENV === "development" ? err.message : undefined,
     });
