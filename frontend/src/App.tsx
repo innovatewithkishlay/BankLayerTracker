@@ -21,6 +21,8 @@ export const App = () => {
             element={<CompareResults />}
           />
         </Routes>
+
+        <CyberToast />
       </Router>
     </AuthProvider>
   );
