@@ -7,3 +7,9 @@ type User = {
   name: string;
   avatar?: string;
 };
+
+type AuthContextType = {
+  user: User | null;
+  loading: boolean;
+  logout: () => Promise<void>;
+};
