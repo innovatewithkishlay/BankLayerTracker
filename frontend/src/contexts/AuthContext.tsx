@@ -31,8 +31,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           throw new Error("Invalid user data");
         }
         setUser(data.user);
+        toast.success("Authentication sequence complete", {
+          style: {
+            background: "#0d0d0d",
+            color: "#00ff9d",
+            border: "1px solid #00ff9d50",
+          },
+        });
       } catch (err) {
+        console.error("Auth check failed:", err);
         setUser(null);
+        toast.error("Authentication failed. Please login again.", {
+          style: {
+            background: "#0d0d0d",
+            color: "#ff4444",
+            border: "1px solid #ff444450",
+          },
+        });
       } finally {
         setLoading(false);
       }
@@ -55,6 +70,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         },
       });
     } catch (err) {
+      console.error("Logout failed:", err);
       toast.error("Logout failed. Please try again.", {
         style: {
           background: "#0d0d0d",
