@@ -9,12 +9,20 @@ export interface Transaction {
     deviceHash?: string;
   };
 }
+
 export interface ConnectorAccount {
   account: string;
   case1Transactions: string[];
   case2Transactions: string[];
   totalAmount: number;
   riskScore: number;
+}
+
+export interface BridgeEdge {
+  from: string;
+  to: string;
+  totalAmount: number;
+  _id: string;
 }
 
 export interface TemporalOverlap {
@@ -27,6 +35,17 @@ export interface HighRiskLocation {
   countryCode: string;
   riskLevel: "low" | "medium" | "high";
   transactionCount: number;
+}
+
+export interface RiskMeterProps {
+  score: number;
+  level: "LOW" | "MEDIUM" | "HIGH";
+}
+
+export interface RiskFactors {
+  sharedAccounts: number;
+  highValueOverlap: number;
+  geographicRisk: number;
 }
 
 export interface CaseComparison {
@@ -55,19 +74,10 @@ export interface CaseComparison {
     };
     networkAnalysis: {
       connectorAccounts: ConnectorAccount[];
-      bridgeEdges: {
-        from: string;
-        to: string;
-        totalAmount: number;
-        _id: string;
-      }[];
+      bridgeEdges: BridgeEdge[];
     };
     riskAssessment: {
-      riskFactors: {
-        sharedAccounts: number;
-        highValueOverlap: number;
-        geographicRisk: number;
-      };
+      riskFactors: RiskFactors;
       totalRisk: number;
       riskLevel: "LOW" | "MEDIUM" | "HIGH";
     };
