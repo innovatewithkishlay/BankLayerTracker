@@ -7,47 +7,60 @@ const { compareCases } = require("../utils/caseComparator");
 
 exports.processSingleCase = async (req, res) => {
   try {
-    if (!req.file)
+    if (!req.file) {
       return res.status(400).json({ error: "No CSV file uploaded" });
+    }
 
-    const data = await parseCSV(req.file.path);
+    const requiredColumns = ["fromaccount", "toaccount", "amount", "date"];
+    const csvData = await parseCSV(req.file.path);
+    const headers = Object.keys(csvData[0] || {}).map((h) => h.toLowerCase());
+
+    const missingColumns = requiredColumns.filter(
+      (col) => !headers.includes(col)
+    );
+    if (missingColumns.length > 0) {
+      return res.status(400).json({
+        error: "Invalid CSV format",
+        required: requiredColumns,
+        found: headers,
+      });
+    }
 
     const newCase = await Case.create({ caseId: `CASE-${Date.now()}` });
 
-    for (const row of data) {
-      const account = await Account.create({
-        accountNumber: row.accountNumber,
-        accountHolder: row.accountHolder,
-        accountType: row.accountType,
-        metadata: {
-          mobile: row.mobile,
-          ipAddress: row.ipAddress,
-          email: row.email,
-        },
-        caseId: newCase._id,
-      });
+    for (const row of csvData) {
+      const formattedRow = Object.fromEntries(
+        Object.entries(row).map(([k, v]) => [k.toLowerCase(), v])
+      );
 
       const transaction = await Transaction.create({
-        fromAccount: row.fromAccount,
-        toAccount: row.toAccount,
-        amount: row.amount,
-        description: row.description,
+        fromAccount: formattedRow.fromaccount,
+        toAccount: formattedRow.toaccount,
+        amount: parseFloat(formattedRow.amount),
+        date: new Date(formattedRow.date),
         caseId: newCase._id,
+        metadata: {
+          email: formattedRow.email,
+          phone: formattedRow.phone,
+          ipAddress: formattedRow.ipaddress,
+          ipCountry: formattedRow["metadata.ipcountry"],
+        },
       });
 
-      newCase.accounts.push(account._id);
       newCase.transactions.push(transaction._id);
     }
 
     await newCase.save();
-
     const anomalies = await detectAnomalies(newCase._id);
+
     res.status(200).json({
       caseId: newCase._id,
       anomalies,
     });
   } catch (err) {
-    res.status(500).json({ error: "Server error: " + err.message });
+    res.status(500).json({
+      error: "CSV processing failed: " + err.message,
+    });
   }
 };
 
