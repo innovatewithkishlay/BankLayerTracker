@@ -91,3 +91,6 @@ export interface CaseComparison {
     };
   };
 }
+export interface CaseUploadResponse {
+  caseId: string;
+}
