@@ -11,19 +11,35 @@ export const useAML = () => {
     const formData = new FormData();
     formData.append("csvFile", file);
 
-    const { data } = await axios.post<{ caseId: string }>(
-      `${API_URL}/cases/upload/plugin`,
-      formData,
-      {
-        onUploadProgress: (progressEvent) => {
-          const percent = Math.round(
-            (progressEvent.loaded * 100) / (progressEvent.total || 1)
-          );
-          onProgress?.(percent);
-        },
+    try {
+      const { data } = await axios.post<{ caseId: string }>(
+        `${API_URL}/cases/upload/plugin`,
+        formData,
+        {
+          withCredentials: true,
+          onUploadProgress: (progressEvent) => {
+            const percent = Math.round(
+              (progressEvent.loaded * 100) / (progressEvent.total || 1)
+            );
+            onProgress?.(percent);
+          },
+        }
+      );
+      return data.caseId;
+    } catch (error: any) {
+      let errorMessage = "Upload failed. Please try again.";
+
+      if (error.response?.data?.error) {
+        errorMessage = error.response.data.error;
+        if (error.response.data.required) {
+          errorMessage += `\nRequired columns: ${error.response.data.required.join(
+            ", "
+          )}`;
+        }
       }
-    );
-    return data.caseId;
+
+      throw new Error(errorMessage);
+    }
   };
 
   const compareCases = async (case1Id: string, case2Id: string) => {
