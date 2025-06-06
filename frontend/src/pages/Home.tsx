@@ -232,7 +232,7 @@ export const Home = () => {
             <span className="hidden sm:inline">View Developer Portfolio</span>
             <span className="sm:hidden">Portfolio</span>
           </a>
-          <span className="text-gray-400 text-sm">Kishlay Kumar</span>
+          <span className="text-gray-400 text-sm">~ Kishlay Kumar</span>
         </div>
       </div>
     </div>
