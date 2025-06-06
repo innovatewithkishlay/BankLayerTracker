@@ -98,7 +98,7 @@ export const Navbar = () => {
           >
             <span className="relative flex items-center">
               <FiTerminal className="mr-2 text-lg transition-transform duration-300 group-hover:rotate-12 group-hover:scale-125" />
-              Initiate Auth Sequence
+              Sign in
             </span>
             <span
               className="
