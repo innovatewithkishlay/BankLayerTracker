@@ -1,4 +1,5 @@
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { GlowingButton } from "../components/UI/GlowingButton";
 import {
@@ -11,12 +12,12 @@ import {
   FiTerminal,
 } from "react-icons/fi";
 import { useAuth } from "../contexts/AuthContext";
-import { useEffect } from "react";
 import { toast } from "react-hot-toast";
 
 export const Home = () => {
   const navigate = useNavigate();
   const { user, loading, logout } = useAuth();
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -62,8 +63,11 @@ export const Home = () => {
 
         <div className="flex items-center space-x-4 pr-6">
           {user ? (
-            <motion.div className="relative group" whileHover={{ scale: 1.05 }}>
-              <button className="flex items-center gap-2 px-4 py-2 bg-[#00ff9d]/10 hover:bg-[#00ff9d]/20 rounded-lg transition-all">
+            <div className="relative">
+              <button
+                onClick={() => setIsProfileOpen(!isProfileOpen)}
+                className="flex items-center gap-2 px-4 py-2 bg-[#00ff9d]/10 hover:bg-[#00ff9d]/20 rounded-lg transition-all"
+              >
                 <div className="relative">
                   <div className="absolute inset-0 bg-[#00ff9d] rounded-full blur-[10px] opacity-20" />
                   {user.avatar ? (
@@ -83,20 +87,29 @@ export const Home = () => {
                 </span>
               </button>
 
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="absolute right-0 mt-2 w-48 bg-[#0d0d0d] border-2 border-[#00ff9d]/30 rounded-xl backdrop-blur-xl"
-              >
-                <button
-                  onClick={logout}
-                  className="w-full px-4 py-3 text-left text-[#00ff9d] hover:bg-[#00ff9d]/10 flex items-center gap-2 transition-colors"
-                >
-                  <FiLogOut />
-                  <span className="font-mono">Terminate Session</span>
-                </button>
-              </motion.div>
-            </motion.div>
+              <AnimatePresence>
+                {isProfileOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                    transition={{ type: "spring", damping: 20, stiffness: 300 }}
+                    className="absolute right-0 mt-2 w-48 bg-[#0d0d0d] border-2 border-[#00ff9d]/30 rounded-xl backdrop-blur-xl z-50"
+                  >
+                    <button
+                      onClick={() => {
+                        logout();
+                        setIsProfileOpen(false);
+                      }}
+                      className="w-full px-4 py-3 text-left text-[#00ff9d] hover:bg-[#00ff9d]/10 flex items-center gap-2 transition-colors rounded-xl"
+                    >
+                      <FiLogOut />
+                      <span className="font-mono">Terminate Session</span>
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           ) : (
             <motion.a
               href={`${import.meta.env.VITE_APP_GOOGLE_AUTH_URL}`}
