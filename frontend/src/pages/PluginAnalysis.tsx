@@ -3,18 +3,13 @@ import { useAML } from "../hooks/useApi";
 import { FileUpload } from "../components/Input/FileUpload";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FiHome } from "react-icons/fi";
+import { FiHome, FiCheck, FiUpload, FiActivity, FiEye } from "react-icons/fi";
 import { ErrorModal } from "../components/UI/ErrorModal";
 
 export const PluginAnalysis = () => {
   const { uploadCase } = useAML();
   const navigate = useNavigate();
-  const [error, setError] = useState<{
-    isOpen: boolean;
-    title: string;
-    message: string;
-    details: string[];
-  }>({
+  const [error, setError] = useState({
     isOpen: false,
     title: "",
     message: "",
@@ -26,13 +21,11 @@ export const PluginAnalysis = () => {
     onProgress: (progress: number) => void
   ) => {
     if (files.length === 0) return;
-
     try {
       const caseId = await uploadCase(files[0], onProgress);
       navigate(`/results/${caseId}`);
     } catch (err: any) {
       const backendError = err?.response?.data;
-
       setError({
         isOpen: true,
         title: "CSV Upload Failed",
@@ -96,6 +89,71 @@ export const PluginAnalysis = () => {
             enableAddMore={false}
           />
         </motion.div>
+
+        <div className="mt-8 p-6 rounded-2xl border border-[#00ff9d]/30 bg-[#0d0d0d]">
+          <h3 className="text-xl font-semibold text-[#00ff9d] mb-4">
+            How to Prepare Your CSV File
+          </h3>
+          <ul className="space-y-3 text-gray-300 text-sm md:text-base">
+            <li className="flex items-start gap-2">
+              <FiCheck className="text-[#00ff9d] mt-1 flex-shrink-0" />
+              <span>
+                Include these columns:{" "}
+                <span className="font-mono">
+                  fromAccount, toAccount, amount, date
+                </span>
+              </span>
+            </li>
+            <li className="flex items-start gap-2">
+              <FiCheck className="text-[#00ff9d] mt-1 flex-shrink-0" />
+              <span>Amounts must be numeric</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <FiCheck className="text-[#00ff9d] mt-1 flex-shrink-0" />
+              <span>
+                Dates must be in <span className="font-mono">YYYY-MM-DD</span>{" "}
+                format
+              </span>
+            </li>
+            <li className="flex items-start gap-2">
+              <FiCheck className="text-[#00ff9d] mt-1 flex-shrink-0" />
+              <span>No empty rows</span>
+            </li>
+          </ul>
+        </div>
+
+        <div className="mt-6 p-6 rounded-2xl border border-[#00ff9d]/30 bg-[#0d0d0d]">
+          <h3 className="text-xl font-semibold text-[#00ff9d] mb-4">
+            Sample CSV Structure
+          </h3>
+          <pre className="font-mono text-xs sm:text-sm text-gray-400 p-4 rounded-lg bg-[#111111] overflow-x-auto">
+            {`fromAccount,toAccount,amount,date
+ACC001,ACC002,5000,2025-06-01
+ACC002,ACC003,9500,2025-06-01
+ACC003,ACC001,48000,2025-06-01`}
+          </pre>
+        </div>
+
+        <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
+          <div className="flex flex-col items-center gap-2">
+            <div className="w-12 h-12 rounded-full bg-[#00ff9d]/10 border border-[#00ff9d]/30 flex items-center justify-center">
+              <FiUpload className="text-[#00ff9d]" />
+            </div>
+            <span className="text-sm text-gray-400">Upload CSV</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <div className="w-12 h-12 rounded-full bg-[#00ff9d]/10 border border-[#00ff9d]/30 flex items-center justify-center">
+              <FiActivity className="text-[#00ff9d]" />
+            </div>
+            <span className="text-sm text-gray-400">Analyze Data</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <div className="w-12 h-12 rounded-full bg-[#00ff9d]/10 border border-[#00ff9d]/30 flex items-center justify-center">
+              <FiEye className="text-[#00ff9d]" />
+            </div>
+            <span className="text-sm text-gray-400">View Results</span>
+          </div>
+        </div>
 
         <motion.div
           initial={{ opacity: 0 }}
