@@ -10,6 +10,7 @@ exports.processSingleCase = async (req, res) => {
     if (!req.file) {
       return res.status(400).json({
         error: "No file uploaded. Please select a CSV file.",
+        details: ["Ensure a CSV file is selected before uploading."],
       });
     }
 
@@ -18,6 +19,7 @@ exports.processSingleCase = async (req, res) => {
     if (!csvData || csvData.length === 0) {
       return res.status(400).json({
         error: "The CSV file is empty or contains no valid data.",
+        details: ["Make sure the file is not empty and has valid rows."],
         suggestion:
           "Please check your file and ensure it contains transaction data.",
       });
@@ -38,7 +40,7 @@ exports.processSingleCase = async (req, res) => {
         details: missingFields.map((field) => `Missing column: ${field}`),
         found: headers,
         suggestion:
-          "Please ensure your CSV contains columns for transaction data: fromAccount, toAccount, and amount.",
+          "Please ensure your CSV contains columns for: fromAccount, toAccount, and amount.",
       });
     }
 
@@ -64,7 +66,7 @@ exports.processSingleCase = async (req, res) => {
           });
           newCase.accounts.push(account._id);
         } catch (accountErr) {
-          console.log("Skipping account creation:", accountErr.message);
+          console.warn("Skipping account creation:", accountErr.message);
         }
       }
 
@@ -93,6 +95,13 @@ exports.processSingleCase = async (req, res) => {
       anomalies,
     });
   } catch (err) {
+    console.error("💥 CSV Processing Error:", {
+      name: err.name,
+      message: err.message,
+      details: err.details || [],
+      stack: err.stack,
+    });
+
     if (err.name === "ValidationError") {
       const errors = Object.values(err.errors).map((e) => e.message);
       return res.status(400).json({
@@ -106,7 +115,12 @@ exports.processSingleCase = async (req, res) => {
     res.status(500).json({
       error:
         "Failed to process your CSV file. Please check the file format and try again.",
-      details: err.details || [],
+      details: err.details || [
+        "Ensure all amounts are numeric",
+        "Dates should be in YYYY-MM-DD format",
+        "No rows should be empty",
+        "Columns: fromAccount, toAccount, and amount are required",
+      ],
       technical:
         process.env.NODE_ENV === "development" ? err.message : undefined,
     });
