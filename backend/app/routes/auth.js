@@ -1,7 +1,7 @@
 const express = require("express");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
-const User = require("../app/models/User");
+const User = require("../models/User");
 const router = express.Router();
 
 router.get("/google", passport.authenticate("google"));
