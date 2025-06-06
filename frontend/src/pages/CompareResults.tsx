@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useAML } from "../hooks/useApi";
-import { CaseComparison } from "../types/apiTypes";
+import { Case2Comparison as CaseComparison } from "../types/apiTypes";
 import { motion } from "framer-motion";
 import {
   FiAlertTriangle,
@@ -75,6 +75,13 @@ export const CompareResults = () => {
     );
   }
 
+  // Helper to safely access nested risk factors
+  const riskFactors = comparisonData?.comparison?.riskAssessment?.riskFactors;
+  const riskAssessment = comparisonData?.comparison?.riskAssessment;
+  const directLinks = comparisonData?.comparison?.directLinks;
+  const networkAnalysis = comparisonData?.comparison?.networkAnalysis;
+  const temporalAnalysis = comparisonData?.comparison?.temporalAnalysis;
+
   return (
     <div className="min-h-screen bg-[#0A001A] text-[#00ff9d] p-8">
       {/* Header */}
@@ -98,31 +105,25 @@ export const CompareResults = () => {
         {/* Risk Assessment */}
         <Section title="Risk Assessment" icon={<FiActivity />}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <RiskMeter
-              score={comparisonData.comparison.riskAssessment.totalRisk}
-              level={comparisonData.comparison.riskAssessment.riskLevel}
-            />
+            {riskAssessment && (
+              <RiskMeter
+                score={riskAssessment?.totalRisk || 0}
+                level={riskAssessment?.riskLevel || "LOW"}
+              />
+            )}
+
             <div className="grid grid-cols-3 gap-4">
               <InfoGridItem
                 label="Shared Accounts"
-                value={
-                  comparisonData.comparison.riskAssessment.riskFactors
-                    .sharedAccounts
-                }
+                value={riskFactors?.sharedAccounts ?? "N/A"}
               />
               <InfoGridItem
                 label="High Value Overlap"
-                value={
-                  comparisonData.comparison.riskAssessment.riskFactors
-                    .highValueOverlap
-                }
+                value={riskFactors?.highValueOverlap ?? "N/A"}
               />
               <InfoGridItem
                 label="Geographic Risk"
-                value={
-                  comparisonData.comparison.riskAssessment.riskFactors
-                    .geographicRisk
-                }
+                value={riskFactors?.geographicRisk ?? "N/A"}
               />
             </div>
           </div>
@@ -133,18 +134,15 @@ export const CompareResults = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="border border-[#00ff9d]/30 rounded-xl p-6">
               <h3 className="text-lg font-bold mb-4">Shared Accounts</h3>
-              {comparisonData.comparison.directLinks.sharedAccounts.length >
-              0 ? (
-                comparisonData.comparison.directLinks.sharedAccounts.map(
-                  (account) => (
-                    <div
-                      key={account}
-                      className="font-mono py-2 border-b border-[#00ff9d]/10"
-                    >
-                      {account}
-                    </div>
-                  )
-                )
+              {directLinks?.sharedAccounts?.length ? (
+                directLinks.sharedAccounts.map((account) => (
+                  <div
+                    key={account}
+                    className="font-mono py-2 border-b border-[#00ff9d]/10"
+                  >
+                    {account}
+                  </div>
+                ))
               ) : (
                 <p className="text-gray-400">No shared accounts found</p>
               )}
@@ -152,21 +150,23 @@ export const CompareResults = () => {
 
             <div className="border border-[#00ff9d]/30 rounded-xl p-6">
               <h3 className="text-lg font-bold mb-4">Transaction Links</h3>
-              {comparisonData.comparison.directLinks.transactionLinks.map(
-                (link, i) => (
+              {directLinks?.transactionLinks?.length ? (
+                directLinks.transactionLinks.map((link, i) => (
                   <div key={i} className="mb-4 p-4 bg-[#17002E] rounded-lg">
                     <div className="font-mono text-sm text-gray-400">
                       Path #{i + 1}
                     </div>
                     <div className="text-[#00ff9d]">
-                      {link.path.join(" → ")}
+                      {link?.path?.join(" → ")}
                     </div>
                     <div className="flex justify-between mt-2 text-sm">
-                      <span>${link.totalAmount.toLocaleString()}</span>
-                      <span>{link.timeGap}</span>
+                      <span>${link?.totalAmount?.toLocaleString()}</span>
+                      <span>{link?.timeGap}</span>
                     </div>
                   </div>
-                )
+                ))
+              ) : (
+                <p className="text-gray-400">No transaction links found</p>
               )}
             </div>
           </div>
@@ -177,37 +177,37 @@ export const CompareResults = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="border border-[#00ff9d]/30 rounded-xl p-6">
               <h3 className="text-lg font-bold mb-4">Bridge Transactions</h3>
-              {comparisonData.comparison.networkAnalysis.bridgeEdges.map(
-                (edge, i) => (
+              {networkAnalysis?.bridgeEdges?.length ? (
+                networkAnalysis.bridgeEdges.map((edge, i) => (
                   <div key={i} className="mb-2 p-3 bg-[#17002E] rounded">
                     <span className="font-mono">
-                      {edge.from} → {edge.to}
+                      {edge?.from} → {edge?.to}
                     </span>
                     <span className="block text-sm text-gray-400 mt-1">
-                      ${edge.totalAmount.toLocaleString()}
+                      ${edge?.totalAmount?.toLocaleString()}
                     </span>
                   </div>
-                )
+                ))
+              ) : (
+                <p className="text-gray-400">No bridge transactions found</p>
               )}
             </div>
 
             <div className="border border-[#00ff9d]/30 rounded-xl p-6">
               <h3 className="text-lg font-bold mb-4">Temporal Analysis</h3>
-              {comparisonData.comparison.temporalAnalysis.overlap ? (
+              {temporalAnalysis?.overlap ? (
                 <div className="space-y-2">
                   <InfoGridItem
                     label="Overlap Period"
                     value={`${new Date(
-                      comparisonData.comparison.temporalAnalysis.overlap.start
+                      temporalAnalysis.overlap.start
                     ).toLocaleDateString()} - ${new Date(
-                      comparisonData.comparison.temporalAnalysis.overlap.end
+                      temporalAnalysis.overlap.end
                     ).toLocaleDateString()}`}
                   />
                   <InfoGridItem
                     label="Similarity Score"
-                    value={comparisonData.comparison.temporalAnalysis.similarity.toFixed(
-                      2
-                    )}
+                    value={temporalAnalysis.similarity?.toFixed(2) ?? "N/A"}
                   />
                 </div>
               ) : (
