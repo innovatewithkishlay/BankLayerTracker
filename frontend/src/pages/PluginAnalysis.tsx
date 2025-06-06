@@ -26,23 +26,21 @@ export const PluginAnalysis = () => {
     onProgress: (progress: number) => void
   ) => {
     if (files.length === 0) return;
+
     try {
       const caseId = await uploadCase(files[0], onProgress);
       navigate(`/results/${caseId}`);
-    } catch (err) {
+    } catch (err: any) {
       setError({
         isOpen: true,
-        title: "Upload Failed",
-        message: err instanceof Error ? err.message : "Unknown error occurred",
-        details: [
-          "Required CSV columns:",
-          "• fromAccount (string)",
-          "• toAccount (string)",
-          "• amount (number)",
-          "• date (ISO format)",
-          "Optional columns:",
-          "• email, phone, ipAddress",
-          "• metadata.ipCountry",
+        title: "CSV Upload Failed",
+        message: err.message,
+        details: err.details || [
+          "Please check:",
+          "• All required columns are present",
+          "• Amounts are numeric values",
+          "• Dates are in YYYY-MM-DD format",
+          "• No empty rows exist",
         ],
       });
     }
@@ -55,7 +53,6 @@ export const PluginAnalysis = () => {
       transition={{ duration: 0.5 }}
       className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0a0a] via-[#111111] to-[#0a0a0a] p-6 relative"
     >
-      {/* Back Button */}
       <motion.button
         onClick={() => navigate("/")}
         className="absolute top-6 left-6 flex items-center space-x-2 text-[#00ff9d] hover:text-[#00ff9d]/80 transition-colors group"
@@ -66,9 +63,7 @@ export const PluginAnalysis = () => {
         </span>
       </motion.button>
 
-      {/* Main Content */}
       <div className="w-full max-w-2xl">
-        {/* Header */}
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -85,7 +80,6 @@ export const PluginAnalysis = () => {
           </p>
         </motion.div>
 
-        {/* Upload Card */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -99,7 +93,6 @@ export const PluginAnalysis = () => {
           />
         </motion.div>
 
-        {/* Instructions */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
