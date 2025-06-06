@@ -1,6 +1,6 @@
-import express from "express";
-import passport from "passport";
-import jwt from "jsonwebtoken";
+const express = require("express");
+const passport = require("passport");
+const jwt = require("jsonwebtoken");
 
 const router = express.Router();
 
@@ -22,7 +22,7 @@ router.get(
     res.cookie("jwt", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // i have to change this to 1 later
+      maxAge: 7 * 24 * 60 * 60 * 1000, // i need to change this later
     });
 
     res.redirect(process.env.CLIENT_URL);
@@ -34,4 +34,4 @@ router.get("/logout", (req, res) => {
   res.json({ message: "Logged out successfully" });
 });
 
-export default router;
+module.exports = router;

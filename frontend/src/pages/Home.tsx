@@ -1,10 +1,48 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { GlowingButton } from "../components/UI/GlowingButton";
-import { FiActivity, FiMapPin, FiShield, FiUsers } from "react-icons/fi";
+import {
+  FiActivity,
+  FiMapPin,
+  FiShield,
+  FiUsers,
+  FiUser,
+  FiLogOut,
+} from "react-icons/fi";
+import { useAuth } from "../contexts/AuthContext";
+import { useEffect } from "react";
+import toast from "react-hot-toast";
 
 export const Home = () => {
   const navigate = useNavigate();
+  const { user, loading, logout } = useAuth();
+
+  // Show welcome toast when user logs in
+  useEffect(() => {
+    if (user) {
+      toast.success(`Welcome back, ${user.name}!`, {
+        style: {
+          background: "#0d0d0d",
+          color: "#00ff9d",
+          border: "1px solid #00ff9d50",
+        },
+        icon: "👋",
+      });
+    }
+  }, [user]);
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] to-[#0d0d0d] flex items-center justify-center">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+          className="w-16 h-16 border-4 border-[#00ff9d] border-t-transparent rounded-full"
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] to-[#0d0d0d] text-white overflow-hidden flex flex-col">
@@ -23,19 +61,39 @@ export const Home = () => {
           />
         </div>
 
-        <div className="flex items-center space-x-4">
-          <button
-            onClick={() => navigate("/login")}
-            className="px-4 py-2 text-gray-300 hover:text-[#00ff9d] transition-colors"
-          >
-            Login
-          </button>
-          <button
-            onClick={() => navigate("/signup")}
-            className="px-6 py-2 bg-[#00ff9d] text-black rounded-lg font-semibold hover:bg-[#00ff9d]/90 transition-all"
-          >
-            Sign Up
-          </button>
+        <div className="flex items-center space-x-4 pr-6">
+          {user ? (
+            <motion.div className="relative group" whileHover={{ scale: 1.05 }}>
+              <button className="flex items-center space-x-2 px-4 py-2 bg-[#00ff9d]/10 hover:bg-[#00ff9d]/20 rounded-lg transition-colors">
+                <FiUser className="text-2xl text-[#00ff9d]" />
+                <span className="text-gray-300">{user.email}</span>
+              </button>
+
+              {/* Dropdown menu */}
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="absolute right-0 mt-2 w-48 bg-[#0d0d0d] border border-[#00ff9d]/20 rounded-lg shadow-xl overflow-hidden"
+              >
+                <button
+                  onClick={logout}
+                  className="w-full px-4 py-3 text-left text-gray-300 hover:bg-[#00ff9d]/10 hover:text-[#00ff9d] transition-colors flex items-center gap-2"
+                >
+                  <FiLogOut className="ml-2" />
+                  Log Out
+                </button>
+              </motion.div>
+            </motion.div>
+          ) : (
+            <motion.a
+              href={`${import.meta.env.VITE_APP_GOOGLE_AUTH_URL}`}
+              whileHover={{ scale: 1.05 }}
+              className="px-6 py-2 bg-[#00ff9d] text-black rounded-lg font-semibold hover:bg-[#00ff9d]/90 transition-all flex items-center gap-2"
+            >
+              <FiUser className="text-lg" />
+              Login with Google
+            </motion.a>
+          )}
         </div>
       </nav>
 
@@ -127,6 +185,7 @@ export const Home = () => {
   );
 };
 
+// Sub-components
 const TerminalText = ({ text }: { text: string }) => (
   <span className="font-mono tracking-wide">{`> ${text}`}</span>
 );
