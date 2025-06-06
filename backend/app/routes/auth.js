@@ -22,7 +22,7 @@ router.get(
     res.cookie("jwt", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: 7 * 24 * 60 * 60 * 1000, // i have to change this to 1 later
     });
 
     res.redirect(process.env.CLIENT_URL);
