@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
-import { RiskMeterProps } from "../types/apiTypes";
-
+import { RiskMeterProps } from "@/types/apiTypes";
 export const RiskMeter = ({ score, level }: RiskMeterProps) => {
   const getColor = () => {
     switch (level) {
