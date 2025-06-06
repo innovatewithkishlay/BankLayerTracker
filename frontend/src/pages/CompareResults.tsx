@@ -45,7 +45,7 @@ export const CompareResults = () => {
     };
 
     loadComparison();
-  }, [case1Id, case2Id]);
+  }, [case1Id, case2Id, compareCases]);
 
   if (isLoading) {
     return (
@@ -75,7 +75,7 @@ export const CompareResults = () => {
     );
   }
 
-  // Helper to safely access nested risk factors
+  // Helper to safely access nested data
   const riskFactors = comparisonData?.comparison?.riskAssessment?.riskFactors;
   const riskAssessment = comparisonData?.comparison?.riskAssessment;
   const directLinks = comparisonData?.comparison?.directLinks;
@@ -107,8 +107,8 @@ export const CompareResults = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {riskAssessment && (
               <RiskMeter
-                score={riskAssessment?.totalRisk || 0}
-                level={riskAssessment?.riskLevel || "LOW"}
+                score={riskAssessment.totalRisk}
+                level={riskAssessment.riskLevel}
               />
             )}
 

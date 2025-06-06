@@ -1,15 +1,21 @@
 import { motion } from "framer-motion";
+import { RiskMeterProps } from "../types/apiTypes";
 
-interface RiskMeterProps {
-  score: number;
-}
-
-export const RiskMeter = ({ score }: RiskMeterProps) => {
+export const RiskMeter = ({ score, level }: RiskMeterProps) => {
   const getColor = () => {
-    if (score > 75) return "#ff4444";
-    if (score > 50) return "#ffaa44";
-    if (score > 25) return "#ffdd44";
-    return "#00ff9d";
+    switch (level) {
+      case "HIGH":
+        return "#ff4444";
+      case "MEDIUM":
+        return "#ffaa44";
+      case "LOW":
+        return "#00ff9d";
+      default:
+        if (score > 75) return "#ff4444";
+        if (score > 50) return "#ffaa44";
+        if (score > 25) return "#ffdd44";
+        return "#00ff9d";
+    }
   };
 
   return (
@@ -40,7 +46,10 @@ export const RiskMeter = ({ score }: RiskMeterProps) => {
         />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-lg font-bold" style={{ color: getColor() }}>
+        <span
+          className="text-lg font-bold font-mono"
+          style={{ color: getColor() }}
+        >
           {score}%
         </span>
       </div>
