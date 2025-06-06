@@ -94,3 +94,12 @@ export interface CaseComparison {
 export interface CaseUploadResponse {
   caseId: string;
 }
+export interface ComparisonResponse {
+  case1: string;
+  case2: string;
+  comparison: CaseComparison["comparison"];
+}
+
+export function isCaseComparison(obj: any): obj is CaseComparison {
+  return obj?.comparison?.riskAssessment?.riskLevel !== undefined;
+}
