@@ -31,10 +31,10 @@ export const Navbar = () => {
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setIsProfileOpen(!isProfileOpen)}
-              className="flex items-center gap-2 px-4 py-2 bg-[#00ff9d]/10 hover:bg-[#00ff9d]/20 rounded-lg transition-all"
+              className="group flex items-center gap-2 px-4 py-3 bg-[#0d0d0d] rounded-xl border-2 border-[#00ff9d]/30 hover:border-[#00ff9d]/50 transition-all"
             >
               <div className="relative">
-                <div className="absolute inset-0 bg-[#00ff9d] rounded-full blur-[10px] opacity-20" />
+                <div className="absolute inset-0 bg-[#00ff9d] rounded-full blur-[12px] opacity-20 group-hover:opacity-30 transition-opacity" />
                 {user.avatar ? (
                   <img
                     src={user.avatar}
@@ -59,7 +59,7 @@ export const Navbar = () => {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -10, scale: 0.95 }}
                   transition={{ type: "spring", damping: 20, stiffness: 300 }}
-                  className="absolute right-0 mt-2 w-48 bg-[#0d0d0d] border-2 border-[#00ff9d]/30 rounded-xl backdrop-blur-xl z-50"
+                  className="absolute right-0 mt-2 w-56 bg-[#0d0d0d] border-2 border-[#00ff9d]/40 rounded-xl backdrop-blur-xl z-50"
                 >
                   <button
                     onClick={() => {
@@ -68,8 +68,11 @@ export const Navbar = () => {
                     }}
                     className="w-full px-4 py-3 text-left text-[#00ff9d] hover:bg-[#00ff9d]/10 flex items-center gap-2 transition-colors rounded-xl"
                   >
-                    <FiLogOut />
+                    <FiLogOut className="text-lg" />
                     <span className="font-mono">Terminate Session</span>
+                    <span className="ml-auto text-xs text-[#00ff9d]/70">
+                      Logout
+                    </span>
                   </button>
                 </motion.div>
               )}
@@ -78,11 +81,32 @@ export const Navbar = () => {
         ) : (
           <motion.a
             href={`${import.meta.env.VITE_APP_GOOGLE_AUTH_URL}`}
-            whileHover={{ scale: 1.05 }}
-            className="px-6 py-2 bg-[#00ff9d] text-black rounded-lg font-semibold hover:bg-[#00ff9d]/90 flex items-center gap-2"
+            whileHover={{ y: -2 }}
+            className="group relative flex items-center gap-3 px-6 py-3
+              bg-gradient-to-r from-[#00ff9d] to-[#00d4ff]
+              text-black font-bold text-sm md:text-base rounded-xl
+              shadow-lg shadow-[#00ff9d]/20
+              transition-all duration-300
+              hover:from-[#00ff9d]/90 hover:to-[#00d4ff]/80
+              hover:shadow-xl hover:scale-105
+              focus:outline-none focus:ring-4 focus:ring-[#00ff9d]/40
+              overflow-hidden"
+            style={{
+              letterSpacing: "0.04em",
+              fontFamily: "monospace",
+            }}
           >
-            <FiTerminal className="rotate-12" />
-            <span>Initiate Auth Sequence</span>
+            <span className="relative flex items-center">
+              <FiTerminal className="mr-2 text-lg transition-transform duration-300 group-hover:rotate-12 group-hover:scale-125" />
+              Initiate Auth Sequence
+            </span>
+            <span
+              className="
+                absolute inset-0 rounded-xl
+                bg-white/10 opacity-0 group-hover:opacity-100
+                transition-opacity duration-300 pointer-events-none
+              "
+            />
           </motion.a>
         )}
       </div>
