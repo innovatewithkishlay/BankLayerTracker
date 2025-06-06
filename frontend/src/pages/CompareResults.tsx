@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useAML } from "../hooks/useApi";
-import { Case2Comparison as CaseComparison } from "../types/apiTypes";
+import { CaseComparison } from "../types/apiTypes";
 import { motion } from "framer-motion";
 import {
   FiAlertTriangle,
