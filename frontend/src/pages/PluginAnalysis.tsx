@@ -31,11 +31,15 @@ export const PluginAnalysis = () => {
       const caseId = await uploadCase(files[0], onProgress);
       navigate(`/results/${caseId}`);
     } catch (err: any) {
+      const backendError = err?.response?.data;
+
       setError({
         isOpen: true,
         title: "CSV Upload Failed",
-        message: err.message,
-        details: err.details || [
+        message:
+          backendError?.error ||
+          "Upload failed. Please check your CSV file format.",
+        details: backendError?.details || [
           "Please check:",
           "• All required columns are present",
           "• Amounts are numeric values",
