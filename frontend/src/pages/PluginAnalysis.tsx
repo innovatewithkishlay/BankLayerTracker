@@ -1,12 +1,25 @@
+import { useState } from "react";
 import { useAML } from "../hooks/useApi";
 import { FileUpload } from "../components/Input/FileUpload";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FiHome } from "react-icons/fi";
+import { ErrorModal } from "../components/UI/ErrorModal";
 
 export const PluginAnalysis = () => {
   const { uploadCase } = useAML();
   const navigate = useNavigate();
+  const [error, setError] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    details: string[];
+  }>({
+    isOpen: false,
+    title: "",
+    message: "",
+    details: [],
+  });
 
   const handleUpload = async (
     files: File[],
@@ -17,10 +30,21 @@ export const PluginAnalysis = () => {
       const caseId = await uploadCase(files[0], onProgress);
       navigate(`/results/${caseId}`);
     } catch (err) {
-      alert(
-        "Upload failed: " +
-          (err instanceof Error ? err.message : "Unknown error")
-      );
+      setError({
+        isOpen: true,
+        title: "Upload Failed",
+        message: err instanceof Error ? err.message : "Unknown error occurred",
+        details: [
+          "Required CSV columns:",
+          "• fromAccount (string)",
+          "• toAccount (string)",
+          "• amount (number)",
+          "• date (ISO format)",
+          "Optional columns:",
+          "• email, phone, ipAddress",
+          "• metadata.ipCountry",
+        ],
+      });
     }
   };
 
@@ -85,6 +109,14 @@ export const PluginAnalysis = () => {
           <p>Maximum file size: 10MB</p>
         </motion.div>
       </div>
+
+      <ErrorModal
+        isOpen={error.isOpen}
+        onClose={() => setError((prev) => ({ ...prev, isOpen: false }))}
+        title={error.title}
+        message={error.message}
+        details={error.details}
+      />
     </motion.div>
   );
 };
