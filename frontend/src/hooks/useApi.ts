@@ -27,18 +27,30 @@ export const useAML = () => {
       );
       return data.caseId;
     } catch (error: any) {
-      let errorMessage = "Upload failed. Please try again.";
+      let errorMessage = "Upload failed. Please check your CSV file format.";
+      const details: string[] = [];
 
-      if (error.response?.data?.error) {
-        errorMessage = error.response.data.error;
-        if (error.response.data.required) {
-          errorMessage += `\nRequired columns: ${error.response.data.required.join(
-            ", "
-          )}`;
+      if (error.response?.data) {
+        // Handle backend validation errors
+        if (error.response.data.error?.includes("missing required columns")) {
+          errorMessage = "Missing required columns in CSV file";
+          details.push(
+            "🔍 Required columns:",
+            "• fromAccount (Source Account)",
+            "• toAccount (Destination Account)",
+            "• amount (Transaction Amount)",
+            "• date (Transaction Date)"
+          );
+        }
+
+        if (error.response.data.details) {
+          details.push("⚠️ Found issues:", ...error.response.data.details);
         }
       }
 
-      throw new Error(errorMessage);
+      const err = new Error(errorMessage);
+      (err as any).details = details;
+      throw err;
     }
   };
 
