@@ -27,6 +27,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           `${import.meta.env.VITE_API_BASE_URL}/auth/profile`,
           { withCredentials: true }
         );
+        if (!data?.user) {
+          throw new Error("Invalid user data");
+        }
         setUser(data.user);
       } catch (err) {
         setUser(null);
