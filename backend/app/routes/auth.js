@@ -28,6 +28,29 @@ router.get(
     res.redirect(process.env.CLIENT_URL);
   }
 );
+router.get("/profile", async (req, res) => {
+  try {
+    const token = req.cookies.jwt;
+    if (!token) return res.status(401).json({ error: "Unauthorized" });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id)
+      .select("-__v -createdAt -googleId")
+      .lean();
+
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    res.json({
+      user: {
+        email: user.email,
+        name: user.name,
+        avatar: user.avatar,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
 
 router.get("/logout", (req, res) => {
   res.clearCookie("jwt");
