@@ -20,50 +20,59 @@ export const Navbar = () => {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          whileHover={{ scale: 1.03 }}
-          className="h-16 w-16 md:h-20 md:w-20 object-contain rounded-lg"
+          whileHover={{ scale: 1.05 }}
+          className="h-16 w-16 md:h-20 md:w-20 object-contain rounded-lg shadow-lg"
+          style={{ boxShadow: "0 2px 20px #00ff9daa" }}
         />
       </div>
+
       <div className="flex items-center space-x-4 pr-6">
         {user ? (
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setIsProfileOpen(!isProfileOpen)}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl transition-all hover:bg-gray-100/5"
+              className="group flex items-center gap-2 px-4 py-3 bg-[#0d0d0d] rounded-xl border-2 border-[#00ff9d]/30 hover:border-[#00ff9d]/50 transition-all"
             >
-              <div className="w-8 h-8 rounded-full border border-gray-700 flex items-center justify-center">
+              <div className="relative">
+                <div className="absolute inset-0 bg-[#00ff9d] rounded-full blur-[12px] opacity-20 group-hover:opacity-30 transition-opacity" />
                 {user.avatar ? (
                   <img
                     src={user.avatar}
-                    className="w-full h-full rounded-full object-cover"
+                    className="w-8 h-8 rounded-full border-2 border-[#00ff9d]/50"
                     alt="Profile"
                   />
                 ) : (
-                  <FiUser className="text-gray-400" />
+                  <div className="w-8 h-8 rounded-full bg-[#0d0d0d] border-2 border-[#00ff9d]/50 flex items-center justify-center">
+                    <FiUser className="text-[#00ff9d]" />
+                  </div>
                 )}
               </div>
-              <span className="text-sm font-medium text-gray-200">
+              <span className="font-mono text-sm bg-gradient-to-r from-[#00ff9d] to-[#00d4ff] bg-clip-text text-transparent">
                 {user.email}
               </span>
             </button>
+
             <AnimatePresence>
               {isProfileOpen && (
                 <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
+                  initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -10, scale: 0.95 }}
                   transition={{ type: "spring", damping: 20, stiffness: 300 }}
-                  className="absolute right-0 mt-2 w-48 bg-gray-900 border border-gray-800 rounded-xl z-50"
+                  className="absolute right-0 mt-2 w-56 bg-[#0d0d0d] border-2 border-[#00ff9d]/40 rounded-xl backdrop-blur-xl z-50"
                 >
                   <button
                     onClick={() => {
                       logout();
                       setIsProfileOpen(false);
                     }}
-                    className="w-full px-4 py-3 text-left text-gray-300 hover:text-white hover:bg-gray-800 flex items-center gap-2 transition-colors rounded-xl"
+                    className="w-full px-4 py-3 text-left text-[#00ff9d] hover:bg-[#00ff9d]/10 flex items-center gap-2 transition-colors rounded-xl"
                   >
-                    <FiLogOut className="text-gray-400" />
-                    <span className="text-sm font-medium">Log out</span>
+                    <FiLogOut className="text-lg" />
+                    <span className="font-mono">Terminate Session</span>
+                    <span className="ml-auto text-xs text-[#00ff9d]/70">
+                      Logout
+                    </span>
                   </button>
                 </motion.div>
               )}
@@ -72,11 +81,32 @@ export const Navbar = () => {
         ) : (
           <motion.a
             href={`${import.meta.env.VITE_APP_GOOGLE_AUTH_URL}`}
-            whileHover={{ scale: 1.03 }}
-            className="flex items-center gap-2 px-5 py-2 rounded-xl bg-gray-900 border border-gray-800 text-sm font-medium text-gray-200 hover:bg-gray-800 hover:text-white transition-colors"
+            whileHover={{ y: -2 }}
+            className="group relative flex items-center gap-3 px-6 py-3
+              bg-gradient-to-r from-[#00ff9d] to-[#00d4ff]
+              text-black font-bold text-sm md:text-base rounded-xl
+              shadow-lg shadow-[#00ff9d]/20
+              transition-all duration-300
+              hover:from-[#00ff9d]/90 hover:to-[#00d4ff]/80
+              hover:shadow-xl hover:scale-105
+              focus:outline-none focus:ring-4 focus:ring-[#00ff9d]/40
+              overflow-hidden"
+            style={{
+              letterSpacing: "0.04em",
+              fontFamily: "monospace",
+            }}
           >
-            <FiTerminal />
-            <span>Sign in</span>
+            <span className="relative flex items-center">
+              <FiTerminal className="mr-2 text-lg transition-transform duration-300 group-hover:rotate-12 group-hover:scale-125" />
+              Initiate Auth Sequence
+            </span>
+            <span
+              className="
+                absolute inset-0 rounded-xl
+                bg-white/10 opacity-0 group-hover:opacity-100
+                transition-opacity duration-300 pointer-events-none
+              "
+            />
           </motion.a>
         )}
       </div>
