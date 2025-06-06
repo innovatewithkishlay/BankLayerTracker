@@ -49,13 +49,10 @@ export const Home = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] to-[#0d0d0d] text-white overflow-hidden flex flex-col">
-      {/* Navbar */}
       <Navbar />
 
-      {/* Main Content */}
       <div className="flex-1">
         <div className="max-w-7xl mx-auto px-6 py-20">
-          {/* Hero Section */}
           <div className="text-center mb-20">
             <motion.h1
               initial={{ opacity: 0, y: 30 }}
@@ -100,7 +97,6 @@ export const Home = () => {
               </GlowingButton>
             </motion.div>
 
-            {/* Stats Section */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -113,7 +109,6 @@ export const Home = () => {
             </motion.div>
           </div>
 
-          {/* Core Capabilities */}
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
@@ -127,7 +122,6 @@ export const Home = () => {
               Comprehensive AML investigation tools powered by machine learning
               and advanced analytics
             </p>
-
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               <FeatureCard
                 icon={<FiActivity className="text-4xl" />}
@@ -162,7 +156,6 @@ export const Home = () => {
             </div>
           </motion.div>
 
-          {/* Investigation Features */}
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
@@ -176,7 +169,6 @@ export const Home = () => {
               Streamlined investigation workflows with automated case management
               and reporting
             </p>
-
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <InvestigationFeature
                 icon={<FiEye className="text-3xl" />}
@@ -223,20 +215,31 @@ export const Home = () => {
         </div>
       </div>
 
-      {/* Footer */}
       <div className="p-8 text-center border-t border-[#00ff9d]/20">
         <div className="text-gray-400 text-lg">
           Enterprise AML Investigation Platform — v2.0
         </div>
-        <div className="text-gray-500 text-sm mt-2">
+        <div className="text-gray-400 text-sm mt-2 mb-4">
           Powered by Advanced AI & Machine Learning
+        </div>
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-4">
+          <a
+            href="https://kishlaykumar.onrender.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-4 py-2 text-sm font-medium text-[#00ff9d] hover:text-white bg-[#0d0d0d] border border-[#00ff9d]/30 rounded-xl hover:bg-[#00ff9d]/10 transition-colors"
+          >
+            <span className="hidden sm:inline">View Developer Portfolio</span>
+            <span className="sm:hidden">Portfolio</span>
+          </a>
+          <span className="text-gray-400 text-sm">Kishlay Kumar</span>
         </div>
       </div>
     </div>
   );
 };
 
-// Sub-components (keep them at the bottom or move to UI folder as needed)
+// Sub-components
 const TerminalText = ({ text }: { text: string }) => (
   <span className="font-mono tracking-wide text-lg">{`> ${text}`}</span>
 );
