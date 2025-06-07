@@ -15,7 +15,7 @@ export const Navbar = () => {
     <nav className="flex items-center justify-between p-4 sm:p-6 w-full">
       <div className="flex items-center space-x-2 sm:space-x-3 pl-2 sm:pl-6 md:pl-8">
         <motion.img
-          src="/src/assets/threatlens.png"
+          src="/assets/threatlens.png"
           alt="ThreatLens Logo"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}

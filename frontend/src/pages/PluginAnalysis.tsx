@@ -129,7 +129,7 @@ export const PluginAnalysis = () => {
               </li>
             </ul>
             <a
-              href="/sample-case.csv"
+              href="/assets/case1.csv"
               download
               className="inline-block mt-4 px-4 py-2 bg-[#00ff9d] text-black rounded-lg font-semibold hover:bg-[#00d4ff] transition-colors text-sm"
             >
