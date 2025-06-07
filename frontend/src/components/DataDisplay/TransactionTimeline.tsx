@@ -20,6 +20,7 @@ export const TransactionTimeline = ({
   const tooltipRef = useRef<HTMLDivElement>(null);
   const [hoveredTransaction, setHoveredTransaction] = useState<any>(null);
 
+  // Chart dimensions
   const width = 900;
   const height = 400;
   const margin = { top: 40, right: 100, bottom: 80, left: 100 };
@@ -27,7 +28,9 @@ export const TransactionTimeline = ({
   const highRiskThreshold = 50000;
   const structuringThreshold = 9000;
   const totalVolume = transactions.reduce((sum, t) => sum + t.amount, 0);
-  const avgTransaction = totalVolume / transactions.length || 0;
+  const avgTransaction = transactions.length
+    ? totalVolume / transactions.length
+    : 0;
   const highRiskCount = transactions.filter(
     (t) => t.amount > highRiskThreshold
   ).length;
@@ -41,7 +44,7 @@ export const TransactionTimeline = ({
     const timestamps = dates.map((d) => d.getTime());
     const minDate = new Date(Math.min(...timestamps));
     const maxDate = new Date(Math.max(...timestamps));
-    const maxAmount = Math.max(...amounts);
+    const maxAmount = Math.max(...amounts, 1);
 
     const xScale = scaleTime()
       .domain([minDate, maxDate])
@@ -364,15 +367,17 @@ export const TransactionTimeline = ({
         </div>
       </div>
 
-      <div className="relative bg-[#1a1a1a] rounded-xl border-2 border-[var(--cyber-border)] p-6 overflow-x-auto">
+      <div className="relative bg-[#1a1a1a] rounded-xl border-2 border-[var(--cyber-border)] p-6 overflow-x-auto h-[500px]">
         <svg
           ref={svgRef}
-          width="100%"
+          width={width}
           height={height}
           viewBox={`0 0 ${width} ${height}`}
-          className="min-w-[800px]"
+          style={{
+            minWidth: `${width}px`,
+            backgroundColor: "#0A001A",
+          }}
         />
-
         <div
           ref={tooltipRef}
           className="fixed pointer-events-none z-50 bg-[#1a1a1a] border-2 border-[var(--cyber-accent)] rounded-lg p-4 shadow-2xl"
