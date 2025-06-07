@@ -115,26 +115,6 @@ const CustomNode = ({ data, selected }: any) => {
   );
 };
 
-const CustomEdge = ({ data }: any) => {
-  const amount = data?.amount || 0;
-  const transactionType = data?.type || "normal";
-  const timestamp = data?.timestamp || "";
-
-  return (
-    <div className="bg-[#17002E] border border-[#00ff9d]/50 rounded px-2 py-1 text-xs font-mono">
-      <div className="text-[#00ff9d] font-bold">${amount.toLocaleString()}</div>
-      {timestamp && (
-        <div className="text-gray-400 text-[10px]">
-          {new Date(timestamp).toLocaleDateString()}
-        </div>
-      )}
-      {transactionType === "high-risk" && (
-        <div className="text-red-400 text-[10px]">⚠ High Risk</div>
-      )}
-    </div>
-  );
-};
-
 const nodeTypes: NodeTypes = {
   custom: CustomNode,
 };
@@ -160,7 +140,6 @@ export const NetworkGraph = ({
           .reduce((sum, edge) => sum + (edge.data?.amount || 0), 0);
 
         const transactionCount = relatedEdges.length;
-
         const maxSingle = Math.max(
           ...relatedEdges.map((e) => e.data?.amount || 0)
         );
