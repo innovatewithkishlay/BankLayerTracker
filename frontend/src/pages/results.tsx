@@ -108,21 +108,31 @@ export const Results = () => {
   const [caseData, setCaseData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  const riskScore = caseData?.anomalies
-    ? Math.min(
-        100,
-        (caseData.anomalies.reduce((s: number, a: any) => s + a.count, 0) /
-          (caseData.transactions?.length || 1)) *
-          100
-      )
-    : 0;
-
   useEffect(() => {
     setLoading(true);
     getCase(caseId!)
       .then((data) => setCaseData(data))
       .finally(() => setLoading(false));
   }, [caseId]);
+
+  const anomaliesArr = Array.isArray(caseData?.anomalies)
+    ? caseData.anomalies
+    : [];
+  const transactionsArr = Array.isArray(caseData?.transactions)
+    ? caseData.transactions
+    : [];
+  const accountsArr = Array.isArray(caseData?.accounts)
+    ? caseData.accounts
+    : [];
+
+  const riskScore = anomaliesArr.length
+    ? Math.min(
+        100,
+        (anomaliesArr.reduce((s: number, a: any) => s + a.count, 0) /
+          (transactionsArr.length || 1)) *
+          100
+      )
+    : 0;
 
   if (loading || !caseData) {
     return (
@@ -132,9 +142,8 @@ export const Results = () => {
     );
   }
 
-  // Example: build networkData from your caseData
   const networkData = {
-    nodes: caseData.accounts?.map((acc: any) => ({
+    nodes: accountsArr.map((acc: any) => ({
       id: acc.accountNumber,
       data: { label: acc.accountHolder || acc.accountNumber },
       position: { x: Math.random() * 400, y: Math.random() * 400 },
@@ -144,7 +153,7 @@ export const Results = () => {
         color: "var(--cyber-accent)",
       },
     })),
-    edges: caseData.transactions?.map((tx: any, i: number) => ({
+    edges: transactionsArr.map((tx: any, i: number) => ({
       id: `e${i}`,
       source: tx.fromAccount,
       target: tx.toAccount,
@@ -157,7 +166,6 @@ export const Results = () => {
 
   return (
     <div className="min-h-screen bg-[var(--cyber-bg)] text-white">
-      {/* Sticky Summary Header */}
       <div className="sticky top-0 z-10 bg-[var(--cyber-bg)]/95 backdrop-blur px-4 py-4 border-b border-[var(--cyber-border)]">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
@@ -172,7 +180,6 @@ export const Results = () => {
             <RiskMeter score={Math.round(riskScore)} />
           </div>
         </div>
-        {/* Navigation Tabs */}
         <div className="flex border-b border-[var(--cyber-border)] mt-4">
           {TABS.map((tab) => (
             <button
@@ -191,32 +198,30 @@ export const Results = () => {
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Key Metrics Sidebar */}
         <div className="lg:col-span-1 space-y-4">
           <SectionCard title="Key Metrics" icon={<FiGrid />} defaultOpen>
             <div className="grid grid-cols-2 gap-4">
               <MetricCard
                 label="Total Transactions"
-                value={caseData.transactions?.length}
+                value={transactionsArr.length}
                 trend="+12%"
               />
               <MetricCard
                 label="Accounts Involved"
-                value={caseData.accounts?.length}
+                value={accountsArr.length}
                 trend="+5%"
               />
               <MetricCard
                 label="Total Volume"
-                value={`$${caseData.transactions
-                  ?.reduce((s: number, t: any) => s + t.amount, 0)
+                value={`$${transactionsArr
+                  .reduce((s: number, t: any) => s + t.amount, 0)
                   .toLocaleString()}`}
                 trend="+18%"
               />
               <MetricCard
                 label="Anomalies"
-                value={caseData.anomalies?.reduce(
+                value={anomaliesArr.reduce(
                   (s: number, a: any) => s + a.count,
                   0
                 )}
@@ -227,7 +232,6 @@ export const Results = () => {
           </SectionCard>
         </div>
 
-        {/* Main Visualization Area */}
         <div className="lg:col-span-2 space-y-6">
           <AnimatePresence mode="wait">
             {activeTab === "overview" && (
@@ -240,11 +244,11 @@ export const Results = () => {
               >
                 <SectionCard title="Risk Overview" icon={<FiActivity />}>
                   <div className="h-64">
-                    <TransactionTimeline transactions={caseData.transactions} />
+                    <TransactionTimeline transactions={transactionsArr} />
                   </div>
                 </SectionCard>
                 <SectionCard title="Top Anomalies" icon={<FiAlertTriangle />}>
-                  <AnomalyTable data={caseData.anomalies} />
+                  <AnomalyTable data={anomaliesArr} />
                 </SectionCard>
               </motion.div>
             )}
@@ -276,7 +280,7 @@ export const Results = () => {
               >
                 <SectionCard title="Geographic Analysis" icon={<FiMap />}>
                   <div className="h-[500px]">
-                    <GeographicMap transactions={caseData.transactions} />
+                    <GeographicMap transactions={transactionsArr} />
                   </div>
                 </SectionCard>
               </motion.div>
@@ -291,7 +295,7 @@ export const Results = () => {
               >
                 <SectionCard title="Transaction Timeline" icon={<FiClock />}>
                   <div className="h-64">
-                    <TransactionTimeline transactions={caseData.transactions} />
+                    <TransactionTimeline transactions={transactionsArr} />
                   </div>
                 </SectionCard>
               </motion.div>
@@ -308,7 +312,7 @@ export const Results = () => {
                   title="Detected Anomalies"
                   icon={<FiAlertTriangle />}
                 >
-                  <AnomalyTable data={caseData.anomalies} />
+                  <AnomalyTable data={anomaliesArr} />
                 </SectionCard>
               </motion.div>
             )}
