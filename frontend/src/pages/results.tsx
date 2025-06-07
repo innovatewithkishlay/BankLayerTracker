@@ -224,10 +224,14 @@ export const Results = () => {
     );
   }
 
+  // Updated networkData with proper transaction amounts in edge data
   const networkData = {
     nodes: accountsArr.map((acc: any) => ({
       id: acc.accountNumber,
-      data: { label: acc.accountHolder || acc.accountNumber },
+      data: {
+        label: acc.accountHolder || acc.accountNumber,
+        accountNumber: acc.accountNumber,
+      },
       position: { x: Math.random() * 400, y: Math.random() * 400 },
       style: {
         border: "2px solid var(--cyber-accent)",
@@ -243,6 +247,11 @@ export const Results = () => {
       animated: true,
       style: { stroke: "var(--cyber-accent)" },
       labelStyle: { fill: "var(--cyber-accent)", fontWeight: 700 },
+      data: {
+        amount: tx.amount, // Critical fix - pass amount in data
+        date: tx.date,
+        timestamp: tx.date,
+      },
     })),
   };
 
@@ -253,7 +262,7 @@ export const Results = () => {
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-4">
             <div className="flex-1">
               <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">
-                {caseData.caseId}
+                Case {caseData.caseId}
               </h1>
               <p className="text-sm sm:text-base lg:text-lg opacity-80 mt-1">
                 {caseData.description || "AML Case Analysis"}
