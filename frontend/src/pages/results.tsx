@@ -262,7 +262,7 @@ export const Results = () => {
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-4">
             <div className="flex-1">
               <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">
-                Case {caseData.caseId}
+                {caseData.caseId}
               </h1>
               <p className="text-sm sm:text-base lg:text-lg opacity-80 mt-1">
                 {caseData.description || "AML Case Analysis"}
