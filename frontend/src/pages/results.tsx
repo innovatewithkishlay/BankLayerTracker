@@ -29,6 +29,21 @@ const getRiskColor = (score: number) => {
   return "text-green-400";
 };
 
+// YOUR OLD WORKING RISK CALCULATION
+const calculateRiskScore = (data: any) => {
+  if (!data.transactions) return 0;
+  let score = 0;
+  const highValueTransactions = data.transactions.filter(
+    (t: any) => t.amount > 50000
+  );
+  const structuringTransactions = data.transactions.filter(
+    (t: any) => t.amount >= 9000 && t.amount <= 10000
+  );
+  score += highValueTransactions.length * 25;
+  score += structuringTransactions.length * 15;
+  return Math.min(score, 100);
+};
+
 const TABS = [
   { key: "overview", label: "Overview", icon: <FiGrid /> },
   { key: "network", label: "Network", icon: <FiActivity /> },
@@ -139,10 +154,8 @@ export const Results = () => {
     ? caseData.accounts
     : [];
 
-  // CORRECTED RISK CALCULATION (matches your old working version)
-  const riskScore = transactionsArr.length
-    ? Math.min(100, (anomaliesArr.length / transactionsArr.length) * 100)
-    : 0;
+  // USE YOUR OLD WORKING RISK CALCULATION
+  const riskScore = caseData ? calculateRiskScore(caseData) : 0;
 
   if (loading || !caseData) {
     return (
