@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+:root {
+  --cyber-bg: #0a001a;
+  --cyber-card: #17002e;
+  --cyber-border: rgba(0, 255, 157, 0.15);
+  --cyber-accent: #00ff9d;
+}
