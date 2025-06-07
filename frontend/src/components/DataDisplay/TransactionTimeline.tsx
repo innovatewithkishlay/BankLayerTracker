@@ -19,14 +19,15 @@ export const TransactionTimeline = ({
   const svgRef = useRef<SVGSVGElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const [hoveredTransaction, setHoveredTransaction] = useState<any>(null);
-  const width = 800;
-  const height = 350;
-  const margin = { top: 40, right: 80, bottom: 60, left: 80 };
+
+  const width = 900;
+  const height = 400;
+  const margin = { top: 40, right: 100, bottom: 80, left: 100 };
 
   const highRiskThreshold = 50000;
   const structuringThreshold = 9000;
   const totalVolume = transactions.reduce((sum, t) => sum + t.amount, 0);
-  const avgTransaction = totalVolume / transactions.length;
+  const avgTransaction = totalVolume / transactions.length || 0;
   const highRiskCount = transactions.filter(
     (t) => t.amount > highRiskThreshold
   ).length;
@@ -47,7 +48,7 @@ export const TransactionTimeline = ({
       .range([margin.left, width - margin.right]);
 
     const yScale = scaleLinear()
-      .domain([0, maxAmount * 1.1])
+      .domain([0, maxAmount * 1.2])
       .range([height - margin.bottom, margin.top]);
 
     const lineGenerator = line<number>()
@@ -64,8 +65,8 @@ export const TransactionTimeline = ({
     const svg = select(svgRef.current);
     svg.selectAll("*").remove();
 
-    const xTicks = xScale.ticks(5);
-    const yTicks = yScale.ticks(6);
+    const xTicks = xScale.ticks(6);
+    const yTicks = yScale.ticks(8);
 
     svg
       .selectAll(".grid-line-x")
@@ -77,9 +78,9 @@ export const TransactionTimeline = ({
       .attr("x2", (d) => xScale(d))
       .attr("y1", margin.top)
       .attr("y2", height - margin.bottom)
-      .attr("stroke", "#333")
-      .attr("stroke-width", 0.5)
-      .attr("opacity", 0.3);
+      .attr("stroke", "#444")
+      .attr("stroke-width", 1)
+      .attr("opacity", 0.5);
 
     svg
       .selectAll(".grid-line-y")
@@ -91,36 +92,39 @@ export const TransactionTimeline = ({
       .attr("x2", width - margin.right)
       .attr("y1", (d) => yScale(d))
       .attr("y2", (d) => yScale(d))
-      .attr("stroke", "#333")
-      .attr("stroke-width", 0.5)
-      .attr("opacity", 0.3);
+      .attr("stroke", "#444")
+      .attr("stroke-width", 1)
+      .attr("opacity", 0.5);
 
-    svg
-      .append("line")
-      .attr("x1", margin.left)
-      .attr("x2", width - margin.right)
-      .attr("y1", yScale(highRiskThreshold))
-      .attr("y2", yScale(highRiskThreshold))
-      .attr("stroke", "#ff4444")
-      .attr("stroke-width", 2)
-      .attr("stroke-dasharray", "5,5")
-      .attr("opacity", 0.8);
+    if (maxAmount > highRiskThreshold) {
+      svg
+        .append("line")
+        .attr("x1", margin.left)
+        .attr("x2", width - margin.right)
+        .attr("y1", yScale(highRiskThreshold))
+        .attr("y2", yScale(highRiskThreshold))
+        .attr("stroke", "#ff4444")
+        .attr("stroke-width", 3)
+        .attr("stroke-dasharray", "8,4")
+        .attr("opacity", 0.9);
 
-    svg
-      .append("text")
-      .attr("x", width - margin.right + 5)
-      .attr("y", yScale(highRiskThreshold))
-      .attr("dy", "-5")
-      .attr("fill", "#ff4444")
-      .attr("font-size", "12px")
-      .attr("font-family", "'Space Mono', monospace")
-      .text("High Risk ($50K+)");
+      svg
+        .append("text")
+        .attr("x", width - margin.right + 10)
+        .attr("y", yScale(highRiskThreshold))
+        .attr("dy", "-8")
+        .attr("fill", "#ff4444")
+        .attr("font-size", "14px")
+        .attr("font-weight", "bold")
+        .attr("font-family", "'Space Mono', monospace")
+        .text("High Risk ($50K+)");
+    }
 
     svg
       .append("path")
       .datum(amounts)
       .attr("fill", "url(#areaGradient)")
-      .attr("opacity", 0.3)
+      .attr("opacity", 0.4)
       .attr("d", areaGenerator);
 
     svg
@@ -128,9 +132,9 @@ export const TransactionTimeline = ({
       .datum(amounts)
       .attr("fill", "none")
       .attr("stroke", "#00ff9d")
-      .attr("stroke-width", 3)
+      .attr("stroke-width", 4)
       .attr("d", lineGenerator)
-      .style("filter", "drop-shadow(0 2px 4px rgba(0, 255, 157, 0.3))");
+      .style("filter", "drop-shadow(0 2px 6px rgba(0, 255, 157, 0.4))");
 
     svg
       .selectAll("circle")
@@ -139,35 +143,35 @@ export const TransactionTimeline = ({
       .append("circle")
       .attr("cx", (d) => xScale(new Date(d.date)))
       .attr("cy", (d) => yScale(d.amount))
-      .attr("r", (d) => (d.amount > highRiskThreshold ? 6 : 4))
+      .attr("r", (d) => (d.amount > highRiskThreshold ? 8 : 6))
       .attr("fill", (d) => {
         if (d.amount > highRiskThreshold) return "#ff4444";
         if (d.amount >= structuringThreshold && d.amount <= 10000)
           return "#ffaa44";
         return "#00ff9d";
       })
-      .attr("stroke", "#0A001A")
+      .attr("stroke", "#ffffff")
       .attr("stroke-width", 2)
       .style("cursor", "pointer")
       .style("filter", (d) =>
         d.amount > highRiskThreshold
-          ? "drop-shadow(0 2px 8px rgba(255, 68, 68, 0.5))"
-          : "none"
+          ? "drop-shadow(0 2px 8px rgba(255, 68, 68, 0.6))"
+          : "drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))"
       )
       .on("mouseover", function (event, d) {
-        select(this).transition().duration(150).attr("r", 8);
+        select(this).transition().duration(150).attr("r", 12);
         setHoveredTransaction(d);
         if (tooltipRef.current) {
           tooltipRef.current.style.display = "block";
-          tooltipRef.current.style.left = event.pageX + 10 + "px";
-          tooltipRef.current.style.top = event.pageY - 10 + "px";
+          tooltipRef.current.style.left = event.pageX + 15 + "px";
+          tooltipRef.current.style.top = event.pageY - 15 + "px";
         }
       })
       .on("mouseout", function (event, d) {
         select(this)
           .transition()
           .duration(150)
-          .attr("r", d.amount > highRiskThreshold ? 6 : 4);
+          .attr("r", d.amount > highRiskThreshold ? 8 : 6);
         setHoveredTransaction(null);
         if (tooltipRef.current) {
           tooltipRef.current.style.display = "none";
@@ -175,13 +179,13 @@ export const TransactionTimeline = ({
       })
       .on("mousemove", function (event) {
         if (tooltipRef.current) {
-          tooltipRef.current.style.left = event.pageX + 10 + "px";
-          tooltipRef.current.style.top = event.pageY - 10 + "px";
+          tooltipRef.current.style.left = event.pageX + 15 + "px";
+          tooltipRef.current.style.top = event.pageY - 15 + "px";
         }
       });
 
     const xAxis = axisBottom(xScale)
-      .ticks(5)
+      .ticks(6)
       .tickFormat((d) => {
         const date = new Date(d.valueOf());
         return date.toLocaleDateString("en-US", {
@@ -194,46 +198,74 @@ export const TransactionTimeline = ({
       .append("g")
       .attr("transform", `translate(0,${height - margin.bottom})`)
       .call(xAxis)
-      .attr("color", "#00ff9d")
       .selectAll("text")
       .style("font-family", "'Space Mono', monospace")
-      .style("font-size", "12px");
+      .style("font-size", "14px")
+      .style("fill", "#00ff9d")
+      .style("font-weight", "bold");
+
+    svg
+      .select("g")
+      .selectAll("line")
+      .style("stroke", "#00ff9d")
+      .style("stroke-width", 2);
+
+    svg
+      .select("g")
+      .select(".domain")
+      .style("stroke", "#00ff9d")
+      .style("stroke-width", 2);
 
     svg
       .append("text")
       .attr("x", (width - margin.left - margin.right) / 2 + margin.left)
-      .attr("y", height - 10)
+      .attr("y", height - 20)
       .attr("text-anchor", "middle")
-      .attr("fill", "#888")
-      .attr("font-size", "14px")
+      .attr("fill", "#00ff9d")
+      .attr("font-size", "16px")
+      .attr("font-weight", "bold")
       .attr("font-family", "'Space Mono', monospace")
       .text("Transaction Date");
 
     const yAxis = axisLeft(yScale)
-      .ticks(6)
+      .ticks(8)
       .tickFormat((d) => {
         const value = d.valueOf();
         if (value >= 1000) return `$${(value / 1000).toFixed(0)}K`;
         return `$${value.toLocaleString()}`;
       });
 
-    svg
+    const yAxisGroup = svg
       .append("g")
       .attr("transform", `translate(${margin.left},0)`)
-      .call(yAxis)
-      .attr("color", "#00ff9d")
+      .call(yAxis);
+
+    yAxisGroup
       .selectAll("text")
       .style("font-family", "'Space Mono', monospace")
-      .style("font-size", "12px");
+      .style("font-size", "14px")
+      .style("fill", "#00ff9d")
+      .style("font-weight", "bold");
+
+    yAxisGroup
+      .selectAll("line")
+      .style("stroke", "#00ff9d")
+      .style("stroke-width", 2);
+
+    yAxisGroup
+      .select(".domain")
+      .style("stroke", "#00ff9d")
+      .style("stroke-width", 2);
 
     svg
       .append("text")
       .attr("transform", "rotate(-90)")
       .attr("x", -(height - margin.top - margin.bottom) / 2 - margin.top)
-      .attr("y", 20)
+      .attr("y", 30)
       .attr("text-anchor", "middle")
-      .attr("fill", "#888")
-      .attr("font-size", "14px")
+      .attr("fill", "#00ff9d")
+      .attr("font-size", "16px")
+      .attr("font-weight", "bold")
       .attr("font-family", "'Space Mono', monospace")
       .text("Transaction Amount");
 
@@ -277,85 +309,100 @@ export const TransactionTimeline = ({
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="relative"
+      className="relative w-full"
     >
-      <div className="mb-6 p-4 bg-[var(--cyber-card)]/50 rounded-lg border border-[var(--cyber-border)]">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="mb-6 p-6 bg-[var(--cyber-card)]/70 rounded-xl border border-[var(--cyber-border)]">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div>
-            <h3 className="text-lg font-bold text-[var(--cyber-accent)] mb-2">
+            <h3 className="text-xl font-bold text-[var(--cyber-accent)] mb-2">
               Transaction Volume Timeline
             </h3>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-gray-300">
               Monitor transaction patterns and identify suspicious activities
               over time
             </p>
           </div>
-          <div className="flex flex-wrap gap-4 text-sm">
+          <div className="flex flex-wrap gap-6 text-sm">
             <div className="flex items-center gap-2">
-              <FiTrendingUp className="text-[var(--cyber-accent)]" />
-              <span>Total: ${totalVolume.toLocaleString()}</span>
+              <FiTrendingUp className="text-[var(--cyber-accent)] text-lg" />
+              <span className="text-white font-medium">
+                Total: ${totalVolume.toLocaleString()}
+              </span>
             </div>
             <div className="flex items-center gap-2">
-              <FiInfo className="text-blue-400" />
-              <span>Avg: ${Math.round(avgTransaction).toLocaleString()}</span>
+              <FiInfo className="text-blue-400 text-lg" />
+              <span className="text-white font-medium">
+                Avg: ${Math.round(avgTransaction).toLocaleString()}
+              </span>
             </div>
             <div className="flex items-center gap-2">
-              <FiAlertTriangle className="text-red-400" />
-              <span>{highRiskCount} High Risk</span>
+              <FiAlertTriangle className="text-red-400 text-lg" />
+              <span className="text-white font-medium">
+                {highRiskCount} High Risk
+              </span>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="mb-4 flex flex-wrap gap-4 text-sm">
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-green-400"></div>
-          <span>Normal (&lt;$9K)</span>
+      <div className="mb-6 flex flex-wrap gap-6 text-sm">
+        <div className="flex items-center gap-3">
+          <div className="w-4 h-4 rounded-full bg-green-400"></div>
+          <span className="text-white font-medium">Normal (&lt;$9K)</span>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
-          <span>Structuring ($9K-$10K)</span>
+        <div className="flex items-center gap-3">
+          <div className="w-4 h-4 rounded-full bg-yellow-400"></div>
+          <span className="text-white font-medium">Structuring ($9K-$10K)</span>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-red-400"></div>
-          <span>High Risk (&gt;$50K)</span>
+        <div className="flex items-center gap-3">
+          <div className="w-4 h-4 rounded-full bg-red-400"></div>
+          <span className="text-white font-medium">High Risk (&gt;$50K)</span>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-0.5 border-t-2 border-dashed border-red-400"></div>
-          <span>Risk Threshold</span>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-1 border-t-3 border-dashed border-red-400"></div>
+          <span className="text-white font-medium">Risk Threshold</span>
         </div>
       </div>
 
-      <div className="relative bg-[var(--cyber-bg)] rounded-lg border border-[var(--cyber-border)] p-4">
+      <div className="relative bg-[#1a1a1a] rounded-xl border-2 border-[var(--cyber-border)] p-6 overflow-x-auto">
         <svg
           ref={svgRef}
           width="100%"
           height={height}
           viewBox={`0 0 ${width} ${height}`}
-          className="overflow-visible"
+          className="min-w-[800px]"
         />
+
         <div
           ref={tooltipRef}
-          className="fixed pointer-events-none z-50 bg-[var(--cyber-card)] border border-[var(--cyber-border)] rounded-lg p-3 shadow-lg"
+          className="fixed pointer-events-none z-50 bg-[#1a1a1a] border-2 border-[var(--cyber-accent)] rounded-lg p-4 shadow-2xl"
           style={{ display: "none" }}
         >
           {hoveredTransaction && (
             <div className="text-sm">
-              <div className="font-bold text-[var(--cyber-accent)] mb-1">
+              <div className="font-bold text-[var(--cyber-accent)] mb-2 text-base">
                 Transaction Details
               </div>
-              <div className="space-y-1">
+              <div className="space-y-2">
                 <div>
-                  <span className="text-gray-400">Date:</span>{" "}
-                  {new Date(hoveredTransaction.date).toLocaleDateString()}
+                  <span className="text-gray-300 font-medium">Date:</span>{" "}
+                  <span className="text-white">
+                    {new Date(hoveredTransaction.date).toLocaleDateString()}
+                  </span>
                 </div>
                 <div>
-                  <span className="text-gray-400">Amount:</span> $
-                  {hoveredTransaction.amount.toLocaleString()}
+                  <span className="text-gray-300 font-medium">Amount:</span>{" "}
+                  <span className="text-white font-bold">
+                    ${hoveredTransaction.amount.toLocaleString()}
+                  </span>
                 </div>
                 <div>
-                  <span className="text-gray-400">Risk Level:</span>{" "}
-                  <span className={getRiskColor(hoveredTransaction.amount)}>
+                  <span className="text-gray-300 font-medium">Risk Level:</span>{" "}
+                  <span
+                    className={`font-bold ${getRiskColor(
+                      hoveredTransaction.amount
+                    )}`}
+                  >
                     {getRiskLevel(hoveredTransaction.amount)}
                   </span>
                 </div>
@@ -365,13 +412,13 @@ export const TransactionTimeline = ({
         </div>
       </div>
 
-      <div className="mt-4 p-3 bg-[var(--cyber-card)]/30 rounded-lg border border-[var(--cyber-border)]">
-        <div className="text-xs text-gray-400">
-          <strong>Insights:</strong>{" "}
+      <div className="mt-4 p-4 bg-[var(--cyber-card)]/50 rounded-lg border border-[var(--cyber-border)]">
+        <div className="text-sm text-gray-300">
+          <strong className="text-[var(--cyber-accent)]">Insights:</strong>{" "}
           {highRiskCount > 0
             ? `${highRiskCount} transactions exceed the $50K high-risk threshold. `
             : "No high-risk transactions detected. "}
-          Average transaction size is $
+          Average transaction size is{" "}
           {avgTransaction > 25000 ? "above" : "below"} normal range.
         </div>
       </div>
