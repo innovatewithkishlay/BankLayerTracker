@@ -101,6 +101,12 @@ const MetricCard = ({
   </div>
 );
 
+const getRiskLevel = (score: number): "LOW" | "MEDIUM" | "HIGH" => {
+  if (score > 75) return "HIGH";
+  if (score > 50) return "MEDIUM";
+  return "LOW";
+};
+
 export const Results = () => {
   const { caseId } = useParams();
   const { getCase } = useAML();
@@ -170,14 +176,17 @@ export const Results = () => {
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold">
-              {caseData.caseId}
+              Case {caseData.caseId}
             </h1>
             <p className="text-base sm:text-lg opacity-80">
               {caseData.description || "AML Case Analysis"}
             </p>
           </div>
           <div className="flex items-center gap-6 mt-3 sm:mt-0">
-            <RiskMeter score={Math.round(riskScore)} />
+            <RiskMeter
+              score={Math.round(riskScore)}
+              level={getRiskLevel(riskScore)}
+            />
           </div>
         </div>
         <div className="flex border-b border-[var(--cyber-border)] mt-4">
