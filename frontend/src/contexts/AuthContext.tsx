@@ -31,13 +31,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           throw new Error("Invalid user data");
         }
         setUser(data.user);
-        toast.success("Authentication sequence complete", {
-          style: {
-            background: "#0d0d0d",
-            color: "#00ff9d",
-            border: "1px solid #00ff9d50",
-          },
-        });
+
+        if (localStorage.getItem("showWelcomeToast") === "true") {
+          toast.success(`Welcome back, ${data.user.name}`, {
+            icon: "👋",
+            style: {
+              background: "#0d0d0d",
+              color: "#00ff9d",
+              border: "1px solid #00ff9d50",
+            },
+          });
+          localStorage.removeItem("showWelcomeToast");
+        }
       } catch (err) {
         console.error("Auth check failed:", err);
         setUser(null);
