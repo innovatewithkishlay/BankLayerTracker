@@ -23,7 +23,7 @@ export const Home = () => {
   const { user, loading } = useAuth();
 
   useEffect(() => {
-    if (user) {
+    if (user && localStorage.getItem("showWelcomeToast") === "true") {
       toast.success(`Welcome back, ${user.name}`, {
         icon: "👋",
         style: {
@@ -32,6 +32,7 @@ export const Home = () => {
           border: "1px solid #00ff9d50",
         },
       });
+      localStorage.removeItem("showWelcomeToast");
     }
   }, [user]);
 
