@@ -1,233 +1,347 @@
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useAML } from "../hooks/useApi";
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import {
-  FiShield,
-  FiActivity,
-  FiUsers,
-  FiTrendingUp,
-  FiMapPin,
-  FiClock,
-} from "react-icons/fi";
 import { NetworkGraph } from "../components/DataDisplay/NetworkGraph";
 import { RiskMeter } from "../components/DataDisplay/RiskMeter";
 import { AnomalyTable } from "../components/DataDisplay/AnomalyTable";
 import { GeographicMap } from "../components/DataDisplay/GeographicMap";
 import { TransactionTimeline } from "../components/DataDisplay/TransactionTimeline";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  FiGrid,
+  FiActivity,
+  FiMap,
+  FiClock,
+  FiAlertTriangle,
+  FiChevronDown,
+} from "react-icons/fi";
 
-interface NetworkData {
-  nodes: any[];
-  edges: any[];
-}
+// Risk calculation helpers (matches your old working version)
+const getRiskLevel = (score: number): "LOW" | "MEDIUM" | "HIGH" => {
+  if (score > 75) return "HIGH";
+  if (score > 50) return "MEDIUM";
+  return "LOW";
+};
+
+const getRiskColor = (score: number) => {
+  if (score > 75) return "text-red-400";
+  if (score > 50) return "text-yellow-400";
+  return "text-green-400";
+};
+
+const TABS = [
+  { key: "overview", label: "Overview", icon: <FiGrid /> },
+  { key: "network", label: "Network", icon: <FiActivity /> },
+  { key: "geography", label: "Geography", icon: <FiMap /> },
+  { key: "timeline", label: "Timeline", icon: <FiClock /> },
+  { key: "anomalies", label: "Anomalies", icon: <FiAlertTriangle /> },
+];
+
+const SectionCard = ({
+  title,
+  icon,
+  children,
+  defaultOpen = true,
+}: {
+  title: string;
+  icon: React.ReactNode;
+  children: React.ReactNode;
+  defaultOpen?: boolean;
+}) => {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+  return (
+    <div className="bg-[var(--cyber-card)]/80 rounded-xl border border-[var(--cyber-border)] shadow-lg">
+      <button
+        onClick={() => setIsOpen((v) => !v)}
+        className="flex items-center justify-between w-full p-4 hover:bg-[var(--cyber-accent)]/5 rounded-t-xl transition-colors"
+      >
+        <div className="flex items-center gap-3">
+          {icon}
+          <h3 className="text-lg font-semibold">{title}</h3>
+        </div>
+        <motion.div
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <FiChevronDown />
+        </motion.div>
+      </button>
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="overflow-hidden"
+          >
+            <div className="p-4 pt-0">{children}</div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+const MetricCard = ({
+  label,
+  value,
+  trend,
+  danger = false,
+}: {
+  label: string;
+  value: string | number | undefined;
+  trend?: string;
+  danger?: boolean;
+}) => (
+  <div className="p-4 rounded-lg bg-[var(--cyber-bg)] border border-[var(--cyber-border)] flex flex-col">
+    <div className="flex justify-between items-center mb-2">
+      <span className="text-xs text-gray-400">{label}</span>
+      {trend && (
+        <span
+          className={`text-xs ${danger ? "text-red-400" : "text-green-400"}`}
+        >
+          {trend}
+        </span>
+      )}
+    </div>
+    <div
+      className={`text-2xl font-bold ${
+        danger ? "text-red-400" : "text-[var(--cyber-accent)]"
+      }`}
+    >
+      {value}
+    </div>
+  </div>
+);
 
 export const Results = () => {
   const { caseId } = useParams();
   const { getCase } = useAML();
+  const [activeTab, setActiveTab] = useState("overview");
   const [caseData, setCaseData] = useState<any>(null);
-  const [riskScore, setRiskScore] = useState(0);
-  const [networkData, setNetworkData] = useState<NetworkData>({
-    nodes: [],
-    edges: [],
-  });
-
-  const generateNetworkData = (transactions: any[]) => {
-    const accounts = new Set<string>();
-    transactions.forEach((tx) => {
-      accounts.add(tx.fromAccount);
-      accounts.add(tx.toAccount);
-    });
-
-    const nodes = Array.from(accounts).map((account, index) => ({
-      id: account,
-      data: { label: account },
-      position: { x: index * 200, y: 100 },
-    }));
-
-    const edges = transactions.map((tx, index) => ({
-      id: `e${index}`,
-      source: tx.fromAccount,
-      target: tx.toAccount,
-      label: `$${tx.amount}`,
-    }));
-
-    return { nodes, edges };
-  };
-
-  // Calculate risk score
-  const calculateRiskScore = (data: any) => {
-    if (!data.transactions) return 0;
-    let score = 0;
-    const highValueTransactions = data.transactions.filter(
-      (t: any) => t.amount > 50000
-    );
-    const structuringTransactions = data.transactions.filter(
-      (t: any) => t.amount >= 9000 && t.amount <= 10000
-    );
-    score += highValueTransactions.length * 25;
-    score += structuringTransactions.length * 15;
-    return Math.min(score, 100);
-  };
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadData = async () => {
-      if (caseId) {
-        const data = await getCase(caseId);
-        setCaseData(data);
-        const network = generateNetworkData(data.transactions || []);
-        setNetworkData(network);
-        setRiskScore(calculateRiskScore(data));
-      }
-    };
-    loadData();
+    setLoading(true);
+    getCase(caseId!)
+      .then((data) => setCaseData(data))
+      .finally(() => setLoading(false));
   }, [caseId]);
 
-  if (!caseData) {
+  // Safe guards for arrays
+  const anomaliesArr = Array.isArray(caseData?.anomalies)
+    ? caseData.anomalies
+    : [];
+  const transactionsArr = Array.isArray(caseData?.transactions)
+    ? caseData.transactions
+    : [];
+  const accountsArr = Array.isArray(caseData?.accounts)
+    ? caseData.accounts
+    : [];
+
+  // CORRECTED RISK CALCULATION (matches your old working version)
+  const riskScore = transactionsArr.length
+    ? Math.min(100, (anomaliesArr.length / transactionsArr.length) * 100)
+    : 0;
+
+  if (loading || !caseData) {
     return (
-      <div className="h-screen bg-[#0A001A] flex items-center justify-center">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-          className="w-16 h-16 border-4 border-[#00ff9d] border-t-transparent rounded-full"
-        />
-        <span className="ml-4 text-[#00ff9d] font-mono">
-          Analyzing threat patterns...
-        </span>
+      <div className="min-h-screen flex items-center justify-center bg-[var(--cyber-bg)]">
+        <div className="w-16 h-16 border-4 border-[var(--cyber-accent)] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
+  // Example: build networkData from your caseData
+  const networkData = {
+    nodes: accountsArr.map((acc: any) => ({
+      id: acc.accountNumber,
+      data: { label: acc.accountHolder || acc.accountNumber },
+      position: { x: Math.random() * 400, y: Math.random() * 400 },
+      style: {
+        border: "2px solid var(--cyber-accent)",
+        background: "var(--cyber-card)",
+        color: "var(--cyber-accent)",
+      },
+    })),
+    edges: transactionsArr.map((tx: any, i: number) => ({
+      id: `e${i}`,
+      source: tx.fromAccount,
+      target: tx.toAccount,
+      label: `$${tx.amount}`,
+      animated: true,
+      style: { stroke: "var(--cyber-accent)" },
+      labelStyle: { fill: "var(--cyber-accent)", fontWeight: 700 },
+    })),
+  };
+
   return (
-    <div className="min-h-screen bg-[#0A001A] text-[#00ff9d] p-6">
-      {/* Header Section */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-4xl font-bold font-orbitron mb-2">
-            THREAT ANALYSIS REPORT
-          </h1>
-          <p className="text-xl opacity-80">Case ID: {caseData.caseId}</p>
-        </div>
-        <div className="flex items-center space-x-4">
-          <RiskMeter score={riskScore} />
-          <div className="text-right">
-            <p className="text-sm opacity-60">Risk Level</p>
-            <p
-              className={`text-2xl font-bold ${
-                riskScore > 75
-                  ? "text-red-400"
-                  : riskScore > 50
-                  ? "text-yellow-400"
-                  : "text-green-400"
-              }`}
-            >
-              {riskScore > 75
-                ? "CRITICAL"
-                : riskScore > 50
-                ? "HIGH"
-                : riskScore > 25
-                ? "MEDIUM"
-                : "LOW"}
+    <div className="min-h-screen bg-[var(--cyber-bg)] text-white">
+      {/* Sticky Summary Header */}
+      <div className="sticky top-0 z-10 bg-[var(--cyber-bg)]/95 backdrop-blur px-4 py-4 border-b border-[var(--cyber-border)]">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold">
+              Case {caseData.caseId}
+            </h1>
+            <p className="text-base sm:text-lg opacity-80">
+              {caseData.description || "AML Case Analysis"}
             </p>
           </div>
-        </div>
-      </div>
-
-      {/* Key Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-[#17002E] border border-[#00ff9d] rounded-xl p-6">
-          <div className="flex items-center justify-between mb-2">
-            <FiActivity className="text-2xl text-[#00ff9d]" />
-            <span className="text-xs text-green-400">+12%</span>
+          <div className="flex items-center gap-6 mt-3 sm:mt-0">
+            <div className="flex flex-col items-center">
+              <RiskMeter
+                score={Math.round(riskScore)}
+                level={getRiskLevel(riskScore)}
+              />
+              <div className="mt-2 text-center">
+                <div className="text-xs opacity-60">Risk Level</div>
+                <div className={`text-xl font-bold ${getRiskColor(riskScore)}`}>
+                  {getRiskLevel(riskScore)}
+                </div>
+              </div>
+            </div>
           </div>
-          <h3 className="text-sm opacity-80 mb-1">Total Transactions</h3>
-          <p className="text-2xl font-bold text-[#00ff9d]">
-            {caseData.transactions?.length || 0}
-          </p>
         </div>
-        <div className="bg-[#17002E] border border-[#00ff9d] rounded-xl p-6">
-          <div className="flex items-center justify-between mb-2">
-            <FiUsers className="text-2xl text-[#00ff9d]" />
-            <span className="text-xs text-green-400">+5%</span>
-          </div>
-          <h3 className="text-sm opacity-80 mb-1">Accounts Involved</h3>
-          <p className="text-2xl font-bold text-[#00ff9d]">
-            {
-              new Set([
-                ...(caseData.transactions?.map((t: any) => t.fromAccount) ||
-                  []),
-                ...(caseData.transactions?.map((t: any) => t.toAccount) || []),
-              ]).size
-            }
-          </p>
-        </div>
-        <div className="bg-[#17002E] border border-red-400 rounded-xl p-6">
-          <div className="flex items-center justify-between mb-2">
-            <FiShield className="text-2xl text-red-400" />
-            <span className="text-xs text-green-400">+23%</span>
-          </div>
-          <h3 className="text-sm opacity-80 mb-1">Anomalies Detected</h3>
-          <p className="text-2xl font-bold text-red-400">
-            {Array.isArray(caseData.anomalies)
-              ? caseData.anomalies.reduce(
-                  (sum: number, a: any) => sum + a.count,
-                  0
-                )
-              : 0}
-          </p>
-        </div>
-        <div className="bg-[#17002E] border border-[#00ff9d] rounded-xl p-6">
-          <div className="flex items-center justify-between mb-2">
-            <FiTrendingUp className="text-2xl text-[#00ff9d]" />
-            <span className="text-xs text-green-400">+18%</span>
-          </div>
-          <h3 className="text-sm opacity-80 mb-1">Total Volume</h3>
-          <p className="text-2xl font-bold text-[#00ff9d]">
-            $
-            {caseData.transactions
-              ?.reduce((sum: number, t: any) => sum + t.amount, 0)
-              .toLocaleString() || 0}
-          </p>
+        {/* Navigation Tabs */}
+        <div className="flex border-b border-[var(--cyber-border)] mt-4">
+          {TABS.map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`px-6 py-3 flex items-center gap-2 font-semibold transition-colors ${
+                activeTab === tab.key
+                  ? "text-[var(--cyber-accent)] border-b-2 border-[var(--cyber-accent)]"
+                  : "text-gray-400 hover:bg-[var(--cyber-accent)]/5"
+              }`}
+            >
+              {tab.icon}
+              {tab.label}
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Network Graph Section */}
-      <div className="mb-12 border-2 border-[#00ff9d] rounded-xl p-6 bg-[#17002E]">
-        <h2 className="text-xl font-bold mb-4 flex items-center">
-          <FiActivity className="mr-2" />
-          Transaction Network
-        </h2>
-        <NetworkGraph
-          nodes={networkData.nodes}
-          edges={networkData.edges}
-          height={400}
-        />
-      </div>
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Key Metrics Sidebar */}
+        <div className="lg:col-span-1 space-y-4">
+          <SectionCard title="Key Metrics" icon={<FiGrid />} defaultOpen>
+            <div className="grid grid-cols-2 gap-4">
+              <MetricCard
+                label="Total Transactions"
+                value={transactionsArr.length}
+                trend="+12%"
+              />
+              <MetricCard
+                label="Accounts Involved"
+                value={accountsArr.length}
+                trend="+5%"
+              />
+              <MetricCard
+                label="Total Volume"
+                value={`$${transactionsArr
+                  .reduce((s: number, t: any) => s + t.amount, 0)
+                  .toLocaleString()}`}
+                trend="+18%"
+              />
+              <MetricCard
+                label="Anomalies"
+                value={anomaliesArr.length}
+                trend="+23%"
+                danger
+              />
+            </div>
+          </SectionCard>
+        </div>
 
-      {/* Geographic Map Section */}
-      <div className="mb-12 border-2 border-[#00ff9d] rounded-xl p-6 bg-[#17002E]">
-        <h2 className="text-xl font-bold mb-4 flex items-center">
-          <FiMapPin className="mr-2" />
-          Geographic Distribution
-        </h2>
-        <GeographicMap transactions={caseData.transactions || []} />
-      </div>
+        {/* Main Visualization Area */}
+        <div className="lg:col-span-2 space-y-6">
+          <AnimatePresence mode="wait">
+            {activeTab === "overview" && (
+              <motion.div
+                key="overview"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="space-y-6"
+              >
+                <SectionCard title="Risk Overview" icon={<FiActivity />}>
+                  <div className="h-64">
+                    <TransactionTimeline transactions={transactionsArr} />
+                  </div>
+                </SectionCard>
+                <SectionCard title="Top Anomalies" icon={<FiAlertTriangle />}>
+                  <AnomalyTable data={anomaliesArr} />
+                </SectionCard>
+              </motion.div>
+            )}
 
-      {/* Transaction Timeline Section */}
-      <div className="mb-12 border-2 border-[#00ff9d] rounded-xl p-6 bg-[#17002E]">
-        <h2 className="text-xl font-bold mb-4 flex items-center">
-          <FiClock className="mr-2" />
-          Transaction Timeline
-        </h2>
-        <TransactionTimeline transactions={caseData.transactions || []} />
-      </div>
+            {activeTab === "network" && (
+              <motion.div
+                key="network"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <SectionCard title="Transaction Network" icon={<FiActivity />}>
+                  <div className="h-[500px]">
+                    <NetworkGraph
+                      nodes={networkData.nodes}
+                      edges={networkData.edges}
+                    />
+                  </div>
+                </SectionCard>
+              </motion.div>
+            )}
 
-      {/* Anomaly Table Section */}
-      <div className="mb-12 border-2 border-[#00ff9d] rounded-xl p-6 bg-[#17002E]">
-        <h2 className="text-xl font-bold mb-4 flex items-center">
-          <FiShield className="mr-2" />
-          Detected Anomalies
-        </h2>
-        <AnomalyTable data={caseData.anomalies || []} />
+            {activeTab === "geography" && (
+              <motion.div
+                key="geography"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <SectionCard title="Geographic Analysis" icon={<FiMap />}>
+                  <div className="h-[500px]">
+                    <GeographicMap transactions={transactionsArr} />
+                  </div>
+                </SectionCard>
+              </motion.div>
+            )}
+
+            {activeTab === "timeline" && (
+              <motion.div
+                key="timeline"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <SectionCard title="Transaction Timeline" icon={<FiClock />}>
+                  <div className="h-64">
+                    <TransactionTimeline transactions={transactionsArr} />
+                  </div>
+                </SectionCard>
+              </motion.div>
+            )}
+
+            {activeTab === "anomalies" && (
+              <motion.div
+                key="anomalies"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <SectionCard
+                  title="Detected Anomalies"
+                  icon={<FiAlertTriangle />}
+                >
+                  <AnomalyTable data={anomaliesArr} />
+                </SectionCard>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );
