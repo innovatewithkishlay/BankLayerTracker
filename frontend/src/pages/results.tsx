@@ -350,7 +350,7 @@ export const Results = () => {
                   className="space-y-6"
                 >
                   <SectionCard title="Risk Overview" icon={<FiActivity />}>
-                    <div className="h-48 sm:h-64">
+                    <div className="h-[400px] sm:h-[450px] lg:h-[500px]">
                       <TransactionTimeline transactions={transactionsArr} />
                     </div>
                   </SectionCard>
@@ -406,7 +406,7 @@ export const Results = () => {
                   exit={{ opacity: 0 }}
                 >
                   <SectionCard title="Transaction Timeline" icon={<FiClock />}>
-                    <div className="h-48 sm:h-64">
+                    <div className="h-[400px] sm:h-[450px] lg:h-[500px]">
                       <TransactionTimeline transactions={transactionsArr} />
                     </div>
                   </SectionCard>
