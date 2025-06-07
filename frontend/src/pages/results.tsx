@@ -14,9 +14,10 @@ import {
   FiClock,
   FiAlertTriangle,
   FiChevronDown,
+  FiMenu,
+  FiX,
 } from "react-icons/fi";
 
-// Risk calculation helpers (matches your old working version)
 const getRiskLevel = (score: number): "LOW" | "MEDIUM" | "HIGH" => {
   if (score > 75) return "HIGH";
   if (score > 50) return "MEDIUM";
@@ -29,7 +30,6 @@ const getRiskColor = (score: number) => {
   return "text-green-400";
 };
 
-// YOUR OLD WORKING RISK CALCULATION
 const calculateRiskScore = (data: any) => {
   if (!data.transactions) return 0;
   let score = 0;
@@ -120,7 +120,7 @@ const MetricCard = ({
       )}
     </div>
     <div
-      className={`text-2xl font-bold ${
+      className={`text-xl lg:text-2xl font-bold ${
         danger ? "text-red-400" : "text-[var(--cyber-accent)]"
       }`}
     >
@@ -128,6 +128,67 @@ const MetricCard = ({
     </div>
   </div>
 );
+
+const MobileTabSelector = ({
+  activeTab,
+  setActiveTab,
+}: {
+  activeTab: string;
+  setActiveTab: (tab: string) => void;
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const activeTabData = TABS.find((tab) => tab.key === activeTab);
+
+  return (
+    <div className="relative lg:hidden">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center justify-between w-full px-4 py-3 bg-[var(--cyber-card)] border border-[var(--cyber-border)] rounded-xl"
+      >
+        <div className="flex items-center gap-2">
+          {activeTabData?.icon}
+          <span className="font-semibold text-[var(--cyber-accent)]">
+            {activeTabData?.label}
+          </span>
+        </div>
+        <motion.div
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <FiChevronDown />
+        </motion.div>
+      </button>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="absolute top-full left-0 right-0 mt-2 bg-[var(--cyber-card)] border border-[var(--cyber-border)] rounded-xl z-50"
+          >
+            {TABS.map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => {
+                  setActiveTab(tab.key);
+                  setIsOpen(false);
+                }}
+                className={`w-full px-4 py-3 flex items-center gap-2 transition-colors ${
+                  activeTab === tab.key
+                    ? "text-[var(--cyber-accent)]"
+                    : "text-gray-400 hover:bg-[var(--cyber-accent)]/5"
+                }`}
+              >
+                {tab.icon}
+                {tab.label}
+              </button>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 
 export const Results = () => {
   const { caseId } = useParams();
@@ -143,7 +204,6 @@ export const Results = () => {
       .finally(() => setLoading(false));
   }, [caseId]);
 
-  // Safe guards for arrays
   const anomaliesArr = Array.isArray(caseData?.anomalies)
     ? caseData.anomalies
     : [];
@@ -154,7 +214,6 @@ export const Results = () => {
     ? caseData.accounts
     : [];
 
-  // USE YOUR OLD WORKING RISK CALCULATION
   const riskScore = caseData ? calculateRiskScore(caseData) : 0;
 
   if (loading || !caseData) {
@@ -165,7 +224,6 @@ export const Results = () => {
     );
   }
 
-  // Example: build networkData from your caseData
   const networkData = {
     nodes: accountsArr.map((acc: any) => ({
       id: acc.accountNumber,
@@ -190,170 +248,190 @@ export const Results = () => {
 
   return (
     <div className="min-h-screen bg-[var(--cyber-bg)] text-white">
-      {/* Sticky Summary Header */}
       <div className="sticky top-0 z-10 bg-[var(--cyber-bg)]/95 backdrop-blur px-4 py-4 border-b border-[var(--cyber-border)]">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold">
-              Case {caseData.caseId}
-            </h1>
-            <p className="text-base sm:text-lg opacity-80">
-              {caseData.description || "AML Case Analysis"}
-            </p>
-          </div>
-          <div className="flex items-center gap-6 mt-3 sm:mt-0">
-            <div className="flex flex-col items-center">
-              <RiskMeter
-                score={Math.round(riskScore)}
-                level={getRiskLevel(riskScore)}
-              />
-              <div className="mt-2 text-center">
-                <div className="text-xs opacity-60">Risk Level</div>
-                <div className={`text-xl font-bold ${getRiskColor(riskScore)}`}>
-                  {getRiskLevel(riskScore)}
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-4">
+            <div className="flex-1">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">
+                {caseData.caseId}
+              </h1>
+              <p className="text-sm sm:text-base lg:text-lg opacity-80 mt-1">
+                {caseData.description || "AML Case Analysis"}
+              </p>
+            </div>
+
+            <div className="flex items-center gap-4 lg:gap-6">
+              <div className="flex items-center gap-4">
+                <RiskMeter
+                  score={Math.round(riskScore)}
+                  level={getRiskLevel(riskScore)}
+                />
+                <div className="flex flex-col">
+                  <div className="text-xs opacity-60 mb-1">Risk Level</div>
+                  <div
+                    className={`text-lg lg:text-xl font-bold ${getRiskColor(
+                      riskScore
+                    )}`}
+                  >
+                    {getRiskLevel(riskScore)}
+                  </div>
+                  <div className="text-xs opacity-60 mt-1">
+                    {Math.round(riskScore)}% Risk Score
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        {/* Navigation Tabs */}
-        <div className="flex border-b border-[var(--cyber-border)] mt-4">
-          {TABS.map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
-              className={`px-6 py-3 flex items-center gap-2 font-semibold transition-colors ${
-                activeTab === tab.key
-                  ? "text-[var(--cyber-accent)] border-b-2 border-[var(--cyber-accent)]"
-                  : "text-gray-400 hover:bg-[var(--cyber-accent)]/5"
-              }`}
-            >
-              {tab.icon}
-              {tab.label}
-            </button>
-          ))}
+
+          <div className="hidden lg:flex border-b border-[var(--cyber-border)]">
+            {TABS.map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`px-6 py-3 flex items-center gap-2 font-semibold transition-colors ${
+                  activeTab === tab.key
+                    ? "text-[var(--cyber-accent)] border-b-2 border-[var(--cyber-accent)]"
+                    : "text-gray-400 hover:bg-[var(--cyber-accent)]/5"
+                }`}
+              >
+                {tab.icon}
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          <MobileTabSelector
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+          />
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Key Metrics Sidebar */}
-        <div className="lg:col-span-1 space-y-4">
-          <SectionCard title="Key Metrics" icon={<FiGrid />} defaultOpen>
-            <div className="grid grid-cols-2 gap-4">
-              <MetricCard
-                label="Total Transactions"
-                value={transactionsArr.length}
-                trend="+12%"
-              />
-              <MetricCard
-                label="Accounts Involved"
-                value={accountsArr.length}
-                trend="+5%"
-              />
-              <MetricCard
-                label="Total Volume"
-                value={`$${transactionsArr
-                  .reduce((s: number, t: any) => s + t.amount, 0)
-                  .toLocaleString()}`}
-                trend="+18%"
-              />
-              <MetricCard
-                label="Anomalies"
-                value={anomaliesArr.length}
-                trend="+23%"
-                danger
-              />
-            </div>
-          </SectionCard>
-        </div>
+      <div className="max-w-7xl mx-auto px-4 py-4 lg:py-8">
+        <div className="grid grid-cols-1 xl:grid-cols-4 gap-4 lg:gap-8">
+          <div className="xl:col-span-1 order-2 xl:order-1">
+            <SectionCard title="Key Metrics" icon={<FiGrid />} defaultOpen>
+              <div className="grid grid-cols-2 xl:grid-cols-1 gap-4">
+                <MetricCard
+                  label="Total Transactions"
+                  value={transactionsArr.length}
+                  trend="+12%"
+                />
+                <MetricCard
+                  label="Accounts Involved"
+                  value={accountsArr.length}
+                  trend="+5%"
+                />
+                <MetricCard
+                  label="Total Volume"
+                  value={`$${transactionsArr
+                    .reduce((s: number, t: any) => s + t.amount, 0)
+                    .toLocaleString()}`}
+                  trend="+18%"
+                />
+                <MetricCard
+                  label="Anomalies"
+                  value={anomaliesArr.length}
+                  trend="+23%"
+                  danger
+                />
+              </div>
+            </SectionCard>
+          </div>
 
-        {/* Main Visualization Area */}
-        <div className="lg:col-span-2 space-y-6">
-          <AnimatePresence mode="wait">
-            {activeTab === "overview" && (
-              <motion.div
-                key="overview"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="space-y-6"
-              >
-                <SectionCard title="Risk Overview" icon={<FiActivity />}>
-                  <div className="h-64">
-                    <TransactionTimeline transactions={transactionsArr} />
-                  </div>
-                </SectionCard>
-                <SectionCard title="Top Anomalies" icon={<FiAlertTriangle />}>
-                  <AnomalyTable data={anomaliesArr} />
-                </SectionCard>
-              </motion.div>
-            )}
-
-            {activeTab === "network" && (
-              <motion.div
-                key="network"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                <SectionCard title="Transaction Network" icon={<FiActivity />}>
-                  <div className="h-[500px]">
-                    <NetworkGraph
-                      nodes={networkData.nodes}
-                      edges={networkData.edges}
-                    />
-                  </div>
-                </SectionCard>
-              </motion.div>
-            )}
-
-            {activeTab === "geography" && (
-              <motion.div
-                key="geography"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                <SectionCard title="Geographic Analysis" icon={<FiMap />}>
-                  <div className="h-[500px]">
-                    <GeographicMap transactions={transactionsArr} />
-                  </div>
-                </SectionCard>
-              </motion.div>
-            )}
-
-            {activeTab === "timeline" && (
-              <motion.div
-                key="timeline"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                <SectionCard title="Transaction Timeline" icon={<FiClock />}>
-                  <div className="h-64">
-                    <TransactionTimeline transactions={transactionsArr} />
-                  </div>
-                </SectionCard>
-              </motion.div>
-            )}
-
-            {activeTab === "anomalies" && (
-              <motion.div
-                key="anomalies"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                <SectionCard
-                  title="Detected Anomalies"
-                  icon={<FiAlertTriangle />}
+          <div className="xl:col-span-3 order-1 xl:order-2">
+            <AnimatePresence mode="wait">
+              {activeTab === "overview" && (
+                <motion.div
+                  key="overview"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="space-y-6"
                 >
-                  <AnomalyTable data={anomaliesArr} />
-                </SectionCard>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                  <SectionCard title="Risk Overview" icon={<FiActivity />}>
+                    <div className="h-48 sm:h-64">
+                      <TransactionTimeline transactions={transactionsArr} />
+                    </div>
+                  </SectionCard>
+                  <SectionCard title="Top Anomalies" icon={<FiAlertTriangle />}>
+                    <div className="overflow-x-auto">
+                      <AnomalyTable data={anomaliesArr} />
+                    </div>
+                  </SectionCard>
+                </motion.div>
+              )}
+
+              {activeTab === "network" && (
+                <motion.div
+                  key="network"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <SectionCard
+                    title="Transaction Network"
+                    icon={<FiActivity />}
+                  >
+                    <div className="h-64 sm:h-80 lg:h-[500px]">
+                      <NetworkGraph
+                        nodes={networkData.nodes}
+                        edges={networkData.edges}
+                      />
+                    </div>
+                  </SectionCard>
+                </motion.div>
+              )}
+
+              {activeTab === "geography" && (
+                <motion.div
+                  key="geography"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <SectionCard title="Geographic Analysis" icon={<FiMap />}>
+                    <div className="h-64 sm:h-80 lg:h-[500px]">
+                      <GeographicMap transactions={transactionsArr} />
+                    </div>
+                  </SectionCard>
+                </motion.div>
+              )}
+
+              {activeTab === "timeline" && (
+                <motion.div
+                  key="timeline"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <SectionCard title="Transaction Timeline" icon={<FiClock />}>
+                    <div className="h-48 sm:h-64">
+                      <TransactionTimeline transactions={transactionsArr} />
+                    </div>
+                  </SectionCard>
+                </motion.div>
+              )}
+
+              {activeTab === "anomalies" && (
+                <motion.div
+                  key="anomalies"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <SectionCard
+                    title="Detected Anomalies"
+                    icon={<FiAlertTriangle />}
+                  >
+                    <div className="overflow-x-auto">
+                      <AnomalyTable data={anomaliesArr} />
+                    </div>
+                  </SectionCard>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
     </div>
