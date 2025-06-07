@@ -21,10 +21,19 @@ interface GeographicMapProps {
   }>;
 }
 
+interface PositionState {
+  coordinates: [number, number];
+  zoom: number;
+}
+
 export const GeographicMap = ({ transactions }: GeographicMapProps) => {
-  const [position, setPosition] = useState({ coordinates: [0, 0], zoom: 1 });
+  const [position, setPosition] = useState<PositionState>({
+    coordinates: [0, 0],
+    zoom: 1,
+  });
   const [hoveredCountry, setHoveredCountry] = useState<string | null>(null);
 
+  // Process transaction data by country
   const countryCounts = transactions.reduce((acc, tx) => {
     const country = tx.metadata?.ipCountry?.toUpperCase();
     if (country) {
@@ -44,8 +53,8 @@ export const GeographicMap = ({ transactions }: GeographicMapProps) => {
   const maxCount = Math.max(...Object.values(countryCounts), 1);
   const colorScale = scaleSequential(interpolateYlOrRd).domain([0, maxCount]);
 
-  const handleMoveEnd = useCallback((position: any) => {
-    setPosition(position);
+  const handleMoveEnd = useCallback((newPosition: PositionState) => {
+    setPosition(newPosition);
   }, []);
 
   const resetZoom = () => {
@@ -70,6 +79,7 @@ export const GeographicMap = ({ transactions }: GeographicMapProps) => {
       animate={{ opacity: 1 }}
       className="relative w-full h-full bg-[#0A001A] rounded-xl border-2 border-[#00ff9d]/30 overflow-hidden"
     >
+      {/* Header with Statistics */}
       <div className="absolute top-4 left-4 z-20 bg-gradient-to-r from-[#17002E]/95 to-[#17002E]/80 px-4 py-3 rounded-lg border border-[#00ff9d]/30 backdrop-blur-sm">
         <h3 className="text-[#00ff9d] font-bold text-sm font-mono mb-2">
           Global Transaction Map
@@ -94,20 +104,21 @@ export const GeographicMap = ({ transactions }: GeographicMapProps) => {
         </div>
       </div>
 
+      {/* Navigation Controls */}
       <div className="absolute top-4 right-4 z-20 flex flex-col gap-2">
         <button
           onClick={zoomIn}
           className="w-10 h-10 bg-[#17002E] border-2 border-[#00ff9d]/50 rounded-lg flex items-center justify-center text-[#00ff9d] hover:bg-[#00ff9d]/10 transition-colors"
           disabled={position.zoom >= 4}
         >
-          <span className="text-lg font-bold">+</span>
+          +
         </button>
         <button
           onClick={zoomOut}
           className="w-10 h-10 bg-[#17002E] border-2 border-[#00ff9d]/50 rounded-lg flex items-center justify-center text-[#00ff9d] hover:bg-[#00ff9d]/10 transition-colors"
           disabled={position.zoom <= 1}
         >
-          <span className="text-lg font-bold">−</span>
+          −
         </button>
         <button
           onClick={resetZoom}
@@ -117,6 +128,7 @@ export const GeographicMap = ({ transactions }: GeographicMapProps) => {
         </button>
       </div>
 
+      {/* Legend */}
       <div className="absolute bottom-4 right-4 z-20 bg-gradient-to-l from-[#17002E]/95 to-[#17002E]/80 px-3 py-3 rounded-lg border border-[#00ff9d]/30 backdrop-blur-sm">
         <h4 className="text-[#00ff9d] font-bold text-xs mb-2 font-mono">
           Transaction Intensity
@@ -133,6 +145,7 @@ export const GeographicMap = ({ transactions }: GeographicMapProps) => {
         </div>
       </div>
 
+      {/* Country Info Tooltip */}
       {hoveredCountry && (
         <div className="absolute top-20 left-4 z-20 bg-[#17002E] border border-[#00ff9d] rounded-lg p-3 max-w-xs">
           <div className="text-[#00ff9d] font-bold text-sm mb-1">
@@ -155,19 +168,17 @@ export const GeographicMap = ({ transactions }: GeographicMapProps) => {
         </div>
       )}
 
+      {/* Map Container */}
       <div className="w-full h-full">
         <ComposableMap
-          width={800}
-          height={400}
-          style={{ width: "100%", height: "100%" }}
           projectionConfig={{
             scale: 147,
-            rotation: [0, 0, 0],
+            rotate: [0, 0, 0],
           }}
         >
           <ZoomableGroup
             zoom={position.zoom}
-            center={position.coordinates as [number, number]}
+            center={position.coordinates}
             onMoveEnd={handleMoveEnd}
             minZoom={1}
             maxZoom={4}
@@ -177,7 +188,6 @@ export const GeographicMap = ({ transactions }: GeographicMapProps) => {
                 geographies.map((geo) => {
                   const countryCode = geo.properties.ISO_A2;
                   const count = countryCounts[countryCode] || 0;
-                  const amount = countryAmounts[countryCode] || 0;
 
                   return (
                     <Geography
@@ -202,20 +212,17 @@ export const GeographicMap = ({ transactions }: GeographicMapProps) => {
                           outline: "none",
                         },
                       }}
-                      onMouseEnter={() => {
-                        if (count > 0) {
-                          setHoveredCountry(geo.properties.NAME);
-                        }
-                      }}
-                      onMouseLeave={() => {
-                        setHoveredCountry(null);
-                      }}
+                      onMouseEnter={() =>
+                        count > 0 && setHoveredCountry(geo.properties.NAME)
+                      }
+                      onMouseLeave={() => setHoveredCountry(null)}
                     />
                   );
                 })
               }
             </Geographies>
 
+            {/* Transaction Markers */}
             {Object.entries(countryCounts).map(([countryCode, count]) => {
               const coordinates = getCountryCoordinates(countryCode);
               if (!coordinates || count === 0) return null;
@@ -250,6 +257,7 @@ export const GeographicMap = ({ transactions }: GeographicMapProps) => {
         </ComposableMap>
       </div>
 
+      {/* Loading state */}
       {transactions.length === 0 && (
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-[#00ff9d] font-mono">
@@ -261,6 +269,7 @@ export const GeographicMap = ({ transactions }: GeographicMapProps) => {
   );
 };
 
+// Helper function for country coordinates
 const getCountryCoordinates = (
   countryCode: string
 ): [number, number] | null => {
