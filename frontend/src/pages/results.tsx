@@ -170,7 +170,7 @@ export const Results = () => {
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold">
-              Case {caseData.caseId}
+              {caseData.caseId}
             </h1>
             <p className="text-base sm:text-lg opacity-80">
               {caseData.description || "AML Case Analysis"}
