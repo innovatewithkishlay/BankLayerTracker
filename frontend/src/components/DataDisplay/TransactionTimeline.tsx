@@ -212,8 +212,9 @@ export const TransactionTimeline = ({
     const yAxis = axisLeft(yScale)
       .ticks(6)
       .tickFormat((d) => {
-        if (d >= 1000) return `$${(d / 1000).toFixed(0)}K`;
-        return `$${d.toLocaleString()}`;
+        const value = d.valueOf();
+        if (value >= 1000) return `$${(value / 1000).toFixed(0)}K`;
+        return `$${value.toLocaleString()}`;
       });
 
     svg
