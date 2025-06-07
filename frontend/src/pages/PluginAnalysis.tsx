@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FiHome, FiCheckCircle, FiAlertTriangle } from "react-icons/fi";
 import { ErrorModal } from "../components/UI/ErrorModal";
-import { AxiosError } from "axios";
 
 export const PluginAnalysis = () => {
   const { uploadCase } = useAML();
