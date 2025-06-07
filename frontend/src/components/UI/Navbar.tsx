@@ -83,6 +83,7 @@ export const Navbar = () => {
         ) : (
           <motion.a
             href={`${import.meta.env.VITE_APP_GOOGLE_AUTH_URL}`}
+            onClick={() => localStorage.setItem("showWelcomeToast", "true")}
             whileHover={{ y: -2 }}
             className="group relative flex items-center gap-2 sm:gap-3 px-3 sm:px-6 py-2 sm:py-3
               bg-gradient-to-r from-[#00ff9d] to-[#00d4ff]
