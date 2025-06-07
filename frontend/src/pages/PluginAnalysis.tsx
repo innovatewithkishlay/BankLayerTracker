@@ -16,12 +16,15 @@ export const PluginAnalysis = () => {
     details: [],
   });
 
-  const handleUpload = async (files, onProgress) => {
+  const handleUpload = async (
+    files: File[],
+    onProgress: (progress: number) => void
+  ) => {
     if (files.length === 0) return;
     try {
       const caseId = await uploadCase(files[0], onProgress);
       navigate(`/results/${caseId}`);
-    } catch (err) {
+    } catch (err: any) {
       const backendError = err?.response?.data;
       setError({
         isOpen: true,
@@ -58,7 +61,7 @@ export const PluginAnalysis = () => {
       </motion.button>
 
       <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-10 items-start mt-12">
-        <div className="p-8 rounded-2xl border border-[#00ff9d]/30 bg-[#0d0d0d] flex flex-col justify-between min-h-[420px]">
+        <div className="p-8 rounded-2xl border border-[#00ff9d]/30 bg-[#0d0d0d] flex flex-col justify-between min-h-[460px]">
           <h3 className="text-2xl font-semibold text-[#00ff9d] mb-6">
             How to Prepare Your CSV File
           </h3>
@@ -99,9 +102,7 @@ export const PluginAnalysis = () => {
           <a
             href="/sample-case.csv"
             download
-            className="block mt-4 w-full py-4 text-lg font-bold text-center
-              bg-[#00ff9d] text-black rounded-xl hover:bg-[#00d4ff] transition-colors
-              shadow-lg"
+            className="block mt-4 w-full py-4 text-lg font-bold text-center bg-[#00ff9d] text-black rounded-xl hover:bg-[#00d4ff] transition-colors shadow-lg"
             style={{ letterSpacing: "0.04em" }}
           >
             Download Sample CSV
@@ -114,6 +115,13 @@ export const PluginAnalysis = () => {
             animate={{ y: 0, opacity: 1 }}
             className="w-full p-8 rounded-2xl border border-[#00ff9d]/30 bg-[#111111]/90 backdrop-blur-lg shadow-xl shadow-[#00ff9d]/10"
           >
+            <h1 className="text-3xl font-bold text-white mb-6 text-center">
+              Upload Case
+            </h1>
+            <p className="text-gray-400 text-center mb-8 max-w-md mx-auto">
+              Upload your transaction data for instant AML analysis and network
+              visualization.
+            </p>
             <FileUpload
               onUpload={handleUpload}
               multiple={false}
@@ -178,3 +186,5 @@ const Step = ({
     <div className="text-gray-400 text-sm">{description}</div>
   </div>
 );
+
+export default PluginAnalysis;
