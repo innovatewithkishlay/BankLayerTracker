@@ -181,7 +181,7 @@ export const NetworkGraph = ({
               : isStructuring
               ? "#ffaa44"
               : "#00ff9d",
-            strokeWidth: Math.max(2, Math.min(8, amount / 10000)),
+            strokeWidth: Math.max(3, Math.min(8, amount / 10000)),
             filter: `drop-shadow(0 0 ${isHighValue ? 8 : 4}px ${
               isHighValue ? "rgba(255, 68, 68, 0.8)" : "rgba(0, 255, 157, 0.6)"
             })`,
@@ -208,8 +208,8 @@ export const NetworkGraph = ({
           },
           markerEnd: {
             type: MarkerType.ArrowClosed,
-            width: 20,
-            height: 20,
+            width: 25,
+            height: 25,
             color: isHighValue
               ? "#ff4444"
               : isStructuring
@@ -299,6 +299,7 @@ export const NetworkGraph = ({
               borderRadius: "12px",
               overflow: "hidden",
             }}
+            position="bottom-left"
             pannable
             zoomable
           />
@@ -312,6 +313,7 @@ export const NetworkGraph = ({
               boxShadow:
                 "0 8px 32px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 255, 157, 0.2)",
             }}
+            position="top-right"
             showInteractive={false}
           />
         </ReactFlow>
@@ -320,7 +322,7 @@ export const NetworkGraph = ({
       <div className="absolute top-4 left-4 z-20">
         <div className="bg-gradient-to-r from-[#17002E]/95 to-[#17002E]/80 px-4 py-3 rounded-lg border border-[#00ff9d]/30 backdrop-blur-sm">
           <h3 className="text-[#00ff9d] font-bold text-sm font-mono mb-2">
-            Transaction Network Analysis
+            Network Analysis
           </h3>
           <div className="space-y-1 text-xs">
             <div className="flex justify-between gap-4">
@@ -337,12 +339,6 @@ export const NetworkGraph = ({
                 ${totalValue.toLocaleString()}
               </span>
             </div>
-            <div className="flex justify-between gap-4">
-              <span className="text-gray-300">Avg Amount:</span>
-              <span className="text-[#00ff9d] font-mono">
-                ${Math.round(avgTransactionSize).toLocaleString()}
-              </span>
-            </div>
             {highRiskTransactions > 0 && (
               <div className="flex justify-between gap-4">
                 <span className="text-red-300">High Risk:</span>
@@ -355,58 +351,75 @@ export const NetworkGraph = ({
         </div>
       </div>
 
-      <div className="absolute bottom-4 right-4 z-20">
-        <div className="bg-gradient-to-l from-[#17002E]/95 to-[#17002E]/80 px-3 py-3 rounded-lg border border-[#00ff9d]/30 backdrop-blur-sm">
-          <h4 className="text-[#00ff9d] font-bold text-xs mb-2 font-mono">
+      <div className="absolute left-4 bottom-4 z-20">
+        <div className="bg-gradient-to-r from-[#17002E]/95 to-[#17002E]/80 px-4 py-3 rounded-lg border border-[#00ff9d]/30 backdrop-blur-sm max-w-[200px]">
+          <h4 className="text-[#00ff9d] font-bold text-xs mb-3 font-mono flex items-center gap-2">
+            <div className="w-2 h-2 bg-[#00ff9d] rounded-full animate-pulse"></div>
             Transaction Types
           </h4>
           <div className="space-y-2 text-xs">
-            <div className="flex items-center gap-2">
-              <div
-                className="w-6 h-0.5 bg-[#00ff9d]"
-                style={{
-                  filter: "drop-shadow(0 0 4px rgba(0, 255, 157, 0.6))",
-                }}
-              />
-              <span className="text-gray-300">Normal (&lt;$50K)</span>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1">
+                <div
+                  className="w-6 h-0.5 bg-[#00ff9d] rounded"
+                  style={{
+                    filter: "drop-shadow(0 0 3px rgba(0, 255, 157, 0.6))",
+                  }}
+                />
+                <div className="w-0 h-0 border-l-[6px] border-l-[#00ff9d] border-y-[3px] border-y-transparent" />
+              </div>
+              <span className="text-gray-200">Normal (&lt;$50K)</span>
             </div>
-            <div className="flex items-center gap-2">
-              <div
-                className="w-6 h-0.5 bg-[#ffaa44]"
-                style={{
-                  filter: "drop-shadow(0 0 4px rgba(255, 170, 68, 0.6))",
-                }}
-              />
-              <span className="text-gray-300">Structuring ($9-10K)</span>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1">
+                <div
+                  className="w-6 h-1 bg-[#ffaa44] rounded"
+                  style={{
+                    filter: "drop-shadow(0 0 3px rgba(255, 170, 68, 0.6))",
+                  }}
+                />
+                <div className="w-0 h-0 border-l-[6px] border-l-[#ffaa44] border-y-[3px] border-y-transparent" />
+              </div>
+              <span className="text-gray-200">Structuring ($9-10K)</span>
             </div>
-            <div className="flex items-center gap-2">
-              <div
-                className="w-6 h-1 bg-[#ff4444]"
-                style={{
-                  filter: "drop-shadow(0 0 6px rgba(255, 68, 68, 0.8))",
-                }}
-              />
-              <span className="text-gray-300">High Risk (&gt;$50K)</span>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1">
+                <div
+                  className="w-6 h-1.5 bg-[#ff4444] rounded"
+                  style={{
+                    filter: "drop-shadow(0 0 4px rgba(255, 68, 68, 0.8))",
+                  }}
+                />
+                <div className="w-0 h-0 border-l-[7px] border-l-[#ff4444] border-y-[4px] border-y-transparent" />
+              </div>
+              <span className="text-gray-200">High Risk (&gt;$50K)</span>
             </div>
-            <div className="flex items-center gap-2 mt-3">
-              <div className="w-3 h-3 rounded-full bg-[#ff4444] animate-pulse" />
-              <span className="text-gray-300">Risk Indicator</span>
+            <div className="border-t border-[#00ff9d]/20 pt-2 mt-3">
+              <div className="flex items-center gap-3">
+                <div className="w-3 h-3 rounded-full bg-[#ff4444] animate-pulse" />
+                <span className="text-gray-200">Risk Level</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="absolute top-4 right-4 z-20">
+      <div className="absolute top-20 right-4 z-20">
         <div className="bg-gradient-to-l from-[#17002E]/95 to-[#17002E]/80 px-3 py-2 rounded-lg border border-[#00ff9d]/30 backdrop-blur-sm">
           <div className="flex items-center gap-2 text-xs">
-            <span className="text-gray-300">Money Flow:</span>
+            <span className="text-gray-300">Flow Direction:</span>
             <div className="flex items-center gap-1">
-              <div className="w-4 h-0.5 bg-[#00ff9d]" />
-              <div className="w-0 h-0 border-l-[4px] border-l-[#00ff9d] border-y-[2px] border-y-transparent" />
+              <span className="text-[#00ff9d] text-[10px]">FROM</span>
+              <div className="w-8 h-0.5 bg-[#00ff9d]" />
+              <div className="w-0 h-0 border-l-[6px] border-l-[#00ff9d] border-y-[3px] border-y-transparent" />
+              <span className="text-[#00ff9d] text-[10px]">TO</span>
             </div>
           </div>
         </div>
       </div>
+
+      <div className="absolute top-0 left-0 w-16 h-16 bg-gradient-to-br from-[#00ff9d]/10 to-transparent rounded-br-full pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-16 h-16 bg-gradient-to-tl from-[#00ff9d]/10 to-transparent rounded-tl-full pointer-events-none" />
     </motion.div>
   );
 };

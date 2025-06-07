@@ -224,7 +224,6 @@ export const Results = () => {
     );
   }
 
-  // Updated networkData with proper transaction amounts in edge data
   const networkData = {
     nodes: accountsArr.map((acc: any) => ({
       id: acc.accountNumber,
@@ -248,7 +247,7 @@ export const Results = () => {
       style: { stroke: "var(--cyber-accent)" },
       labelStyle: { fill: "var(--cyber-accent)", fontWeight: 700 },
       data: {
-        amount: tx.amount, // Critical fix - pass amount in data
+        amount: tx.amount,
         date: tx.date,
         timestamp: tx.date,
       },
