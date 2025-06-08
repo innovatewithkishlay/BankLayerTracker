@@ -7,6 +7,7 @@ import { Results } from "./pages/Results";
 import { CompareResults } from "./pages/CompareResults";
 import { CyberToast } from "./components/UI/CyberToast";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import ProButtonDemo from "./pages/Test";
 export const App = () => {
   return (
     <AuthProvider>
