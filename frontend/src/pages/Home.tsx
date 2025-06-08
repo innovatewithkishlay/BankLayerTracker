@@ -24,6 +24,7 @@ export const Home = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
 
+  // For tsParticles full features
   const particlesInit = async (main: any) => {
     await loadFull(main);
   };
@@ -56,45 +57,45 @@ export const Home = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] to-[#0d0d0d] text-white overflow-hidden flex flex-col relative">
+      {/* Cybersecurity particles background */}
       <Particles
         id="tsparticles"
         init={particlesInit}
         options={{
-          fullScreen: { enable: false },
+          fullScreen: { enable: false, zIndex: 0 },
           background: { color: { value: "transparent" } },
           particles: {
-            number: { value: 35, density: { enable: true, area: 1200 } },
+            number: { value: 60, density: { enable: true, area: 900 } },
             color: { value: ["#00ff9d", "#00d4ff", "#ffffff"] },
-            opacity: { value: 0.1, random: true, anim: { enable: false } },
-            size: { value: { min: 1, max: 2.5 }, random: true },
+            opacity: { value: 0.18, random: true },
+            size: { value: { min: 1.5, max: 3 }, random: true },
             move: {
               enable: true,
-              speed: 0.25,
+              speed: 0.3,
               direction: "none",
               random: true,
               straight: false,
               outModes: "out",
-              attract: { enable: false },
             },
             links: {
               enable: true,
-              distance: 120,
+              distance: 130,
               color: "#00ff9d",
-              opacity: 0.07,
+              opacity: 0.12,
               width: 1,
             },
           },
           interactivity: {
             events: {
               onHover: { enable: true, mode: "repulse" },
+              onClick: { enable: false },
               resize: true,
             },
             modes: {
-              repulse: { distance: 60, duration: 0.4 },
+              repulse: { distance: 70, duration: 0.4 },
             },
           },
           detectRetina: true,
-          zIndex: 0,
         }}
         className="absolute inset-0 w-full h-full pointer-events-none z-0"
       />
@@ -291,6 +292,7 @@ export const Home = () => {
   );
 };
 
+// Sub-components
 const TerminalText = ({ text }: { text: string }) => (
   <span className="font-mono tracking-wide text-lg">{`> ${text}`}</span>
 );
