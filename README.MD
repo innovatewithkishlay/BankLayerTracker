@@ -19,7 +19,7 @@ Follow these steps to set up ThreatLens locally:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/innovatewithkishlay/BankLayerTracker.git
+git clone https://github.com/innovatewithkishlay/ThreatLens.git
 cd BankLayerTracker
 ```
 
