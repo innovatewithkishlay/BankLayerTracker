@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiUser, FiLogOut, FiTerminal } from "react-icons/fi";
+import { FiUser, FiLogOut, FiTerminal, FiGitPullRequest } from "react-icons/fi";
 import { useClickOutside } from "../../hooks/useClickOutside";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, NavLink } from "react-router-dom";
 
 const logoVariants = {
   hidden: { opacity: 0, x: -18 },
@@ -113,6 +113,19 @@ export const Navbar = () => {
       </div>
 
       <div className="flex items-center space-x-2 sm:space-x-4 pr-2 sm:pr-6">
+        <NavLink
+          to="/contribute"
+          className="flex items-center gap-1 px-3 py-2 rounded-lg font-mono text-sm sm:text-base text-[#00ff9d] border border-[#00ff9d]/30 hover:border-[#00ff9d] hover:bg-[#00ff9d]/10 transition-all"
+          style={{
+            fontWeight: 600,
+            letterSpacing: "0.03em",
+            boxShadow: "0 2px 12px #00ff9d11",
+            backdropFilter: "blur(5px)",
+          }}
+        >
+          <FiGitPullRequest className="text-[#00ff9d] mr-1" />
+          Contribute
+        </NavLink>
         {user ? (
           <div className="relative" ref={dropdownRef}>
             <button
@@ -173,13 +186,13 @@ export const Navbar = () => {
             whileHover={{ y: -2, scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
             className="
-    group relative flex items-center gap-2 sm:gap-3 px-4 sm:px-7 py-2 sm:py-3
-    bg-[#101212]/80 border border-[#00ff9d]/40 rounded-xl
-    shadow-md hover:shadow-lg transition-all duration-200
-    hover:border-[#00ff9d]/80
-    focus:outline-none focus:ring-4 focus:ring-[#00ff9d]/30
-    backdrop-blur-md
-  "
+              group relative flex items-center gap-2 sm:gap-3 px-4 sm:px-7 py-2 sm:py-3
+              bg-[#101212]/80 border border-[#00ff9d]/40 rounded-xl
+              shadow-md hover:shadow-lg transition-all duration-200
+              hover:border-[#00ff9d]/80
+              focus:outline-none focus:ring-4 focus:ring-[#00ff9d]/30
+              backdrop-blur-md
+            "
             style={{
               fontFamily: "monospace",
               color: "#00ff9d",
@@ -192,7 +205,7 @@ export const Navbar = () => {
             <span className="relative flex items-center">
               <FiTerminal className="mr-2 text-lg group-hover:rotate-12 group-hover:scale-110 transition-transform duration-200" />
               <span className="hidden sm:inline">Sign in</span>
-              <span className="sm:hidden">Sign in</span>
+              <span className="sm:hidden">Login</span>
             </span>
             <span
               className="absolute inset-0 rounded-xl pointer-events-none"
