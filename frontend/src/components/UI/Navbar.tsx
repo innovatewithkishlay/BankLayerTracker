@@ -12,14 +12,14 @@ const logoVariants = {
 
 const separatorVariants = {
   hidden: { opacity: 0, y: 10 },
-  visible: { opacity: 0.7, y: 0, transition: { delay: 0.7, duration: 0.4 } },
+  visible: { opacity: 0.5, y: 0, transition: { delay: 0.7, duration: 0.4 } },
 };
 
 const textContainerVariants = {
   hidden: {},
   visible: {
     transition: {
-      staggerChildren: 0.08,
+      staggerChildren: 0.07,
       delayChildren: 0.85,
     },
   },
@@ -68,12 +68,13 @@ export const Navbar = () => {
           className="mx-2"
           style={{
             color: "#00ff9d",
-            fontWeight: 500,
-            fontSize: "2.1rem",
-            fontFamily: "'Poppins', sans-serif",
+            fontWeight: 400,
+            fontSize: "1.5rem",
+            fontFamily: "'Inter', 'Poppins', sans-serif",
             lineHeight: 1,
             userSelect: "none",
-            opacity: 0.7,
+            opacity: 0.5,
+            letterSpacing: 0,
           }}
           variants={separatorVariants}
           initial="hidden"
@@ -84,13 +85,13 @@ export const Navbar = () => {
         <motion.div
           className="flex space-x-0.5"
           style={{
-            fontFamily: "'Montserrat', sans-serif",
-            fontWeight: 600,
-            fontSize: "2.1rem",
-            letterSpacing: "0.11em",
+            fontFamily: "'Inter', 'Montserrat', sans-serif",
+            fontWeight: 500,
+            fontSize: "1.8rem",
+            letterSpacing: "0.045em",
             color: "#00ff9d",
             userSelect: "none",
-            textShadow: "0 2px 12px #00ff9d33",
+            textShadow: "0 2px 10px #00ff9d22",
             lineHeight: 1,
           }}
           variants={textContainerVariants}
@@ -105,6 +106,7 @@ export const Navbar = () => {
         </motion.div>
       </div>
 
+      {/* Profile/Login */}
       <div className="flex items-center space-x-2 sm:space-x-4 pr-2 sm:pr-6">
         {user ? (
           <div className="relative" ref={dropdownRef}>
