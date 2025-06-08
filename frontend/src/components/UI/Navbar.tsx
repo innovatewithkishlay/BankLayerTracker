@@ -13,12 +13,11 @@ export const Navbar = () => {
 
   return (
     <nav className="flex items-center justify-between p-4 sm:p-6 w-full">
-      {/* Logo + Brand Name */}
       <div className="flex items-center space-x-3 pl-2 sm:pl-6 md:pl-8">
         <img
           src="/assets/threatlens.png"
           alt="ThreatLens Logo"
-          className="h-9 w-9 object-contain"
+          className="h-14 w-14 object-contain"
           style={{
             borderRadius: 0,
             boxShadow: "none",
@@ -32,12 +31,28 @@ export const Navbar = () => {
           draggable={false}
         />
         <span
-          className="text-xl font-bold tracking-widest uppercase select-none"
+          className="mx-2"
           style={{
             color: "#00ff9d",
-            letterSpacing: "0.08em",
+            fontWeight: 900,
+            fontSize: "2rem",
+            lineHeight: 1,
+            opacity: 0.7,
+            userSelect: "none",
+            letterSpacing: "-0.1em",
+          }}
+        >
+          |
+        </span>
+        <span
+          className="text-2xl font-extrabold tracking-widest uppercase select-none"
+          style={{
+            color: "#00ff9d",
+            letterSpacing: "0.13em",
             fontFamily: "Orbitron, monospace, sans-serif",
             lineHeight: 1,
+            textShadow: "0 2px 12px #00ff9d33",
+            fontSize: "2.1rem",
           }}
         >
           THREATLENS
