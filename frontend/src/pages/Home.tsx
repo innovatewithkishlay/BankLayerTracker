@@ -146,10 +146,11 @@ export const Home = () => {
                 transition={{ delay: 0.1 }}
                 className="text-lg sm:text-xl lg:text-2xl text-gray-400 max-w-4xl mx-auto mb-8 sm:mb-12 leading-relaxed px-4"
               >
-                Advanced AI-powered platform for financial crime detection,
-                transaction analysis, and regulatory compliance. Detect money
-                laundering patterns with forensic precision and reduce
-                investigation time by up to 85%.
+                A robust platform for financial crime detection, transaction
+                analysis, and regulatory compliance. Our advanced rule-based
+                algorithms identify suspicious transaction patterns with
+                forensic precision, helping you reduce investigation time by up
+                to 85%.
               </motion.p>
 
               <motion.div
