@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { GlowingButton } from "../components/UI/GlowingButton";
 import { useAuth } from "../contexts/AuthContext";
@@ -24,7 +24,6 @@ export const Home = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
 
-  // For tsParticles full features
   const particlesInit = async (main: any) => {
     await loadFull(main);
   };
@@ -57,7 +56,6 @@ export const Home = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] to-[#0d0d0d] text-white overflow-hidden flex flex-col relative">
-      {/* Cybersecurity particles background */}
       <Particles
         id="tsparticles"
         init={particlesInit}
@@ -65,13 +63,13 @@ export const Home = () => {
           fullScreen: { enable: false, zIndex: 0 },
           background: { color: { value: "transparent" } },
           particles: {
-            number: { value: 60, density: { enable: true, area: 900 } },
-            color: { value: ["#00ff9d", "#00d4ff", "#ffffff"] },
-            opacity: { value: 0.18, random: true },
-            size: { value: { min: 1.5, max: 3 }, random: true },
+            number: { value: 100, density: { enable: true, area: 900 } },
+            color: { value: ["#00ff9d", "#00d4ff", "#ffffff", "#1de9b6"] },
+            opacity: { value: 0.25, random: true },
+            size: { value: { min: 1.5, max: 3.5 }, random: true },
             move: {
               enable: true,
-              speed: 0.3,
+              speed: 0.4,
               direction: "none",
               random: true,
               straight: false,
@@ -81,7 +79,7 @@ export const Home = () => {
               enable: true,
               distance: 130,
               color: "#00ff9d",
-              opacity: 0.12,
+              opacity: 0.18,
               width: 1,
             },
           },
@@ -292,7 +290,6 @@ export const Home = () => {
   );
 };
 
-// Sub-components
 const TerminalText = ({ text }: { text: string }) => (
   <span className="font-mono tracking-wide text-lg">{`> ${text}`}</span>
 );
