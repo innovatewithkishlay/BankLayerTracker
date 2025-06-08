@@ -27,11 +27,11 @@ const ProTooltip = ({ show }: { show: boolean }) => (
         animate={{ opacity: 1, y: -10, scale: 1 }}
         exit={{ opacity: 0, y: 10, scale: 0.95 }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="absolute left-1/2 -translate-x-1/2 -top-3 z-50"
+        className="absolute left-1/2 -translate-x-1/2 -top-4 z-50"
         style={{ pointerEvents: "none" }}
       >
         <div
-          className="bg-[#181818] border border-[#00ff9d]/30 rounded-lg px-4 py-2 shadow-lg text-xs text-white font-mono"
+          className="bg-[#181818]/90 border border-[#00ff9d]/30 rounded-lg px-4 py-2 shadow-xl text-xs text-white font-mono backdrop-blur"
           style={{
             minWidth: "200px",
             textAlign: "center",
@@ -44,7 +44,7 @@ const ProTooltip = ({ show }: { show: boolean }) => (
             You need to purchase for this feature.
             <br />
             Contact owner:{" "}
-            <span className="underline">kishlaykumar141@gmail.com</span>
+            <span className="underline">support@threadlens.com</span>
           </div>
         </div>
       </motion.div>
@@ -189,31 +189,30 @@ export const Home = () => {
                 </GlowingButton>
 
                 <div className="relative flex items-center">
-                  <GlowingButton
-                    variant="danger"
-                    onClick={() => {}}
+                  <motion.button
+                    type="button"
+                    className="relative px-8 py-3 rounded-lg font-mono text-lg tracking-widest transition-all bg-[#181a20] text-[#00ff9d] hover:bg-[#23262e] border border-[#00ff9d]/40 shadow-lg hover:shadow-xl"
+                    style={{ paddingRight: "3.5em" }}
                     onMouseEnter={() => setProTooltip(true)}
                     onMouseLeave={() => setProTooltip(false)}
                     onTouchStart={() => setProTooltip(true)}
                     onTouchEnd={() => setProTooltip(false)}
-                    style={{
-                      position: "relative",
-                      paddingRight: "2.8em",
-                    }}
+                    disabled
                   >
                     <span className="relative flex items-center">
                       <TerminalText text="Cross-Case Investigation" />
                       <span
-                        className="absolute -top-3 right-2 flex items-center"
+                        className="absolute -top-4 right-2 flex items-center"
                         style={{ pointerEvents: "none" }}
                       >
                         <span
-                          className="bg-yellow-400 text-yellow-900 font-bold text-xs px-2 py-0.5 rounded-full shadow-md flex items-center"
+                          className="bg-[#181a20]/90 border border-[#00ff9d] text-[#00ff9d] font-bold text-xs px-2 py-0.5 rounded-full shadow-md flex items-center backdrop-blur"
                           style={{
                             fontFamily: "monospace",
-                            fontSize: "1rem",
+                            fontSize: "0.95rem",
                             transform: "translateY(-0.2em)",
-                            boxShadow: "0 2px 12px #0002",
+                            boxShadow: "0 2px 12px #00ff9d33",
+                            letterSpacing: "0.08em",
                           }}
                         >
                           <span role="img" aria-label="pro" className="mr-1">
@@ -223,7 +222,7 @@ export const Home = () => {
                         </span>
                       </span>
                     </span>
-                  </GlowingButton>
+                  </motion.button>
                   <ProTooltip show={proTooltip} />
                 </div>
               </motion.div>
