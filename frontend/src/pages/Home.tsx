@@ -17,6 +17,7 @@ import {
   FiBarChart,
 } from "react-icons/fi";
 import { Navbar } from "../components/UI/Navbar";
+import Footer from "../components/UI/Footer";
 
 export const Home = () => {
   const navigate = useNavigate();
@@ -50,7 +51,6 @@ export const Home = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] to-[#0d0d0d] text-white overflow-hidden flex flex-col relative">
-      {/* Subtle, always visible animated SVG grid background */}
       <div
         aria-hidden="true"
         style={{
@@ -58,7 +58,7 @@ export const Home = () => {
           inset: 0,
           zIndex: 0,
           pointerEvents: "none",
-          opacity: 0.18, // nicely subtle
+          opacity: 0.18,
           background: "transparent",
         }}
       >
@@ -279,33 +279,12 @@ export const Home = () => {
             </motion.div>
           </div>
         </div>
-
-        <div className="p-8 text-center border-t border-[#00ff9d]/20">
-          <div className="text-gray-400 text-lg">
-            Enterprise AML Investigation Platform — v2.0
-          </div>
-          <div className="text-gray-400 text-sm mt-2 mb-4">
-            Powered by Advanced AI & Machine Learning
-          </div>
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-4">
-            <a
-              href="https://kishlaykumar.onrender.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-4 py-2 text-sm font-medium text-[#00ff9d] hover:text-white bg-[#0d0d0d] border border-[#00ff9d]/30 rounded-xl hover:bg-[#00ff9d]/10 transition-colors"
-            >
-              <span className="hidden sm:inline">View Developer Portfolio</span>
-              <span className="sm:hidden">Portfolio</span>
-            </a>
-            <span className="text-gray-400 text-sm">~ Kishlay Kumar</span>
-          </div>
-        </div>
+        <Footer />
       </div>
     </div>
   );
 };
 
-// Sub-components
 const TerminalText = ({ text }: { text: string }) => (
   <span className="font-mono tracking-wide text-lg">{`> ${text}`}</span>
 );
