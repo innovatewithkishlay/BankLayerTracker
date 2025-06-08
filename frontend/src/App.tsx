@@ -20,6 +20,7 @@ export const App = () => {
             path="/compare-results/:case1Id/:case2Id"
             element={<CompareResults />}
           />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         </Routes>
 
         <CyberToast />
