@@ -43,7 +43,7 @@ export const Footer = () => (
       </div>
       <div className="flex flex-col items-center md:items-end gap-1">
         <div className="text-xs text-gray-400">
-          &copy; {new Date().getFullYear()} Thread Lens
+          &copy; {new Date().getFullYear()} ThreatLens
         </div>
         <div className="text-xs text-gray-500">All rights reserved.</div>
       </div>
