@@ -15,14 +15,9 @@ export default function ContributePage() {
           <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-[#00ff9d] to-[#00d4ff] bg-clip-text text-transparent">
             Contribute to{" "}
             <span className=" decoration-[#00ff9d] decoration-2">
-              ThreadLens
+              ThreatLens
             </span>
           </h1>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-4">
-            <span className="inline-block px-3 py-1 bg-[#00ff9d]/10 border border-[#00ff9d]/30 rounded-lg font-bold text-[#00ff9d]">
-              OPEN SOURCE
-            </span>
-          </p>
           <p className="text-lg text-gray-400 max-w-2xl mx-auto">
             Help us build the next generation of{" "}
             <span className="text-[#00ff9d] font-semibold">open-source</span>{" "}
@@ -60,7 +55,7 @@ export default function ContributePage() {
               <li>• Improve code quality and add automated tests</li>
             </ul>
             <a
-              href="https://github.com/yourusername/yourrepo"
+              href="https://github.com/innovatewithkishlay/Threatlens.git"
               className="mt-6 inline-flex items-center gap-2 px-5 py-2 bg-[#00ff9d]/10 hover:bg-[#00ff9d]/20 border border-[#00ff9d]/30 rounded-lg text-[#00ff9d] font-mono transition-all group"
             >
               <FiGithub className="group-hover:scale-125 transition-transform" />
