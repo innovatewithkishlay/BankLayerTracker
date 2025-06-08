@@ -22,6 +22,7 @@ import Footer from "../components/UI/Footer";
 export const Home = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
+  const [showProPopup, setShowProPopup] = useState(false);
 
   useEffect(() => {
     if (user && localStorage.getItem("showWelcomeToast") === "true") {
@@ -154,34 +155,18 @@ export const Home = () => {
                   <TerminalText text="Single Case Analysis" />
                 </GlowingButton>
 
-                <div className="relative inline-block">
-                  <div className="absolute left-1/2 -translate-x-1/2 -top-24 z-50 bg-[#181818] border border-[#00ff9d]/30 text-white text-xs rounded-md px-4 py-3 shadow-xl font-mono w-72 text-center">
-                    <div className="flex items-center gap-2 mb-1 justify-center">
-                      <div className="w-2 h-2 bg-[#00ff9d] rounded-full animate-pulse" />
-                      <span className="font-semibold text-[#00ff9d] text-base">
-                        Pro Feature
-                      </span>
-                    </div>
-                    <div className="text-gray-300 leading-snug mb-1">
-                      For using this feature you need to purchase PRO.
-                      <br />
-                      Contact owner:{" "}
-                      <a
-                        href="mailto:kishlay141@gmail.com"
-                        className="text-[#00ff9d] underline"
-                      >
-                        kishlay141@gmail.com
-                      </a>
-                    </div>
-                    <div className="absolute left-1/2 -bottom-2 -translate-x-1/2 w-3 h-3 bg-[#181818] border-l border-b border-[#00ff9d]/30 rotate-45"></div>
-                  </div>
+                <div
+                  className="relative inline-block"
+                  onMouseEnter={() => setShowProPopup(true)}
+                  onMouseLeave={() => setShowProPopup(false)}
+                >
                   <button
                     className="px-8 py-3 bg-[#181a20] text-[#00ff9d] font-mono text-lg font-bold rounded-lg border border-[#00ff9d]/40 shadow-lg hover:bg-[#23262e] transition-all relative"
-                    disabled
                     style={{ paddingRight: "3.5em" }}
+                    disabled
                   >
                     <span className="relative flex items-center">
-                      Cross-Case Investigation
+                      <TerminalText text="Cross-Case Investigation" />
                       <span
                         className="absolute -top-4 right-2 flex items-center"
                         style={{ pointerEvents: "none" }}
@@ -204,6 +189,28 @@ export const Home = () => {
                       </span>
                     </span>
                   </button>
+                  {showProPopup && (
+                    <div className="absolute left-1/2 -translate-x-1/2 -top-24 z-50 bg-[#181818] border border-[#00ff9d]/30 text-white text-xs rounded-md px-4 py-3 shadow-xl font-mono w-72 text-center">
+                      <div className="flex items-center gap-2 mb-1 justify-center">
+                        <div className="w-2 h-2 bg-[#00ff9d] rounded-full animate-pulse" />
+                        <span className="font-semibold text-[#00ff9d] text-base">
+                          Pro Feature
+                        </span>
+                      </div>
+                      <div className="text-gray-300 leading-snug mb-1">
+                        For using this feature you need to purchase PRO.
+                        <br />
+                        Contact owner:{" "}
+                        <a
+                          href="mailto:kishlay141@gmail.com"
+                          className="text-[#00ff9d] underline"
+                        >
+                          kishlay141@gmail.com
+                        </a>
+                      </div>
+                      <div className="absolute left-1/2 -bottom-2 -translate-x-1/2 w-3 h-3 bg-[#181818] border-l border-b border-[#00ff9d]/30 rotate-45"></div>
+                    </div>
+                  )}
                 </div>
               </motion.div>
 
