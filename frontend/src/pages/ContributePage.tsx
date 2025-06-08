@@ -5,16 +5,29 @@ import {
   FiBookOpen,
   FiUsers,
   FiZap,
+  FiHome,
 } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
 export default function ContributePage() {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] to-[#0d0d0d] text-white">
-      <div className="max-w-5xl mx-auto px-6 py-20">
+      <div className="max-w-5xl mx-auto px-6 py-20 relative">
+        {/* Home icon button */}
+        <button
+          onClick={() => navigate("/")}
+          className="absolute left-0 top-0 m-4 p-2 rounded-lg bg-[#181a20]/80 border border-[#00ff9d]/30 text-[#00ff9d] hover:bg-[#00ff9d]/10 hover:border-[#00ff9d] transition-all shadow-lg"
+          aria-label="Go to Home"
+        >
+          <FiHome size={22} />
+        </button>
+
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-[#00ff9d] to-[#00d4ff] bg-clip-text text-transparent">
             Contribute to{" "}
-            <span className=" decoration-[#00ff9d] decoration-2">
+            <span className="decoration-[#00ff9d] decoration-2">
               ThreatLens
             </span>
           </h1>
