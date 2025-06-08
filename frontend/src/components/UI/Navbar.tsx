@@ -15,12 +15,7 @@ const separatorVariants = {
 };
 const textContainerVariants = {
   hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.055,
-      delayChildren: 0.6,
-    },
-  },
+  visible: { transition: { staggerChildren: 0.055, delayChildren: 0.6 } },
 };
 const letterVariants = {
   hidden: { opacity: 0, y: 16 },
@@ -61,57 +56,60 @@ export const Navbar = () => {
           initial="hidden"
           animate="visible"
         />
-        <motion.span
-          className="mx-2"
-          style={{
-            color: "#00ff9d",
-            fontWeight: 400,
-            fontSize: "1.3rem",
-            fontFamily: "'Inter', 'Space Grotesk', sans-serif",
-            lineHeight: 1,
-            userSelect: "none",
-            opacity: 0.3,
-            letterSpacing: 0,
-            display: "flex",
-            alignItems: "center",
-          }}
-          variants={separatorVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          |
-        </motion.span>
-        <motion.div
-          className="flex"
-          style={{
-            fontFamily: "'Space Grotesk', 'Inter', sans-serif",
-            fontWeight: 500,
-            fontSize: "1.8rem",
-            letterSpacing: "0.02em",
-            color: "#00ff9d",
-            userSelect: "none",
-            textShadow: "0 2px 8px #00ff9d22",
-            lineHeight: 1,
-          }}
-          variants={textContainerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {brandText.split("").map((char, idx) => (
-            <motion.span
-              key={idx}
-              variants={letterVariants}
-              style={{
-                marginRight: idx === brandText.length - 1 ? 0 : "0.01em",
-                fontWeight: idx === 0 ? 700 : 500,
-              }}
-            >
-              {char}
-            </motion.span>
-          ))}
-        </motion.div>
+        {/* Hide separator and brand text on mobile */}
+        <div className="hidden sm:flex items-center">
+          <motion.span
+            className="mx-2"
+            style={{
+              color: "#00ff9d",
+              fontWeight: 400,
+              fontSize: "1.3rem",
+              fontFamily: "'Inter', 'Space Grotesk', sans-serif",
+              lineHeight: 1,
+              userSelect: "none",
+              opacity: 0.3,
+              letterSpacing: 0,
+              display: "flex",
+              alignItems: "center",
+            }}
+            variants={separatorVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            |
+          </motion.span>
+          <motion.div
+            className="flex"
+            style={{
+              fontFamily: "'Space Grotesk', 'Inter', sans-serif",
+              fontWeight: 500,
+              fontSize: "1.8rem",
+              letterSpacing: "0.02em",
+              color: "#00ff9d",
+              userSelect: "none",
+              textShadow: "0 2px 8px #00ff9d22",
+              lineHeight: 1,
+            }}
+            variants={textContainerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {brandText.split("").map((char, idx) => (
+              <motion.span
+                key={idx}
+                variants={letterVariants}
+                style={{
+                  marginRight: idx === brandText.length - 1 ? 0 : "0.01em",
+                  fontWeight: idx === 0 ? 700 : 500,
+                }}
+              >
+                {char}
+              </motion.span>
+            ))}
+          </motion.div>
+        </div>
       </div>
-
+      {/* ...rest of your code remains unchanged... */}
       <div className="flex items-center space-x-2 sm:space-x-4 pr-2 sm:pr-6">
         <NavLink
           to="/contribute"
@@ -150,7 +148,6 @@ export const Navbar = () => {
                 {user.email}
               </span>
             </button>
-
             <AnimatePresence>
               {isProfileOpen && (
                 <motion.div
