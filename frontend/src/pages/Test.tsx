@@ -44,6 +44,7 @@ export default function ProButtonDemo() {
             </span>
           </span>
         </motion.button>
+
         <AnimatePresence>
           {show && (
             <motion.div
@@ -62,19 +63,13 @@ export default function ProButtonDemo() {
                 }}
               >
                 <div className="absolute -left-1.5 top-1/2 -translate-y-1/2 w-3 h-3 bg-[#181818]/90 border-l border-t border-[#00ff9d]/30 rotate-45" />
-                <div className="flex items-center gap-2 mb-1">
-                  <div className="w-2 h-2 bg-[#00ff9d] rounded-full animate-pulse" />
-                  <span className="font-semibold text-[#00ff9d]">
-                    Pro Feature
-                  </span>
+                <div className="flex items-center gap-1">
+                  <span className="text-[#00ff9d]">👑</span>
+                  <span>Available on the Pro plan</span>
                 </div>
-                <div className="text-gray-300 leading-snug">
-                  For using this feature you need to purchase PRO.
-                  <br />
-                  Contact owner:{" "}
-                  <span className="text-[#00ff9d] underline">
-                    kishlay141@gmail.com
-                  </span>
+                <div className="opacity-70">
+                  Upgrade to unlock this cross-case investigative tool and see
+                  relationships across reports.
                 </div>
               </div>
             </motion.div>
