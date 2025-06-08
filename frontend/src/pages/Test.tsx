@@ -6,8 +6,8 @@ export default function ProButtonDemo() {
 
   return (
     <div
-      className="w-full flex justify-center items-center"
-      style={{ minHeight: "60vh" }}
+      className="w-full flex justify-center items-center bg-black"
+      style={{ minHeight: "100vh" }}
     >
       <div className="relative" style={{ minWidth: 480 }}>
         <motion.button
