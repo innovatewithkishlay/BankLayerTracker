@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { GlowingButton } from "../components/UI/GlowingButton";
 import { useAuth } from "../contexts/AuthContext";
@@ -19,9 +19,43 @@ import {
 import { Navbar } from "../components/UI/Navbar";
 import Footer from "../components/UI/Footer";
 
+const ProTooltip = ({ show }: { show: boolean }) => (
+  <AnimatePresence>
+    {show && (
+      <motion.div
+        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+        animate={{ opacity: 1, y: -10, scale: 1 }}
+        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        className="absolute left-1/2 -translate-x-1/2 -top-3 z-50"
+        style={{ pointerEvents: "none" }}
+      >
+        <div
+          className="bg-[#181818] border border-[#00ff9d]/30 rounded-lg px-4 py-2 shadow-lg text-xs text-white font-mono"
+          style={{
+            minWidth: "200px",
+            textAlign: "center",
+            boxShadow: "0 6px 32px #00ff9d22",
+            pointerEvents: "auto",
+          }}
+        >
+          <span className="font-semibold text-[#00ff9d]">Pro Feature</span>
+          <div className="mt-1">
+            You need to purchase for this feature.
+            <br />
+            Contact owner:{" "}
+            <span className="underline">support@threadlens.com</span>
+          </div>
+        </div>
+      </motion.div>
+    )}
+  </AnimatePresence>
+);
+
 export const Home = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
+  const [proTooltip, setProTooltip] = useState(false);
 
   useEffect(() => {
     if (user && localStorage.getItem("showWelcomeToast") === "true") {
@@ -154,12 +188,44 @@ export const Home = () => {
                   <TerminalText text="Single Case Analysis" />
                 </GlowingButton>
 
-                <GlowingButton
-                  variant="danger"
-                  onClick={() => navigate("/interlink")}
-                >
-                  <TerminalText text="Cross-Case Investigation" />
-                </GlowingButton>
+                <div className="relative flex items-center">
+                  <GlowingButton
+                    variant="danger"
+                    onClick={() => {}}
+                    onMouseEnter={() => setProTooltip(true)}
+                    onMouseLeave={() => setProTooltip(false)}
+                    onTouchStart={() => setProTooltip(true)}
+                    onTouchEnd={() => setProTooltip(false)}
+                    style={{
+                      position: "relative",
+                      paddingRight: "2.8em",
+                    }}
+                  >
+                    <span className="relative flex items-center">
+                      <TerminalText text="Cross-Case Investigation" />
+                      <span
+                        className="absolute -top-3 right-2 flex items-center"
+                        style={{ pointerEvents: "none" }}
+                      >
+                        <span
+                          className="bg-yellow-400 text-yellow-900 font-bold text-xs px-2 py-0.5 rounded-full shadow-md flex items-center"
+                          style={{
+                            fontFamily: "monospace",
+                            fontSize: "1rem",
+                            transform: "translateY(-0.2em)",
+                            boxShadow: "0 2px 12px #0002",
+                          }}
+                        >
+                          <span role="img" aria-label="pro" className="mr-1">
+                            👑
+                          </span>
+                          PRO
+                        </span>
+                      </span>
+                    </span>
+                  </GlowingButton>
+                  <ProTooltip show={proTooltip} />
+                </div>
               </motion.div>
 
               <motion.div
