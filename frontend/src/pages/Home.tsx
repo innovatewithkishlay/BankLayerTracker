@@ -40,15 +40,12 @@ export const Home = () => {
     }
   }, [user]);
 
+  // Show the Contribute popup 5 seconds after every page load
   useEffect(() => {
-    const hasSeenPopup = localStorage.getItem("hasSeenContributePopup");
-    if (!hasSeenPopup) {
-      const timer = setTimeout(() => {
-        setShowContributePopup(true);
-        localStorage.setItem("hasSeenContributePopup", "true");
-      }, 5000);
-      return () => clearTimeout(timer);
-    }
+    const timer = setTimeout(() => {
+      setShowContributePopup(true);
+    }, 5000);
+    return () => clearTimeout(timer);
   }, []);
 
   if (loading) {
@@ -364,6 +361,7 @@ export const Home = () => {
         </div>
         <Footer />
       </div>
+      {/* Contribute Popup - always rendered, responsive */}
       <ContributePopup
         show={showContributePopup}
         onClose={() => setShowContributePopup(false)}
