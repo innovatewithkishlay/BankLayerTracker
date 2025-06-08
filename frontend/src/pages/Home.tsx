@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { GlowingButton } from "../components/UI/GlowingButton";
 import { useAuth } from "../contexts/AuthContext";
@@ -18,43 +18,6 @@ import {
 } from "react-icons/fi";
 import { Navbar } from "../components/UI/Navbar";
 import Footer from "../components/UI/Footer";
-
-const ProTooltip = ({ show }: { show: boolean }) => (
-  <AnimatePresence>
-    {show && (
-      <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: -12 }}
-        exit={{ opacity: 0, y: 8 }}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="absolute left-1/2 -translate-x-1/2 -top-16 z-50"
-        style={{ pointerEvents: "none" }}
-      >
-        <div
-          className="bg-[#181818]/90 border border-[#00ff9d]/30 rounded-lg px-4 py-3 shadow-xl text-xs text-white font-mono backdrop-blur flex flex-col gap-1.5 relative"
-          style={{
-            width: "230px",
-            boxShadow: "0 6px 32px #00ff9d22",
-          }}
-        >
-          <div className="absolute left-1/2 -bottom-2 -translate-x-1/2 w-3 h-3 bg-[#181818]/90 border-l border-b border-[#00ff9d]/30 rotate-45" />
-          <div className="flex items-center gap-2 mb-1">
-            <div className="w-2 h-2 bg-[#00ff9d] rounded-full animate-pulse" />
-            <span className="font-semibold text-[#00ff9d]">Pro Feature</span>
-          </div>
-          <div className="text-gray-300 leading-snug">
-            For using this feature you need to purchase PRO.
-            <br />
-            Contact owner:{" "}
-            <span className="text-[#00ff9d] underline">
-              kishlay141@gmail.com
-            </span>
-          </div>
-        </div>
-      </motion.div>
-    )}
-  </AnimatePresence>
-);
 
 export const Home = () => {
   const navigate = useNavigate();
@@ -192,13 +155,16 @@ export const Home = () => {
                   <TerminalText text="Single Case Analysis" />
                 </GlowingButton>
 
+                {/* PRO Button with always-visible tooltip */}
                 <div className="relative flex items-center">
-                  <motion.button
+                  <button
                     type="button"
                     className="relative px-8 py-3 rounded-lg font-mono text-lg tracking-widest transition-all bg-[#181a20] text-[#00ff9d] hover:bg-[#23262e] border border-[#00ff9d]/40 shadow-lg hover:shadow-xl"
                     style={{ paddingRight: "3.5em" }}
                     onMouseEnter={() => setProTooltip(true)}
                     onMouseLeave={() => setProTooltip(false)}
+                    onFocus={() => setProTooltip(true)}
+                    onBlur={() => setProTooltip(false)}
                     onTouchStart={() => setProTooltip(true)}
                     onTouchEnd={() => setProTooltip(false)}
                     disabled
@@ -226,8 +192,33 @@ export const Home = () => {
                         </span>
                       </span>
                     </span>
-                  </motion.button>
-                  <ProTooltip show={proTooltip} />
+                  </button>
+                  <div
+                    className={`absolute left-1/2 -translate-x-1/2 -top-16 z-50 transition-opacity duration-200 ${
+                      proTooltip
+                        ? "opacity-100 pointer-events-auto"
+                        : "opacity-0 pointer-events-none"
+                    }`}
+                    style={{ width: 230 }}
+                  >
+                    <div className="bg-[#181818]/90 border border-[#00ff9d]/30 rounded-lg px-4 py-3 shadow-xl text-xs text-white font-mono backdrop-blur flex flex-col gap-1.5 relative">
+                      <div className="absolute left-1/2 -bottom-2 -translate-x-1/2 w-3 h-3 bg-[#181818]/90 border-l border-b border-[#00ff9d]/30 rotate-45" />
+                      <div className="flex items-center gap-2 mb-1">
+                        <div className="w-2 h-2 bg-[#00ff9d] rounded-full animate-pulse" />
+                        <span className="font-semibold text-[#00ff9d]">
+                          Pro Feature
+                        </span>
+                      </div>
+                      <div className="text-gray-300 leading-snug">
+                        For using this feature you need to purchase PRO.
+                        <br />
+                        Contact owner:{" "}
+                        <span className="text-[#00ff9d] underline">
+                          kishlay141@gmail.com
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </motion.div>
 
