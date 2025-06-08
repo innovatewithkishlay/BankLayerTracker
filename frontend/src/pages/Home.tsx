@@ -50,6 +50,34 @@ export const Home = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] to-[#0d0d0d] text-white overflow-hidden flex flex-col">
+      {/* Modern Logo Header */}
+      <header className="flex items-center gap-4 px-8 pt-8 pb-4">
+        <img
+          src="/logo.png" // <-- update this path to your actual logo file if needed
+          alt="Thread Lens Logo"
+          className="w-12 h-12 object-contain"
+          style={{
+            borderRadius: 0,
+            boxShadow: "none",
+            background: "none",
+            margin: 0,
+            padding: 0,
+          }}
+          draggable={false}
+        />
+        <span
+          className="text-2xl font-bold tracking-widest uppercase"
+          style={{
+            color: "#00ff9d",
+            letterSpacing: "0.08em",
+            fontFamily: "Orbitron, sans-serif",
+            userSelect: "none",
+          }}
+        >
+          Thread Lens
+        </span>
+      </header>
+
       <Navbar />
 
       <div className="flex-1">
