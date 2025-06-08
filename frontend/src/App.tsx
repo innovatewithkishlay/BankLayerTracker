@@ -22,6 +22,7 @@ export const App = () => {
             element={<CompareResults />}
           />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/pro" element={<ProButtonDemo />} />
         </Routes>
 
         <CyberToast />
