@@ -24,6 +24,7 @@ export const App = () => {
           />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/pro" element={<ProButtonDemo />} />
+          <Route path="/contribute" element={<ContributePage />} />
         </Routes>
 
         <CyberToast />
