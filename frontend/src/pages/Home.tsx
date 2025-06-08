@@ -23,21 +23,21 @@ const ProTooltip = ({ show }: { show: boolean }) => (
   <AnimatePresence>
     {show && (
       <motion.div
-        initial={{ opacity: 0, x: 24 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: 24 }}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: -16 }}
+        exit={{ opacity: 0, y: 10 }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="absolute left-full top-1/2 -translate-y-1/2 z-50"
+        className="absolute left-1/2 -translate-x-1/2 -top-20 z-50"
         style={{ pointerEvents: "none" }}
       >
         <div
-          className="bg-[#181818]/90 border border-[#00ff9d]/30 rounded-lg p-4 shadow-xl text-xs text-white font-mono backdrop-blur flex flex-col gap-1.5 relative ml-2"
+          className="bg-[#181818]/90 border border-[#00ff9d]/30 rounded-lg p-4 shadow-xl text-xs text-white font-mono backdrop-blur flex flex-col gap-1.5 relative"
           style={{
             width: "230px",
             boxShadow: "0 6px 32px #00ff9d22",
           }}
         >
-          <div className="absolute -left-1.5 top-1/2 -translate-y-1/2 w-3 h-3 bg-[#181818]/90 border-l border-t border-[#00ff9d]/30 rotate-45" />
+          <div className="absolute left-1/2 -bottom-2 -translate-x-1/2 w-3 h-3 bg-[#181818]/90 border-l border-b border-[#00ff9d]/30 rotate-45" />
           <div className="flex items-center gap-2 mb-1">
             <div className="w-2 h-2 bg-[#00ff9d] rounded-full animate-pulse" />
             <span className="font-semibold text-[#00ff9d]">Pro Feature</span>
