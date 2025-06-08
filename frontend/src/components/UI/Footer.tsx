@@ -29,16 +29,16 @@ export const Footer = () => (
             Privacy Policy
           </Link>
         </div>
-        <div className="flex items-center gap-2 text-xs text-[#00ff9d] mt-1">
+        <div className="flex items-center gap-2 mt-1">
           <a
             href="https://kishlaykumar.onrender.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:underline"
+            className="px-4 py-2 rounded-lg border border-[#00ff9d]/30 text-[#00ff9d] hover:bg-[#00ff9d]/10 transition-colors text-xs font-semibold"
           >
             View Developer Portfolio
           </a>
-          <span>~ Kishlay Kumar</span>
+          <span className="text-xs text-[#00ff9d]">~ Kishlay Kumar</span>
         </div>
       </div>
       <div className="flex flex-col items-center md:items-end gap-1">
