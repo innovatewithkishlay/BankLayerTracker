@@ -17,16 +17,10 @@ import {
   FiBarChart,
 } from "react-icons/fi";
 import { Navbar } from "../components/UI/Navbar";
-import Particles from "react-tsparticles";
-import { loadFull } from "tsparticles";
 
 export const Home = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
-
-  const particlesInit = async (main: any) => {
-    await loadFull(main);
-  };
 
   useEffect(() => {
     if (user && localStorage.getItem("showWelcomeToast") === "true") {
@@ -56,47 +50,68 @@ export const Home = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] to-[#0d0d0d] text-white overflow-hidden flex flex-col relative">
-      <Particles
-        id="tsparticles"
-        init={particlesInit}
-        options={{
-          fullScreen: { enable: false, zIndex: 0 },
-          background: { color: { value: "transparent" } },
-          particles: {
-            number: { value: 100, density: { enable: true, area: 900 } },
-            color: { value: ["#00ff9d", "#00d4ff", "#ffffff", "#1de9b6"] },
-            opacity: { value: 0.25, random: true },
-            size: { value: { min: 1.5, max: 3.5 }, random: true },
-            move: {
-              enable: true,
-              speed: 0.4,
-              direction: "none",
-              random: true,
-              straight: false,
-              outModes: "out",
-            },
-            links: {
-              enable: true,
-              distance: 130,
-              color: "#00ff9d",
-              opacity: 0.18,
-              width: 1,
-            },
-          },
-          interactivity: {
-            events: {
-              onHover: { enable: true, mode: "repulse" },
-              onClick: { enable: false },
-              resize: true,
-            },
-            modes: {
-              repulse: { distance: 70, duration: 0.4 },
-            },
-          },
-          detectRetina: true,
+      {/* Always visible, animated SVG grid background */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: "fixed",
+          inset: 0,
+          zIndex: 0,
+          pointerEvents: "none",
+          opacity: 0.18,
+          background: "transparent",
         }}
-        className="absolute inset-0 w-full h-full pointer-events-none z-0"
-      />
+      >
+        <svg
+          width="100%"
+          height="100%"
+          style={{ position: "absolute", left: 0, top: 0 }}
+          xmlns="http://www.w3.org/2000/svg"
+          preserveAspectRatio="none"
+        >
+          <defs>
+            <pattern
+              id="smallGrid"
+              width="40"
+              height="40"
+              patternUnits="userSpaceOnUse"
+            >
+              <path
+                d="M 40 0 L 0 0 0 40"
+                fill="none"
+                stroke="#00ff9d"
+                strokeWidth="0.5"
+                opacity="0.18"
+              />
+            </pattern>
+            <pattern
+              id="grid"
+              width="160"
+              height="160"
+              patternUnits="userSpaceOnUse"
+            >
+              <rect width="160" height="160" fill="url(#smallGrid)" />
+              <path
+                d="M 160 0 L 0 0 0 160"
+                fill="none"
+                stroke="#00ff9d"
+                strokeWidth="1"
+                opacity="0.25"
+              />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid)">
+            <animateTransform
+              attributeName="transform"
+              type="translate"
+              from="0 0"
+              to="40 40"
+              dur="20s"
+              repeatCount="indefinite"
+            />
+          </rect>
+        </svg>
+      </div>
 
       <div className="relative z-10">
         <Navbar />
@@ -290,6 +305,7 @@ export const Home = () => {
   );
 };
 
+// Sub-components
 const TerminalText = ({ text }: { text: string }) => (
   <span className="font-mono tracking-wide text-lg">{`> ${text}`}</span>
 );
@@ -357,3 +373,5 @@ const InvestigationFeature = ({
     </ul>
   </motion.div>
 );
+
+export default Home;
