@@ -5,32 +5,30 @@ import { FiUser, FiLogOut, FiTerminal } from "react-icons/fi";
 import { useClickOutside } from "../../hooks/useClickOutside";
 import { useNavigate } from "react-router-dom";
 
+// --- Animation Variants ---
 const logoVariants = {
-  hidden: { opacity: 0, x: -20 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.6 } },
+  hidden: { opacity: 0, x: -18 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.5, ease: "easeOut" } },
 };
-
 const separatorVariants = {
   hidden: { opacity: 0, y: 10 },
-  visible: { opacity: 0.5, y: 0, transition: { delay: 0.7, duration: 0.4 } },
+  visible: { opacity: 0.3, y: 0, transition: { delay: 0.45, duration: 0.3 } },
 };
-
 const textContainerVariants = {
   hidden: {},
   visible: {
     transition: {
-      staggerChildren: 0.07,
-      delayChildren: 0.85,
+      staggerChildren: 0.055,
+      delayChildren: 0.6,
     },
   },
 };
-
 const letterVariants = {
   hidden: { opacity: 0, y: 16 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { type: "spring", stiffness: 400, damping: 24 },
+    transition: { type: "spring", stiffness: 400, damping: 22 },
   },
 };
 
@@ -44,11 +42,13 @@ export const Navbar = () => {
 
   return (
     <nav className="flex items-center justify-between p-4 sm:p-6 w-full">
+      {/* Animated Logo + Separator + Brand Name */}
       <div className="flex items-center pl-2 sm:pl-6 md:pl-8">
+        {/* Logo */}
         <motion.img
           src="/assets/threatlens.png"
           alt="ThreatLens Logo"
-          className="h-14 w-14 object-contain"
+          className="h-12 w-12 object-contain"
           style={{
             borderRadius: 0,
             boxShadow: "none",
@@ -64,17 +64,20 @@ export const Navbar = () => {
           initial="hidden"
           animate="visible"
         />
+        {/* Thin, subtle separator */}
         <motion.span
           className="mx-2"
           style={{
             color: "#00ff9d",
             fontWeight: 400,
-            fontSize: "1.5rem",
-            fontFamily: "'Inter', 'Poppins', sans-serif",
+            fontSize: "1.3rem",
+            fontFamily: "'Inter', 'Space Grotesk', sans-serif",
             lineHeight: 1,
             userSelect: "none",
-            opacity: 0.5,
+            opacity: 0.3,
             letterSpacing: 0,
+            display: "flex",
+            alignItems: "center",
           }}
           variants={separatorVariants}
           initial="hidden"
@@ -82,16 +85,17 @@ export const Navbar = () => {
         >
           |
         </motion.span>
+        {/* Animated brand name */}
         <motion.div
-          className="flex space-x-0.5"
+          className="flex"
           style={{
-            fontFamily: "'Inter', 'Montserrat', sans-serif",
+            fontFamily: "'Space Grotesk', 'Inter', sans-serif",
             fontWeight: 500,
             fontSize: "1.8rem",
-            letterSpacing: "0.045em",
+            letterSpacing: "0.02em",
             color: "#00ff9d",
             userSelect: "none",
-            textShadow: "0 2px 10px #00ff9d22",
+            textShadow: "0 2px 8px #00ff9d22",
             lineHeight: 1,
           }}
           variants={textContainerVariants}
@@ -99,7 +103,14 @@ export const Navbar = () => {
           animate="visible"
         >
           {brandText.split("").map((char, idx) => (
-            <motion.span key={idx} variants={letterVariants}>
+            <motion.span
+              key={idx}
+              variants={letterVariants}
+              style={{
+                marginRight: idx === brandText.length - 1 ? 0 : "0.01em",
+                fontWeight: idx === 0 ? 700 : 500, // make T slightly bolder for modern look
+              }}
+            >
               {char}
             </motion.span>
           ))}
