@@ -192,7 +192,7 @@ export const Navbar = () => {
             <span className="relative flex items-center">
               <FiTerminal className="mr-2 text-lg group-hover:rotate-12 group-hover:scale-110 transition-transform duration-200" />
               <span className="hidden sm:inline">Sign in</span>
-              <span className="sm:hidden">Login</span>
+              <span className="sm:hidden">Sign in</span>
             </span>
             <span
               className="absolute inset-0 rounded-xl pointer-events-none"
