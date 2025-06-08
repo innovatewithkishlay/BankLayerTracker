@@ -6,7 +6,7 @@ import { InterlinkAnalysis } from "./pages/InterlinkAnalysis";
 import { Results } from "./pages/Results";
 import { CompareResults } from "./pages/CompareResults";
 import { CyberToast } from "./components/UI/CyberToast";
-
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 export const App = () => {
   return (
     <AuthProvider>
