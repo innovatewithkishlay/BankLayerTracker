@@ -50,7 +50,7 @@ export const Home = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] to-[#0d0d0d] text-white overflow-hidden flex flex-col relative">
-      {/* More visible, animated SVG grid background */}
+      {/* Subtle, always visible animated SVG grid background */}
       <div
         aria-hidden="true"
         style={{
@@ -58,7 +58,7 @@ export const Home = () => {
           inset: 0,
           zIndex: 0,
           pointerEvents: "none",
-          opacity: 0.35, // Increased overall opacity
+          opacity: 0.18, // nicely subtle
           background: "transparent",
         }}
       >
@@ -72,7 +72,7 @@ export const Home = () => {
           <defs>
             <pattern
               id="smallGrid"
-              width="28" // smaller grid for denser lines
+              width="28"
               height="28"
               patternUnits="userSpaceOnUse"
             >
@@ -80,8 +80,8 @@ export const Home = () => {
                 d="M 28 0 L 0 0 0 28"
                 fill="none"
                 stroke="#00ff9d"
-                strokeWidth="1" // thicker grid lines
-                opacity="0.35" // more visible
+                strokeWidth="1"
+                opacity="0.18"
               />
             </pattern>
             <pattern
@@ -95,8 +95,8 @@ export const Home = () => {
                 d="M 112 0 L 0 0 0 112"
                 fill="none"
                 stroke="#00ff9d"
-                strokeWidth="1.5" // thicker main lines
-                opacity="0.5" // more visible
+                strokeWidth="1"
+                opacity="0.28"
               />
             </pattern>
           </defs>
