@@ -5,8 +5,11 @@ export default function ProButtonDemo() {
   const [show, setShow] = useState(false);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-black">
-      <div className="relative" style={{ minWidth: 420 }}>
+    <div
+      className="w-full flex justify-center items-center"
+      style={{ minHeight: "60vh" }}
+    >
+      <div className="relative" style={{ minWidth: 480 }}>
         <motion.button
           type="button"
           className="relative px-8 py-3 rounded-lg font-mono text-lg tracking-widest transition-all bg-[#181a20] text-[#00ff9d] hover:bg-[#23262e] border border-[#00ff9d]/40 shadow-lg hover:shadow-xl"
