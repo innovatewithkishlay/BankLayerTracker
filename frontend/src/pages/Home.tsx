@@ -22,7 +22,6 @@ import Footer from "../components/UI/Footer";
 export const Home = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
-  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     if (user && localStorage.getItem("showWelcomeToast") === "true") {
@@ -155,13 +154,26 @@ export const Home = () => {
                   <TerminalText text="Single Case Analysis" />
                 </GlowingButton>
 
+                {/* PRO Button with permanent popup above */}
                 <div className="relative inline-block">
+                  <div className="absolute left-1/2 -translate-x-1/2 -top-20 z-50 bg-[#181818] border border-[#00ff9d]/30 text-white text-xs rounded-md px-4 py-3 shadow-xl font-mono w-60">
+                    <div className="flex items-center gap-2 mb-1">
+                      <div className="w-2 h-2 bg-[#00ff9d] rounded-full animate-pulse" />
+                      <span className="font-semibold text-[#00ff9d]">
+                        Pro Feature
+                      </span>
+                    </div>
+                    <div className="text-gray-300 leading-snug">
+                      For using this feature you need to purchase PRO.
+                      <br />
+                      Contact owner:{" "}
+                      <span className="text-[#00ff9d] underline">
+                        kishlay141@gmail.com
+                      </span>
+                    </div>
+                  </div>
                   <button
                     className="px-8 py-3 bg-[#181a20] text-[#00ff9d] font-mono text-lg font-bold rounded-lg border border-[#00ff9d]/40 shadow-lg hover:bg-[#23262e] transition-all relative"
-                    onMouseEnter={() => setIsHovered(true)}
-                    onMouseLeave={() => setIsHovered(false)}
-                    onFocus={() => setIsHovered(true)}
-                    onBlur={() => setIsHovered(false)}
                     disabled
                     style={{ paddingRight: "3.5em" }}
                   >
@@ -189,27 +201,6 @@ export const Home = () => {
                       </span>
                     </span>
                   </button>
-                  {isHovered && (
-                    <div
-                      className="absolute left-1/2 -translate-x-1/2 -top-20 z-50 bg-[#181818] border border-[#00ff9d]/30 text-white text-xs rounded-md px-4 py-3 shadow-xl font-mono w-60"
-                      style={{ pointerEvents: "none" }}
-                    >
-                      <div className="flex items-center gap-2 mb-1">
-                        <div className="w-2 h-2 bg-[#00ff9d] rounded-full animate-pulse" />
-                        <span className="font-semibold text-[#00ff9d]">
-                          Pro Feature
-                        </span>
-                      </div>
-                      <div className="text-gray-300 leading-snug">
-                        For using this feature you need to purchase PRO.
-                        <br />
-                        Contact owner:{" "}
-                        <span className="text-[#00ff9d] underline">
-                          kishlay141@gmail.com
-                        </span>
-                      </div>
-                    </div>
-                  )}
                 </div>
               </motion.div>
 
