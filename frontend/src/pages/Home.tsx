@@ -272,7 +272,7 @@ export const Home = () => {
                 <FeatureCard
                   icon={<FiActivity className="text-3xl sm:text-4xl" />}
                   title="Advanced Transaction Monitoring"
-                  description="Real-time analysis of transaction patterns using AI algorithms to detect suspicious activities, structuring, and layering schemes across multiple accounts and jurisdictions."
+                  description="Real-time analysis of transaction patterns to identify suspicious activities, structuring, and layering schemes across multiple accounts and jurisdictions."
                 />
                 <FeatureCard
                   icon={<FiMapPin className="text-3xl sm:text-4xl" />}
