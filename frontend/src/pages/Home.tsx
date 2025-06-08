@@ -154,23 +154,26 @@ export const Home = () => {
                   <TerminalText text="Single Case Analysis" />
                 </GlowingButton>
 
-                {/* PRO Button with permanent popup above */}
                 <div className="relative inline-block">
-                  <div className="absolute left-1/2 -translate-x-1/2 -top-20 z-50 bg-[#181818] border border-[#00ff9d]/30 text-white text-xs rounded-md px-4 py-3 shadow-xl font-mono w-60">
-                    <div className="flex items-center gap-2 mb-1">
+                  <div className="absolute left-1/2 -translate-x-1/2 -top-24 z-50 bg-[#181818] border border-[#00ff9d]/30 text-white text-xs rounded-md px-4 py-3 shadow-xl font-mono w-72 text-center">
+                    <div className="flex items-center gap-2 mb-1 justify-center">
                       <div className="w-2 h-2 bg-[#00ff9d] rounded-full animate-pulse" />
-                      <span className="font-semibold text-[#00ff9d]">
+                      <span className="font-semibold text-[#00ff9d] text-base">
                         Pro Feature
                       </span>
                     </div>
-                    <div className="text-gray-300 leading-snug">
+                    <div className="text-gray-300 leading-snug mb-1">
                       For using this feature you need to purchase PRO.
                       <br />
                       Contact owner:{" "}
-                      <span className="text-[#00ff9d] underline">
+                      <a
+                        href="mailto:kishlay141@gmail.com"
+                        className="text-[#00ff9d] underline"
+                      >
                         kishlay141@gmail.com
-                      </span>
+                      </a>
                     </div>
+                    <div className="absolute left-1/2 -bottom-2 -translate-x-1/2 w-3 h-3 bg-[#181818] border-l border-b border-[#00ff9d]/30 rotate-45"></div>
                   </div>
                   <button
                     className="px-8 py-3 bg-[#181a20] text-[#00ff9d] font-mono text-lg font-bold rounded-lg border border-[#00ff9d]/40 shadow-lg hover:bg-[#23262e] transition-all relative"
