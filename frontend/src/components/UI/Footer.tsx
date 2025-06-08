@@ -13,14 +13,13 @@ export const Footer = () => (
             draggable={false}
           />
           <span className="text-lg font-bold uppercase tracking-wider text-[#00ff9d]">
-            ThreatLens
+            Thread Lens
           </span>
         </div>
         <div className="text-xs text-gray-400 mt-1">
           Enterprise AML Investigation Platform — v2.0
         </div>
       </div>
-
       <div className="flex flex-col items-center gap-2">
         <div className="flex gap-4 text-sm font-medium">
           <Link
@@ -30,21 +29,22 @@ export const Footer = () => (
             Privacy Policy
           </Link>
         </div>
-        <a
-          href="https://kishlaykumar.onrender.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="px-4 py-2 rounded-lg border border-[#00ff9d]/30 text-[#00ff9d] hover:bg-[#00ff9d]/10 transition-colors text-xs font-semibold mt-1"
-        >
-          View Developer Portfolio
-        </a>
+        <div className="flex items-center gap-2 text-xs text-[#00ff9d] mt-1">
+          <a
+            href="https://kishlaykumar.onrender.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:underline"
+          >
+            View Developer Portfolio
+          </a>
+          <span>~ Kishlay Kumar</span>
+        </div>
       </div>
-
       <div className="flex flex-col items-center md:items-end gap-1">
         <div className="text-xs text-gray-400">
           &copy; {new Date().getFullYear()} Thread Lens
         </div>
-        <div className="text-xs text-gray-400">~ Kishlay Kumar</div>
         <div className="text-xs text-gray-500">All rights reserved.</div>
       </div>
     </div>
