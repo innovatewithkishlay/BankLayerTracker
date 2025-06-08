@@ -44,7 +44,7 @@ const ProTooltip = ({ show }: { show: boolean }) => (
             You need to purchase for this feature.
             <br />
             Contact owner:{" "}
-            <span className="underline">support@threadlens.com</span>
+            <span className="underline">kishlaykumar141@gmail.com</span>
           </div>
         </div>
       </motion.div>
