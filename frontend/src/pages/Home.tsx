@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { GlowingButton } from "../components/UI/GlowingButton";
 import { useAuth } from "../contexts/AuthContext";
@@ -118,12 +118,12 @@ export const Home = () => {
         <Navbar />
 
         <div className="flex-1">
-          <div className="max-w-7xl mx-auto px-6 py-20">
-            <div className="text-center mb-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
+            <div className="text-center mb-16 sm:mb-20">
               <motion.h1
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-6xl md:text-8xl font-bold mb-8"
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-bold mb-6 sm:mb-8 px-4"
               >
                 <span className="text-[#00ff9d]">AML</span> Investigation
                 <br />
@@ -134,7 +134,7 @@ export const Home = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="text-2xl text-gray-400 max-w-4xl mx-auto mb-12 leading-relaxed"
+                className="text-lg sm:text-xl lg:text-2xl text-gray-400 max-w-4xl mx-auto mb-8 sm:mb-12 leading-relaxed px-4"
               >
                 Advanced AI-powered platform for financial crime detection,
                 transaction analysis, and regulatory compliance. Detect money
@@ -146,7 +146,7 @@ export const Home = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="flex flex-col md:flex-row gap-8 justify-center mb-16"
+                className="flex flex-col sm:flex-row gap-6 sm:gap-8 justify-center mb-12 sm:mb-16 px-4"
               >
                 <GlowingButton
                   variant="primary"
@@ -161,11 +161,11 @@ export const Home = () => {
                   onMouseLeave={() => setShowProPopup(false)}
                 >
                   <button
-                    className="px-8 py-3 bg-[#181a20] text-[#00ff9d] font-mono text-lg font-bold rounded-lg border border-[#00ff9d]/40 shadow-lg hover:bg-[#23262e] transition-all relative"
+                    className="w-full sm:w-auto px-6 sm:px-8 py-3 bg-[#181a20] text-[#00ff9d] font-mono text-base sm:text-lg font-bold rounded-lg border border-[#00ff9d]/40 shadow-lg hover:bg-[#23262e] transition-all relative"
                     style={{ paddingRight: "3.5em" }}
                     disabled
                   >
-                    <span className="relative flex items-center">
+                    <span className="relative flex items-center justify-center sm:justify-start">
                       <TerminalText text="Cross-Case Investigation" />
                       <span
                         className="absolute -top-4 right-2 flex items-center"
@@ -189,28 +189,46 @@ export const Home = () => {
                       </span>
                     </span>
                   </button>
-                  {showProPopup && (
-                    <div className="absolute left-1/2 -translate-x-1/2 -top-24 z-50 bg-[#181818] border border-[#00ff9d]/30 text-white text-xs rounded-md px-4 py-3 shadow-xl font-mono w-72 text-center">
-                      <div className="flex items-center gap-2 mb-1 justify-center">
-                        <div className="w-2 h-2 bg-[#00ff9d] rounded-full animate-pulse" />
-                        <span className="font-semibold text-[#00ff9d] text-base">
-                          Pro Feature
-                        </span>
-                      </div>
-                      <div className="text-gray-300 leading-snug mb-1">
-                        For using this feature you need to purchase PRO.
-                        <br />
-                        Contact owner:{" "}
-                        <a
-                          href="mailto:kishlay141@gmail.com"
-                          className="text-[#00ff9d] underline"
-                        >
-                          kishlay141@gmail.com
-                        </a>
-                      </div>
-                      <div className="absolute left-1/2 -bottom-2 -translate-x-1/2 w-3 h-3 bg-[#181818] border-l border-b border-[#00ff9d]/30 rotate-45"></div>
-                    </div>
-                  )}
+                  <AnimatePresence>
+                    {showProPopup && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 300,
+                          damping: 30,
+                          duration: 0.2,
+                        }}
+                        className="absolute left-1/2 -translate-x-1/2 top-full mt-3 z-50 bg-[#181818]/95 border border-[#00ff9d]/30 text-white text-xs rounded-lg px-4 py-3 shadow-xl font-mono w-64 sm:w-72 text-center backdrop-blur-sm"
+                        style={{ pointerEvents: "none" }}
+                      >
+                        <div className="flex items-center gap-2 mb-1 justify-center">
+                          <motion.div
+                            className="w-2 h-2 bg-[#00ff9d] rounded-full"
+                            animate={{ scale: [1, 1.2, 1] }}
+                            transition={{ duration: 1.5, repeat: Infinity }}
+                          />
+                          <span className="font-semibold text-[#00ff9d] text-sm">
+                            Pro Feature
+                          </span>
+                        </div>
+                        <div className="text-gray-300 leading-snug mb-1 text-xs sm:text-sm">
+                          For using this feature you need to purchase PRO.
+                          <br />
+                          Contact owner:{" "}
+                          <a
+                            href="mailto:kishlay141@gmail.com"
+                            className="text-[#00ff9d] underline hover:text-[#00e0ff] transition-colors"
+                          >
+                            kishlay141@gmail.com
+                          </a>
+                        </div>
+                        <div className="absolute left-1/2 -top-2 -translate-x-1/2 w-3 h-3 bg-[#181818]/95 border-l border-t border-[#00ff9d]/30 rotate-45"></div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               </motion.div>
 
@@ -218,7 +236,7 @@ export const Home = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20"
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-16 sm:mb-20 px-4"
               >
                 <StatCard value="99.7%" label="Detection Accuracy" />
                 <StatCard value="<2min" label="Analysis Time" />
@@ -230,43 +248,43 @@ export const Home = () => {
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="mb-20"
+              className="mb-16 sm:mb-20"
             >
-              <h2 className="text-4xl font-bold text-center mb-4">
+              <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4 px-4">
                 <span className="text-[#00ff9d]">Core</span> Capabilities
               </h2>
-              <p className="text-gray-400 text-center mb-12 text-lg max-w-3xl mx-auto">
+              <p className="text-gray-400 text-center mb-8 sm:mb-12 text-base sm:text-lg max-w-3xl mx-auto px-4">
                 Comprehensive AML investigation tools powered by machine
                 learning and advanced analytics
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 px-4">
                 <FeatureCard
-                  icon={<FiActivity className="text-4xl" />}
+                  icon={<FiActivity className="text-3xl sm:text-4xl" />}
                   title="Advanced Transaction Monitoring"
                   description="Real-time analysis of transaction patterns using AI algorithms to detect suspicious activities, structuring, and layering schemes across multiple accounts and jurisdictions."
                 />
                 <FeatureCard
-                  icon={<FiMapPin className="text-4xl" />}
+                  icon={<FiMapPin className="text-3xl sm:text-4xl" />}
                   title="Geographic Risk Analysis"
                   description="Track fund movements across geographic boundaries, identify high-risk jurisdictions, and analyze cross-border transaction flows with integrated sanctions screening."
                 />
                 <FeatureCard
-                  icon={<FiShield className="text-4xl" />}
+                  icon={<FiShield className="text-3xl sm:text-4xl" />}
                   title="Behavioral Anomaly Detection"
                   description="Machine learning models that establish customer baselines and detect deviations indicating potential money laundering, terrorist financing, or fraud schemes."
                 />
                 <FeatureCard
-                  icon={<FiUsers className="text-4xl" />}
+                  icon={<FiUsers className="text-3xl sm:text-4xl" />}
                   title="Network & Entity Analysis"
                   description="Visualize complex relationship networks between accounts, entities, and beneficial owners to uncover hidden connections and layered ownership structures."
                 />
                 <FeatureCard
-                  icon={<FiDatabase className="text-4xl" />}
+                  icon={<FiDatabase className="text-3xl sm:text-4xl" />}
                   title="Multi-Source Data Integration"
                   description="Seamlessly integrate transaction data, customer information, sanctions lists, and external databases for comprehensive risk assessment and due diligence."
                 />
                 <FeatureCard
-                  icon={<FiTrendingUp className="text-4xl" />}
+                  icon={<FiTrendingUp className="text-3xl sm:text-4xl" />}
                   title="Predictive Risk Scoring"
                   description="Advanced analytics engine that calculates dynamic risk scores based on transaction patterns, customer behavior, and external risk factors."
                 />
@@ -277,18 +295,18 @@ export const Home = () => {
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
-              className="mb-20"
+              className="mb-16 sm:mb-20"
             >
-              <h2 className="text-4xl font-bold text-center mb-4">
+              <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4 px-4">
                 Investigation <span className="text-[#00ff9d]">Excellence</span>
               </h2>
-              <p className="text-gray-400 text-center mb-12 text-lg max-w-3xl mx-auto">
+              <p className="text-gray-400 text-center mb-8 sm:mb-12 text-base sm:text-lg max-w-3xl mx-auto px-4">
                 Streamlined investigation workflows with automated case
                 management and reporting
               </p>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 px-4">
                 <InvestigationFeature
-                  icon={<FiEye className="text-3xl" />}
+                  icon={<FiEye className="text-2xl sm:text-3xl" />}
                   title="Automated Case Generation"
                   description="Intelligent alert prioritization and case creation based on risk severity, reducing manual review time and ensuring high-risk cases receive immediate attention."
                   features={[
@@ -298,7 +316,7 @@ export const Home = () => {
                   ]}
                 />
                 <InvestigationFeature
-                  icon={<FiBarChart className="text-3xl" />}
+                  icon={<FiBarChart className="text-2xl sm:text-3xl" />}
                   title="Advanced Analytics Dashboard"
                   description="Interactive visualizations and comprehensive reporting tools for investigators, compliance officers, and regulatory reporting requirements."
                   features={[
@@ -308,7 +326,7 @@ export const Home = () => {
                   ]}
                 />
                 <InvestigationFeature
-                  icon={<FiClock className="text-3xl" />}
+                  icon={<FiClock className="text-2xl sm:text-3xl" />}
                   title="Rapid Investigation Tools"
                   description="Accelerated investigation capabilities with automated data gathering, timeline reconstruction, and evidence compilation for faster case resolution."
                   features={[
@@ -318,7 +336,7 @@ export const Home = () => {
                   ]}
                 />
                 <InvestigationFeature
-                  icon={<FiCheck className="text-3xl" />}
+                  icon={<FiCheck className="text-2xl sm:text-3xl" />}
                   title="Compliance Automation"
                   description="Automated SAR filing, regulatory reporting, and audit trail maintenance ensuring consistent compliance with AML regulations and standards."
                   features={[
@@ -338,16 +356,18 @@ export const Home = () => {
 };
 
 const TerminalText = ({ text }: { text: string }) => (
-  <span className="font-mono tracking-wide text-lg">{`> ${text}`}</span>
+  <span className="font-mono tracking-wide text-sm sm:text-lg">{`> ${text}`}</span>
 );
 
 const StatCard = ({ value, label }: { value: string; label: string }) => (
   <motion.div
     whileHover={{ scale: 1.05 }}
-    className="text-center p-6 bg-[#00ff9d]/5 rounded-xl border border-[#00ff9d]/20"
+    className="text-center p-4 sm:p-6 bg-[#00ff9d]/5 rounded-xl border border-[#00ff9d]/20"
   >
-    <div className="text-4xl font-bold text-[#00ff9d] mb-2">{value}</div>
-    <div className="text-gray-400 text-lg">{label}</div>
+    <div className="text-2xl sm:text-4xl font-bold text-[#00ff9d] mb-2">
+      {value}
+    </div>
+    <div className="text-gray-400 text-sm sm:text-lg">{label}</div>
   </motion.div>
 );
 
@@ -362,15 +382,17 @@ const FeatureCard = ({
 }) => (
   <motion.div
     whileHover={{ y: -8, scale: 1.02 }}
-    className="p-8 border border-[#00ff9d]/20 rounded-2xl bg-[#0d0d0d] hover:border-[#00ff9d]/50 transition-all duration-300 group"
+    className="p-6 sm:p-8 border border-[#00ff9d]/20 rounded-2xl bg-[#0d0d0d] hover:border-[#00ff9d]/50 transition-all duration-300 group"
   >
-    <div className="text-[#00ff9d] mb-6 group-hover:scale-110 transition-transform duration-300">
+    <div className="text-[#00ff9d] mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-300">
       {icon}
     </div>
-    <h3 className="text-2xl font-semibold mb-4 text-white group-hover:text-[#00ff9d] transition-colors">
+    <h3 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-white group-hover:text-[#00ff9d] transition-colors">
       {title}
     </h3>
-    <p className="text-gray-400 text-lg leading-relaxed">{description}</p>
+    <p className="text-gray-400 text-sm sm:text-lg leading-relaxed">
+      {description}
+    </p>
   </motion.div>
 );
 
@@ -387,17 +409,22 @@ const InvestigationFeature = ({
 }) => (
   <motion.div
     whileHover={{ scale: 1.02 }}
-    className="p-8 border border-[#00ff9d]/20 rounded-2xl bg-[#0d0d0d] hover:border-[#00ff9d]/40 transition-all"
+    className="p-6 sm:p-8 border border-[#00ff9d]/20 rounded-2xl bg-[#0d0d0d] hover:border-[#00ff9d]/40 transition-all"
   >
-    <div className="flex items-center mb-6">
-      <div className="text-[#00ff9d] mr-4">{icon}</div>
-      <h3 className="text-2xl font-semibold">{title}</h3>
+    <div className="flex items-center mb-4 sm:mb-6">
+      <div className="text-[#00ff9d] mr-3 sm:mr-4">{icon}</div>
+      <h3 className="text-xl sm:text-2xl font-semibold">{title}</h3>
     </div>
-    <p className="text-gray-400 mb-6 text-lg">{description}</p>
+    <p className="text-gray-400 mb-4 sm:mb-6 text-sm sm:text-lg">
+      {description}
+    </p>
     <ul className="space-y-2">
       {features.map((feature, index) => (
-        <li key={index} className="flex items-center text-gray-300">
-          <FiCheck className="text-[#00ff9d] mr-3" />
+        <li
+          key={index}
+          className="flex items-center text-gray-300 text-sm sm:text-base"
+        >
+          <FiCheck className="text-[#00ff9d] mr-2 sm:mr-3 flex-shrink-0" />
           {feature}
         </li>
       ))}
