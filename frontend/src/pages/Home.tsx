@@ -282,7 +282,7 @@ export const Home = () => {
                 <FeatureCard
                   icon={<FiShield className="text-3xl sm:text-4xl" />}
                   title="Behavioral Anomaly Detection"
-                  description="Machine learning models that establish customer baselines and detect deviations indicating potential money laundering, terrorist financing, or fraud schemes."
+                  description="Establishes customer activity baselines and detects deviations that may indicate potential money laundering, terrorist financing, or fraud schemes."
                 />
                 <FeatureCard
                   icon={<FiUsers className="text-3xl sm:text-4xl" />}
