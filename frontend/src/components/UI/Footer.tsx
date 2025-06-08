@@ -36,7 +36,7 @@ export const Footer = () => (
             rel="noopener noreferrer"
             className="px-4 py-2 rounded-lg border border-[#00ff9d]/30 text-[#00ff9d] hover:bg-[#00ff9d]/10 transition-colors text-xs font-semibold"
           >
-            View Developer Portfolio
+            Know About Developer
           </a>
           <span className="text-xs text-[#00ff9d]">~ Kishlay Kumar</span>
         </div>
