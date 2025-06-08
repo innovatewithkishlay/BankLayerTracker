@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiX } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
@@ -11,21 +12,35 @@ export default function ContributePopup({
 }) {
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (!show) return;
+    const timer = setTimeout(() => {
+      onClose();
+    }, 8000); // Auto close after 8 seconds
+    return () => clearTimeout(timer);
+  }, [show, onClose]);
+
   return (
     <AnimatePresence>
       {show && (
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 20, x: 0 }}
+          animate={{ opacity: 1, y: 0, x: 0 }}
+          exit={{ opacity: 0, y: 0, x: 200 }} // Slide right on exit
+          transition={{
+            type: "spring",
+            stiffness: 300,
+            damping: 30,
+            duration: 0.5,
+          }}
           className="
-  fixed z-50
-  top-4 right-4
-  w-full max-w-xs sm:max-w-sm
-  sm:right-6 sm:top-6
-  mx-auto sm:mx-0
-  bg-[#181a20]/95 backdrop-blur-lg rounded-xl border border-[#00ff9d]/30 p-6 shadow-xl
-"
+            fixed z-50
+            top-4 right-4
+            w-full max-w-xs sm:max-w-sm
+            sm:right-6 sm:top-6
+            mx-auto sm:mx-0
+            bg-[#181a20]/95 backdrop-blur-lg rounded-xl border border-[#00ff9d]/30 p-6 shadow-xl
+          "
         >
           <div className="flex justify-between items-start mb-4">
             <h3 className="text-[#00ff9d] font-mono text-lg font-bold flex items-center gap-2">
