@@ -5,7 +5,6 @@ import { FiUser, FiLogOut, FiTerminal } from "react-icons/fi";
 import { useClickOutside } from "../../hooks/useClickOutside";
 import { useNavigate } from "react-router-dom";
 
-// --- Animation Variants ---
 const logoVariants = {
   hidden: { opacity: 0, x: -18 },
   visible: { opacity: 1, x: 0, transition: { duration: 0.5, ease: "easeOut" } },
@@ -42,9 +41,7 @@ export const Navbar = () => {
 
   return (
     <nav className="flex items-center justify-between p-4 sm:p-6 w-full">
-      {/* Animated Logo + Separator + Brand Name */}
       <div className="flex items-center pl-2 sm:pl-6 md:pl-8">
-        {/* Logo */}
         <motion.img
           src="/assets/threatlens.png"
           alt="ThreatLens Logo"
@@ -64,7 +61,6 @@ export const Navbar = () => {
           initial="hidden"
           animate="visible"
         />
-        {/* Thin, subtle separator */}
         <motion.span
           className="mx-2"
           style={{
@@ -85,7 +81,6 @@ export const Navbar = () => {
         >
           |
         </motion.span>
-        {/* Animated brand name */}
         <motion.div
           className="flex"
           style={{
@@ -108,7 +103,7 @@ export const Navbar = () => {
               variants={letterVariants}
               style={{
                 marginRight: idx === brandText.length - 1 ? 0 : "0.01em",
-                fontWeight: idx === 0 ? 700 : 500, // make T slightly bolder for modern look
+                fontWeight: idx === 0 ? 700 : 500,
               }}
             >
               {char}
@@ -117,7 +112,6 @@ export const Navbar = () => {
         </motion.div>
       </div>
 
-      {/* Profile/Login */}
       <div className="flex items-center space-x-2 sm:space-x-4 pr-2 sm:pr-6">
         {user ? (
           <div className="relative" ref={dropdownRef}>
@@ -176,32 +170,40 @@ export const Navbar = () => {
           <motion.a
             href={`${import.meta.env.VITE_APP_GOOGLE_AUTH_URL}`}
             onClick={() => localStorage.setItem("showWelcomeToast", "true")}
-            whileHover={{ y: -2 }}
-            className="group relative flex items-center gap-2 sm:gap-3 px-3 sm:px-6 py-2 sm:py-3
-              bg-gradient-to-r from-[#00ff9d] to-[#00d4ff]
-              text-black font-bold text-xs sm:text-sm md:text-base rounded-xl
-              shadow-lg shadow-[#00ff9d]/20
-              transition-all duration-300
-              hover:from-[#00ff9d]/90 hover:to-[#00d4ff]/80
-              hover:shadow-xl hover:scale-105
-              focus:outline-none focus:ring-4 focus:ring-[#00ff9d]/40
-              overflow-hidden"
+            whileHover={{ y: -2, scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            className="
+    group relative flex items-center gap-2 sm:gap-3 px-4 sm:px-7 py-2 sm:py-3
+    bg-[#101212]/80 border border-[#00ff9d]/40 rounded-xl
+    shadow-md hover:shadow-lg transition-all duration-200
+    hover:border-[#00ff9d]/80
+    focus:outline-none focus:ring-4 focus:ring-[#00ff9d]/30
+    backdrop-blur-md
+  "
             style={{
-              letterSpacing: "0.04em",
               fontFamily: "monospace",
+              color: "#00ff9d",
+              fontWeight: 700,
+              fontSize: "1.08rem",
+              letterSpacing: "0.04em",
+              boxShadow: "0 2px 16px #00ff9d11",
             }}
           >
             <span className="relative flex items-center">
-              <FiTerminal className="mr-1 sm:mr-2 text-sm sm:text-lg transition-transform duration-300 group-hover:rotate-12 group-hover:scale-125" />
+              <FiTerminal className="mr-2 text-lg group-hover:rotate-12 group-hover:scale-110 transition-transform duration-200" />
               <span className="hidden sm:inline">Sign in</span>
               <span className="sm:hidden">Login</span>
             </span>
             <span
-              className="
-                absolute inset-0 rounded-xl
-                bg-white/10 opacity-0 group-hover:opacity-100
-                transition-opacity duration-300 pointer-events-none
-              "
+              className="absolute inset-0 rounded-xl pointer-events-none"
+              style={{
+                background:
+                  "linear-gradient(120deg, #00ff9d22 10%, #00e0ff22 90%)",
+                opacity: 0.3,
+                zIndex: 0,
+                boxShadow: "0 4px 24px #00ff9d11",
+                backdropFilter: "blur(6px)",
+              }}
             />
           </motion.a>
         )}
