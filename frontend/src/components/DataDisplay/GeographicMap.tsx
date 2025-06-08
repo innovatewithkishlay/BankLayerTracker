@@ -121,6 +121,7 @@ export const GeographicMap = ({ transactions }: GeographicMapProps) => {
       animate={{ opacity: 1 }}
       className="relative w-full h-full bg-[#0A001A] rounded-xl border-2 border-[#00ff9d]/30 overflow-hidden"
     >
+      {/* Header with Statistics */}
       <div className="absolute top-4 left-4 z-20 bg-gradient-to-r from-[#17002E]/95 to-[#17002E]/80 px-4 py-3 rounded-lg border border-[#00ff9d]/30 backdrop-blur-sm">
         <h3 className="text-[#00ff9d] font-bold text-sm font-mono mb-2">
           Global Transaction Map
@@ -154,20 +155,7 @@ export const GeographicMap = ({ transactions }: GeographicMapProps) => {
         </div>
       </div>
 
-      <div className="absolute top-4 left-72 z-20 bg-gradient-to-r from-[#17002E]/95 to-[#17002E]/80 px-3 py-2 rounded-lg border border-[#00ff9d]/30 backdrop-blur-sm">
-        <h4 className="text-[#00ff9d] font-bold text-xs mb-1">
-          Active Countries
-        </h4>
-        <div className="text-xs space-y-1">
-          {processedCountries.map((country) => (
-            <div key={country} className="flex justify-between gap-2">
-              <span className="text-gray-300">{country}:</span>
-              <span className="text-[#00ff9d]">{countryCounts[country]}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
+      {/* Navigation Controls */}
       <div className="absolute top-4 right-4 z-20 flex flex-col gap-2">
         <button
           onClick={zoomIn}
@@ -191,6 +179,7 @@ export const GeographicMap = ({ transactions }: GeographicMapProps) => {
         </button>
       </div>
 
+      {/* Legend */}
       <div className="absolute bottom-4 right-4 z-20 bg-gradient-to-l from-[#17002E]/95 to-[#17002E]/80 px-3 py-3 rounded-lg border border-[#00ff9d]/30 backdrop-blur-sm">
         <h4 className="text-[#00ff9d] font-bold text-xs mb-2 font-mono">
           Transaction Activity
@@ -211,6 +200,7 @@ export const GeographicMap = ({ transactions }: GeographicMapProps) => {
         </div>
       </div>
 
+      {/* Country Tooltip */}
       {hoveredCountry && (
         <div className="absolute top-24 left-4 z-20 bg-[#17002E] border-2 border-[#00ff9d] rounded-lg p-3 max-w-xs">
           <div className="text-[#00ff9d] font-bold text-sm mb-2">
@@ -292,7 +282,6 @@ export const GeographicMap = ({ transactions }: GeographicMapProps) => {
                 })
               }
             </Geographies>
-
             {Object.entries(countryCounts).map(([countryCode, count]) => {
               const coordinates = getCountryCoordinates(countryCode);
               if (!coordinates || count === 0) return null;
@@ -344,7 +333,7 @@ export const GeographicMap = ({ transactions }: GeographicMapProps) => {
           </ZoomableGroup>
         </ComposableMap>
       </div>
-
+      {/* Loading/Empty State */}
       {transactions.length === 0 && (
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-[#00ff9d] font-mono text-center">
@@ -389,6 +378,5 @@ const getCountryCoordinates = (
     CH: [8.2275, 46.8182],
     SE: [18.6435, 60.1282],
   };
-
   return coordinates[countryCode] || null;
 };
