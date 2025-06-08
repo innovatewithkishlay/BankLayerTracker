@@ -19,10 +19,69 @@ import {
 import { Navbar } from "../components/UI/Navbar";
 import Footer from "../components/UI/Footer";
 
+const CrossCaseProButton = () => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <div className="relative inline-block">
+      <button
+        className="px-8 py-3 bg-[#181a20] text-[#00ff9d] font-mono text-lg font-bold rounded-lg border border-[#00ff9d]/40 shadow-lg hover:bg-[#23262e] transition-all relative"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        onFocus={() => setIsHovered(true)}
+        onBlur={() => setIsHovered(false)}
+        disabled
+        style={{ paddingRight: "3.5em" }}
+      >
+        <span className="relative flex items-center">
+          Cross-Case Investigation
+          <span
+            className="absolute -top-4 right-2 flex items-center"
+            style={{ pointerEvents: "none" }}
+          >
+            <span
+              className="bg-[#181a20]/90 border border-[#00ff9d] text-[#00ff9d] font-bold text-xs px-2 py-0.5 rounded-full shadow-md flex items-center backdrop-blur"
+              style={{
+                fontFamily: "monospace",
+                fontSize: "0.95rem",
+                transform: "translateY(-0.2em)",
+                boxShadow: "0 2px 12px #00ff9d33",
+                letterSpacing: "0.08em",
+              }}
+            >
+              <span role="img" aria-label="pro" className="mr-1">
+                👑
+              </span>
+              PRO
+            </span>
+          </span>
+        </span>
+      </button>
+
+      {isHovered && (
+        <div className="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 bg-[#181818] border border-[#00ff9d]/30 text-white text-xs rounded-md px-4 py-3 shadow-xl z-50 font-mono w-60">
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-2 h-2 bg-[#00ff9d] rounded-full animate-pulse" />
+            <span className="font-semibold text-[#00ff9d]">Pro Feature</span>
+          </div>
+          <div className="text-gray-300 leading-snug">
+            For using this feature you need to purchase PRO.
+            <br />
+            Contact owner:{" "}
+            <span className="text-[#00ff9d] underline">
+              kishlay141@gmail.com
+            </span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// --- Main Home Component ---
 export const Home = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
-  const [proTooltip, setProTooltip] = useState(false);
 
   useEffect(() => {
     if (user && localStorage.getItem("showWelcomeToast") === "true") {
@@ -155,71 +214,7 @@ export const Home = () => {
                   <TerminalText text="Single Case Analysis" />
                 </GlowingButton>
 
-                {/* PRO Button with always-visible tooltip */}
-                <div className="relative flex items-center">
-                  <button
-                    type="button"
-                    className="relative px-8 py-3 rounded-lg font-mono text-lg tracking-widest transition-all bg-[#181a20] text-[#00ff9d] hover:bg-[#23262e] border border-[#00ff9d]/40 shadow-lg hover:shadow-xl"
-                    style={{ paddingRight: "3.5em" }}
-                    onMouseEnter={() => setProTooltip(true)}
-                    onMouseLeave={() => setProTooltip(false)}
-                    onFocus={() => setProTooltip(true)}
-                    onBlur={() => setProTooltip(false)}
-                    onTouchStart={() => setProTooltip(true)}
-                    onTouchEnd={() => setProTooltip(false)}
-                    disabled
-                  >
-                    <span className="relative flex items-center">
-                      <TerminalText text="Cross-Case Investigation" />
-                      <span
-                        className="absolute -top-4 right-2 flex items-center"
-                        style={{ pointerEvents: "none" }}
-                      >
-                        <span
-                          className="bg-[#181a20]/90 border border-[#00ff9d] text-[#00ff9d] font-bold text-xs px-2 py-0.5 rounded-full shadow-md flex items-center backdrop-blur"
-                          style={{
-                            fontFamily: "monospace",
-                            fontSize: "0.95rem",
-                            transform: "translateY(-0.2em)",
-                            boxShadow: "0 2px 12px #00ff9d33",
-                            letterSpacing: "0.08em",
-                          }}
-                        >
-                          <span role="img" aria-label="pro" className="mr-1">
-                            👑
-                          </span>
-                          PRO
-                        </span>
-                      </span>
-                    </span>
-                  </button>
-                  <div
-                    className={`absolute left-1/2 -translate-x-1/2 -top-16 z-50 transition-opacity duration-200 ${
-                      proTooltip
-                        ? "opacity-100 pointer-events-auto"
-                        : "opacity-0 pointer-events-none"
-                    }`}
-                    style={{ width: 230 }}
-                  >
-                    <div className="bg-[#181818]/90 border border-[#00ff9d]/30 rounded-lg px-4 py-3 shadow-xl text-xs text-white font-mono backdrop-blur flex flex-col gap-1.5 relative">
-                      <div className="absolute left-1/2 -bottom-2 -translate-x-1/2 w-3 h-3 bg-[#181818]/90 border-l border-b border-[#00ff9d]/30 rotate-45" />
-                      <div className="flex items-center gap-2 mb-1">
-                        <div className="w-2 h-2 bg-[#00ff9d] rounded-full animate-pulse" />
-                        <span className="font-semibold text-[#00ff9d]">
-                          Pro Feature
-                        </span>
-                      </div>
-                      <div className="text-gray-300 leading-snug">
-                        For using this feature you need to purchase PRO.
-                        <br />
-                        Contact owner:{" "}
-                        <span className="text-[#00ff9d] underline">
-                          kishlay141@gmail.com
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <CrossCaseProButton />
               </motion.div>
 
               <motion.div
