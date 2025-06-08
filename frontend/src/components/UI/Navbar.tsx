@@ -5,16 +5,47 @@ import { FiUser, FiLogOut, FiTerminal } from "react-icons/fi";
 import { useClickOutside } from "../../hooks/useClickOutside";
 import { useNavigate } from "react-router-dom";
 
+const logoVariants = {
+  hidden: { opacity: 0, x: -20 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.6 } },
+};
+
+const separatorVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 0.7, y: 0, transition: { delay: 0.7, duration: 0.4 } },
+};
+
+const textContainerVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.85,
+    },
+  },
+};
+
+const letterVariants = {
+  hidden: { opacity: 0, y: 16 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { type: "spring", stiffness: 400, damping: 24 },
+  },
+};
+
 export const Navbar = () => {
   const { user, logout } = useAuth();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const dropdownRef = useClickOutside(() => setIsProfileOpen(false));
   const navigate = useNavigate();
 
+  const brandText = "Threatlens";
+
   return (
     <nav className="flex items-center justify-between p-4 sm:p-6 w-full">
-      <div className="flex items-center space-x-3 pl-2 sm:pl-6 md:pl-8">
-        <img
+      <div className="flex items-center pl-2 sm:pl-6 md:pl-8">
+        <motion.img
           src="/assets/threatlens.png"
           alt="ThreatLens Logo"
           className="h-14 w-14 object-contain"
@@ -29,34 +60,49 @@ export const Navbar = () => {
             display: "block",
           }}
           draggable={false}
+          variants={logoVariants}
+          initial="hidden"
+          animate="visible"
         />
-        <span
+        <motion.span
           className="mx-2"
           style={{
             color: "#00ff9d",
-            fontWeight: 900,
-            fontSize: "2rem",
+            fontWeight: 500,
+            fontSize: "2.1rem",
+            fontFamily: "'Poppins', sans-serif",
             lineHeight: 1,
-            opacity: 0.7,
             userSelect: "none",
-            letterSpacing: "-0.1em",
+            opacity: 0.7,
           }}
+          variants={separatorVariants}
+          initial="hidden"
+          animate="visible"
         >
           |
-        </span>
-        <span
-          className="text-2xl font-extrabold tracking-widest uppercase select-none"
+        </motion.span>
+        <motion.div
+          className="flex space-x-0.5"
           style={{
-            color: "#00ff9d",
-            letterSpacing: "0.13em",
-            fontFamily: "Orbitron, monospace, sans-serif",
-            lineHeight: 1,
-            textShadow: "0 2px 12px #00ff9d33",
+            fontFamily: "'Montserrat', sans-serif",
+            fontWeight: 600,
             fontSize: "2.1rem",
+            letterSpacing: "0.11em",
+            color: "#00ff9d",
+            userSelect: "none",
+            textShadow: "0 2px 12px #00ff9d33",
+            lineHeight: 1,
           }}
+          variants={textContainerVariants}
+          initial="hidden"
+          animate="visible"
         >
-          THREATLENS
-        </span>
+          {brandText.split("").map((char, idx) => (
+            <motion.span key={idx} variants={letterVariants}>
+              {char}
+            </motion.span>
+          ))}
+        </motion.div>
       </div>
 
       <div className="flex items-center space-x-2 sm:space-x-4 pr-2 sm:pr-6">
