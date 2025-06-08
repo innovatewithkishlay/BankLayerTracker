@@ -6,7 +6,7 @@ export default function ProButtonDemo() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-black">
-      <div className="relative">
+      <div className="relative" style={{ minWidth: 420 }}>
         <motion.button
           type="button"
           className="relative px-8 py-3 rounded-lg font-mono text-lg tracking-widest transition-all bg-[#181a20] text-[#00ff9d] hover:bg-[#23262e] border border-[#00ff9d]/40 shadow-lg hover:shadow-xl"
