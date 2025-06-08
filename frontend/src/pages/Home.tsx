@@ -24,27 +24,31 @@ const ProTooltip = ({ show }: { show: boolean }) => (
     {show && (
       <motion.div
         initial={{ opacity: 0, y: 10, scale: 0.95 }}
-        animate={{ opacity: 1, y: -10, scale: 1 }}
+        animate={{ opacity: 1, y: -16, scale: 1 }}
         exit={{ opacity: 0, y: 10, scale: 0.95 }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="absolute left-1/2 -translate-x-1/2 -top-3 z-50"
+        className="absolute left-1/2 -translate-x-1/2 -top-20 z-50"
         style={{ pointerEvents: "none" }}
       >
         <div
-          className="bg-[#181818] border border-[#00ff9d]/30 rounded-lg px-4 py-2 shadow-lg text-xs text-white font-mono"
+          className="bg-[#181818]/90 border border-[#00ff9d]/30 rounded-lg px-4 py-3 shadow-xl text-xs text-white font-mono backdrop-blur flex flex-col gap-1.5 relative"
           style={{
-            minWidth: "200px",
-            textAlign: "center",
+            width: "230px",
             boxShadow: "0 6px 32px #00ff9d22",
-            pointerEvents: "auto",
           }}
         >
-          <span className="font-semibold text-[#00ff9d]">Pro Feature</span>
-          <div className="mt-1">
-            You need to purchase for this feature.
+          <div className="absolute left-1/2 -bottom-2 -translate-x-1/2 w-3 h-3 bg-[#181818]/90 border-l border-b border-[#00ff9d]/30 rotate-45" />
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-2 h-2 bg-[#00ff9d] rounded-full animate-pulse" />
+            <span className="font-semibold text-[#00ff9d]">Pro Feature</span>
+          </div>
+          <div className="text-gray-300 leading-snug">
+            For using this feature you need to purchase PRO.
             <br />
             Contact owner:{" "}
-            <span className="underline">kishlay141@gmail.com</span>
+            <span className="text-[#00ff9d] underline">
+              kishlay141@gmail.com
+            </span>
           </div>
         </div>
       </motion.div>
@@ -189,17 +193,15 @@ export const Home = () => {
                 </GlowingButton>
 
                 <div className="relative flex items-center">
-                  <GlowingButton
-                    variant="danger"
-                    onClick={() => {}}
+                  <motion.button
+                    type="button"
+                    className="relative px-8 py-3 rounded-lg font-mono text-lg tracking-widest transition-all bg-[#181a20] text-[#00ff9d] hover:bg-[#23262e] border border-[#00ff9d]/40 shadow-lg hover:shadow-xl"
+                    style={{ paddingRight: "3.5em" }}
                     onMouseEnter={() => setProTooltip(true)}
                     onMouseLeave={() => setProTooltip(false)}
                     onTouchStart={() => setProTooltip(true)}
                     onTouchEnd={() => setProTooltip(false)}
-                    style={{
-                      position: "relative",
-                      paddingRight: "2.8em",
-                    }}
+                    disabled
                   >
                     <span className="relative flex items-center">
                       <TerminalText text="Cross-Case Investigation" />
@@ -208,12 +210,13 @@ export const Home = () => {
                         style={{ pointerEvents: "none" }}
                       >
                         <span
-                          className="bg-yellow-400 text-yellow-900 font-bold text-xs px-2 py-0.5 rounded-full shadow-md flex items-center"
+                          className="bg-[#181a20]/90 border border-[#00ff9d] text-[#00ff9d] font-bold text-xs px-2 py-0.5 rounded-full shadow-md flex items-center backdrop-blur"
                           style={{
                             fontFamily: "monospace",
-                            fontSize: "1rem",
+                            fontSize: "0.95rem",
                             transform: "translateY(-0.2em)",
-                            boxShadow: "0 2px 12px #0002",
+                            boxShadow: "0 2px 12px #00ff9d33",
+                            letterSpacing: "0.08em",
                           }}
                         >
                           <span role="img" aria-label="pro" className="mr-1">
@@ -223,7 +226,7 @@ export const Home = () => {
                         </span>
                       </span>
                     </span>
-                  </GlowingButton>
+                  </motion.button>
                   <ProTooltip show={proTooltip} />
                 </div>
               </motion.div>
