@@ -5,16 +5,14 @@ Detect money laundering patterns with forensic precision.
 
 ---
 
-## 🚀 Features
+## Features
 
 - **AI-powered case investigation**
 - **Cross-case analysis** <sup>(PRO)</sup>
 - **Responsive, modern UI**
 - **Secure and open source**
 
----
-
-## 🛠️ Getting Started
+## Getting Started
 
 Follow these steps to set up ThreatLens locally:
 
@@ -45,7 +43,7 @@ npm run dev
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Pull requests are welcome!  
 Please read our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
