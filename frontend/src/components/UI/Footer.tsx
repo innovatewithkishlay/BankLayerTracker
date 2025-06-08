@@ -13,7 +13,7 @@ export const Footer = () => (
             draggable={false}
           />
           <span className="text-lg font-bold uppercase tracking-wider text-[#00ff9d]">
-            Thread Lens
+            ThreatLens
           </span>
         </div>
         <div className="text-xs text-gray-400 mt-1">
