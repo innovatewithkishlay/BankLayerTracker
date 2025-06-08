@@ -50,7 +50,7 @@ export const Home = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] to-[#0d0d0d] text-white overflow-hidden flex flex-col relative">
-      {/* Always visible, animated SVG grid background */}
+      {/* More visible, animated SVG grid background */}
       <div
         aria-hidden="true"
         style={{
@@ -58,7 +58,7 @@ export const Home = () => {
           inset: 0,
           zIndex: 0,
           pointerEvents: "none",
-          opacity: 0.18,
+          opacity: 0.35, // Increased overall opacity
           background: "transparent",
         }}
       >
@@ -72,31 +72,31 @@ export const Home = () => {
           <defs>
             <pattern
               id="smallGrid"
-              width="40"
-              height="40"
+              width="28" // smaller grid for denser lines
+              height="28"
               patternUnits="userSpaceOnUse"
             >
               <path
-                d="M 40 0 L 0 0 0 40"
+                d="M 28 0 L 0 0 0 28"
                 fill="none"
                 stroke="#00ff9d"
-                strokeWidth="0.5"
-                opacity="0.18"
+                strokeWidth="1" // thicker grid lines
+                opacity="0.35" // more visible
               />
             </pattern>
             <pattern
               id="grid"
-              width="160"
-              height="160"
+              width="112"
+              height="112"
               patternUnits="userSpaceOnUse"
             >
-              <rect width="160" height="160" fill="url(#smallGrid)" />
+              <rect width="112" height="112" fill="url(#smallGrid)" />
               <path
-                d="M 160 0 L 0 0 0 160"
+                d="M 112 0 L 0 0 0 112"
                 fill="none"
                 stroke="#00ff9d"
-                strokeWidth="1"
-                opacity="0.25"
+                strokeWidth="1.5" // thicker main lines
+                opacity="0.5" // more visible
               />
             </pattern>
           </defs>
@@ -105,7 +105,7 @@ export const Home = () => {
               attributeName="transform"
               type="translate"
               from="0 0"
-              to="40 40"
+              to="28 28"
               dur="20s"
               repeatCount="indefinite"
             />
