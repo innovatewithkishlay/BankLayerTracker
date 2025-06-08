@@ -23,11 +23,11 @@ const ProTooltip = ({ show }: { show: boolean }) => (
   <AnimatePresence>
     {show && (
       <motion.div
-        initial={{ opacity: 0, y: 10, scale: 0.95 }}
-        animate={{ opacity: 1, y: -16, scale: 1 }}
-        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: -12 }}
+        exit={{ opacity: 0, y: 8 }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="absolute left-1/2 -translate-x-1/2 -top-20 z-50"
+        className="absolute left-1/2 -translate-x-1/2 -top-16 z-50"
         style={{ pointerEvents: "none" }}
       >
         <div
