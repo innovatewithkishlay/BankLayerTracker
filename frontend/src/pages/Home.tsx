@@ -18,11 +18,13 @@ import {
 } from "react-icons/fi";
 import { Navbar } from "../components/UI/Navbar";
 import Footer from "../components/UI/Footer";
+import ContributePopup from "../components/UI/ContributePopup";
 
 export const Home = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
   const [showProPopup, setShowProPopup] = useState(false);
+  const [showContributePopup, setShowContributePopup] = useState(false);
 
   useEffect(() => {
     if (user && localStorage.getItem("showWelcomeToast") === "true") {
@@ -37,6 +39,17 @@ export const Home = () => {
       localStorage.removeItem("showWelcomeToast");
     }
   }, [user]);
+
+  useEffect(() => {
+    const hasSeenPopup = localStorage.getItem("hasSeenContributePopup");
+    if (!hasSeenPopup) {
+      const timer = setTimeout(() => {
+        setShowContributePopup(true);
+        localStorage.setItem("hasSeenContributePopup", "true");
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, []);
 
   if (loading) {
     return (
@@ -351,6 +364,10 @@ export const Home = () => {
         </div>
         <Footer />
       </div>
+      <ContributePopup
+        show={showContributePopup}
+        onClose={() => setShowContributePopup(false)}
+      />
     </div>
   );
 };
