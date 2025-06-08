@@ -13,17 +13,35 @@ export const Navbar = () => {
 
   return (
     <nav className="flex items-center justify-between p-4 sm:p-6 w-full">
-      <div className="flex items-center space-x-2 sm:space-x-3 pl-2 sm:pl-6 md:pl-8">
-        <motion.img
+      {/* Logo + Brand Name */}
+      <div className="flex items-center space-x-3 pl-2 sm:pl-6 md:pl-8">
+        <img
           src="/assets/threatlens.png"
           alt="ThreatLens Logo"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          whileHover={{ scale: 1.03 }}
-          className="h-12 w-12 sm:h-16 sm:w-16 md:h-20 md:w-20 object-contain rounded-lg shadow-lg"
-          style={{ boxShadow: "0 2px 20px #00ff9daa" }}
+          className="h-9 w-9 object-contain"
+          style={{
+            borderRadius: 0,
+            boxShadow: "none",
+            background: "none",
+            margin: 0,
+            padding: 0,
+            border: "none",
+            filter: "none",
+            display: "block",
+          }}
+          draggable={false}
         />
+        <span
+          className="text-xl font-bold tracking-widest uppercase select-none"
+          style={{
+            color: "#00ff9d",
+            letterSpacing: "0.08em",
+            fontFamily: "Orbitron, monospace, sans-serif",
+            lineHeight: 1,
+          }}
+        >
+          THREATLENS
+        </span>
       </div>
 
       <div className="flex items-center space-x-2 sm:space-x-4 pr-2 sm:pr-6">
