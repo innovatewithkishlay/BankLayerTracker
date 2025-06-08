@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { FiX, FiGithub } from "react-icons/fi";
+import { FiX } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
 export default function ContributePopup({
   show,
@@ -8,6 +9,8 @@ export default function ContributePopup({
   show: boolean;
   onClose: () => void;
 }) {
+  const navigate = useNavigate();
+
   return (
     <AnimatePresence>
       {show && (
@@ -15,7 +18,14 @@ export default function ContributePopup({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
-          className="fixed bottom-6 right-6 z-50 w-80 bg-[#181a20]/95 backdrop-blur-lg rounded-xl border border-[#00ff9d]/30 p-6 shadow-xl"
+          className="
+            fixed z-50
+            left-2 right-2 bottom-4
+            sm:right-6 sm:bottom-6 sm:left-auto
+            w-full max-w-xs sm:max-w-sm
+            mx-auto sm:mx-0
+            bg-[#181a20]/95 backdrop-blur-lg rounded-xl border border-[#00ff9d]/30 p-6 shadow-xl
+          "
         >
           <div className="flex justify-between items-start mb-4">
             <h3 className="text-[#00ff9d] font-mono text-lg font-bold flex items-center gap-2">
@@ -25,6 +35,7 @@ export default function ContributePopup({
             <button
               onClick={onClose}
               className="text-gray-400 hover:text-[#00ff9d] transition-colors"
+              aria-label="Close"
             >
               <FiX size={20} />
             </button>
@@ -33,14 +44,12 @@ export default function ContributePopup({
             We're open source and need your AML/AI expertise to build the
             next-gen investigation platform.
           </p>
-          <a
-            href="https://github.com/innovatewithkishlay/ThreatLens.git"
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            onClick={() => navigate("/contribute")}
             className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-[#00ff9d]/10 hover:bg-[#00ff9d]/20 border border-[#00ff9d]/30 rounded-lg text-[#00ff9d] font-mono transition-all"
           >
-            <FiGithub /> View GitHub
-          </a>
+            Contribute
+          </button>
         </motion.div>
       )}
     </AnimatePresence>
