@@ -56,7 +56,6 @@ export const Navbar = () => {
           initial="hidden"
           animate="visible"
         />
-        {/* Hide separator and brand text on mobile */}
         <div className="hidden sm:flex items-center">
           <motion.span
             className="mx-2"
@@ -109,7 +108,6 @@ export const Navbar = () => {
           </motion.div>
         </div>
       </div>
-      {/* ...rest of your code remains unchanged... */}
       <div className="flex items-center space-x-2 sm:space-x-4 pr-2 sm:pr-6">
         <NavLink
           to="/contribute"
