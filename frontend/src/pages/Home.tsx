@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { GlowingButton } from "../components/UI/GlowingButton";
@@ -27,6 +27,7 @@ export const Home = () => {
   const [showProPopup, setShowProPopup] = useState(false);
   const [showContributePopup, setShowContributePopup] = useState(false);
   const [showSignInModal, setShowSignInModal] = useState(false);
+  const signInTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (user && localStorage.getItem("showWelcomeToast") === "true") {
@@ -48,6 +49,17 @@ export const Home = () => {
     }, 5000);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (!user) {
+      signInTimerRef.current = setTimeout(() => {
+        setShowSignInModal(true);
+      }, 180000);
+    }
+    return () => {
+      if (signInTimerRef.current) clearTimeout(signInTimerRef.current);
+    };
+  }, [user]);
 
   const handleSingleCaseClick = () => {
     if (!user) {
@@ -261,7 +273,6 @@ export const Home = () => {
                 <StatCard value="85%" label="Noise Reduction" />
               </motion.div>
             </div>
-
             <motion.div
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
@@ -378,6 +389,7 @@ export const Home = () => {
         show={showSignInModal}
         onClose={() => setShowSignInModal(false)}
         onSignIn={() => {
+          if (signInTimerRef.current) clearTimeout(signInTimerRef.current);
           window.location.href = import.meta.env.VITE_APP_GOOGLE_AUTH_URL;
         }}
       />
