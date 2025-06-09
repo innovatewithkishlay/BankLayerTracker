@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-
+import { Link } from "react-router-dom";
 export default function CookieBanner() {
   const [consent, setConsent] = useState(
     () => localStorage.getItem("cookie_consent") || "undecided"
@@ -8,7 +8,6 @@ export default function CookieBanner() {
   const [show, setShow] = useState(false);
   const [leaving, setLeaving] = useState(false);
 
-  // Delay the appearance by 1.5 seconds
   useEffect(() => {
     if (consent === "undecided") {
       const timer = setTimeout(() => setShow(true), 1500);
