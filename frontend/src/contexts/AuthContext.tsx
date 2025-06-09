@@ -1,98 +1,96 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-} from "react";
+import { createContext, useContext, useState, useEffect } from "react";
+import axios from "axios";
+import { toast } from "react-hot-toast";
 
 type User = {
-  id: string;
-  name: string;
   email: string;
+  name: string;
   avatar?: string;
 };
 
 type AuthContextType = {
   user: User | null;
   loading: boolean;
-  error: string | null;
-  signIn: (email: string, password: string) => Promise<void>;
-  signOut: () => void;
-  clearError: () => void;
+  logout: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const token = localStorage.getItem("authToken");
-        if (!token) {
-          setUser(null);
-        } else {
-          const response = await fetch("/api/auth/check", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          if (response.ok) {
-            const userData = await response.json();
-            setUser(userData);
-          } else {
-            setUser(null);
-            localStorage.removeItem("authToken");
-          }
+        const { data } = await axios.get(
+          `${import.meta.env.VITE_API_BASE_URL}/auth/profile`,
+          { withCredentials: true }
+        );
+        if (!data?.user) {
+          throw new Error("Invalid user data");
         }
-      } catch {
+        setUser(data.user);
+
+        if (localStorage.getItem("showWelcomeToast") === "true") {
+          toast.success(`Welcome back, ${data.user.name}`, {
+            icon: "👋",
+            style: {
+              background: "#0d0d0d",
+              color: "#00ff9d",
+              border: "1px solid #00ff9d50",
+            },
+          });
+          localStorage.removeItem("showWelcomeToast");
+        }
+      } catch (err) {
+        console.error("Auth check failed:", err);
         setUser(null);
+        toast.error("Authentication failed. Please login again.", {
+          style: {
+            background: "#0d0d0d",
+            color: "#ff4444",
+            border: "1px solid #ff444450",
+          },
+        });
       } finally {
         setLoading(false);
       }
     };
+
     checkAuth();
   }, []);
 
-  const signIn = async (email: string, password: string) => {
-    setLoading(true);
-    setError(null);
+  const logout = async () => {
     try {
-      const response = await fetch("/api/auth/signin", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+      await axios.get(`${import.meta.env.VITE_API_BASE_URL}/auth/logout`, {
+        withCredentials: true,
       });
-      if (!response.ok) throw new Error("Invalid credentials");
-      const { user, token } = await response.json();
-      localStorage.setItem("authToken", token);
-      setUser(user);
-    } catch {
-      setError("Authentication failed. Please login again");
       setUser(null);
-      localStorage.removeItem("authToken");
-    } finally {
-      setLoading(false);
+      toast.success("Logged out successfully!", {
+        style: {
+          background: "#0d0d0d",
+          color: "#00ff9d",
+          border: "1px solid #00ff9d50",
+        },
+      });
+    } catch (err) {
+      console.error("Logout failed:", err);
+      toast.error("Logout failed. Please try again.", {
+        style: {
+          background: "#0d0d0d",
+          color: "#ff4444",
+          border: "1px solid #ff444450",
+        },
+      });
     }
   };
 
-  const signOut = () => {
-    localStorage.removeItem("authToken");
-    setUser(null);
-    setError(null);
-  };
-
-  const clearError = () => setError(null);
-
   return (
-    <AuthContext.Provider
-      value={{ user, loading, error, signIn, signOut, clearError }}
-    >
+    <AuthContext.Provider value={{ user, loading, logout }}>
       {children}
     </AuthContext.Provider>
   );
-}
+};
 
 export const useAuth = () => useContext(AuthContext);
