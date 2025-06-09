@@ -2,7 +2,6 @@ import { motion } from "framer-motion";
 import { MdCookie } from "react-icons/md";
 import { FiInfo, FiSettings, FiMail, FiLink } from "react-icons/fi";
 import { Link, useLocation } from "react-router-dom";
-import Navbar from "../components/UI/Navbar";
 import Footer from "../components/UI/Footer";
 
 export default function CookiePolicy() {
@@ -10,8 +9,6 @@ export default function CookiePolicy() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] to-[#0d0d0d] text-white overflow-hidden">
-      <Navbar />
-
       <div className="max-w-5xl mx-auto px-6 py-12 sm:py-16 lg:py-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
