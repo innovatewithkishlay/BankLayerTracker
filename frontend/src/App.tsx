@@ -10,7 +10,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ProButtonDemo from "./pages/Test";
 import ContributePage from "./pages/ContributePage";
 import CookieBanner from "./components/UI/CookieBanner";
-
+import CookiePolicy from "./pages/CookiePolicy";
 export const App = () => {
   return (
     <AuthProvider>
@@ -27,6 +27,7 @@ export const App = () => {
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/pro" element={<ProButtonDemo />} />
           <Route path="/contribute" element={<ContributePage />} />
+          <Route path="/cookie-policy" element={<CookiePolicy />} />
         </Routes>
         <CyberToast />
         <CookieBanner />
