@@ -19,6 +19,7 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [firstLoad, setFirstLoad] = useState(true);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -27,9 +28,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           `${import.meta.env.VITE_API_BASE_URL}/auth/profile`,
           { withCredentials: true }
         );
+
         if (!data?.user) {
           throw new Error("Invalid user data");
         }
+
         setUser(data.user);
 
         if (localStorage.getItem("showWelcomeToast") === "true") {
@@ -46,14 +49,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       } catch (err) {
         console.error("Auth check failed:", err);
         setUser(null);
-        toast.error("Authentication failed. Please login again.", {
-          style: {
-            background: "#0d0d0d",
-            color: "#ff4444",
-            border: "1px solid #ff444450",
-          },
-        });
+
+        if (!firstLoad) {
+          toast.error("Authentication failed. Please login again.", {
+            style: {
+              background: "#0d0d0d",
+              color: "#ff4444",
+              border: "1px solid #ff444450",
+            },
+          });
+        }
       } finally {
+        setFirstLoad(false);
         setLoading(false);
       }
     };
