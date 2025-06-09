@@ -8,6 +8,7 @@ export default function CookieBanner() {
   const [show, setShow] = useState(false);
   const [leaving, setLeaving] = useState(false);
 
+  // Delay the appearance by 1.5 seconds
   useEffect(() => {
     if (consent === "undecided") {
       const timer = setTimeout(() => setShow(true), 1500);
@@ -62,6 +63,7 @@ export default function CookieBanner() {
             color: "#fff",
             padding: "1.2rem 1.5rem",
             borderRadius: "12px",
+            border: "2px solid #00FF9D",
             boxShadow: "0 0 16px #00ff9d33",
             zIndex: 1000,
             display: "flex",
