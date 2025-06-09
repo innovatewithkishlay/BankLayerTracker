@@ -20,6 +20,7 @@ import { Navbar } from "../components/UI/Navbar";
 import Footer from "../components/UI/Footer";
 import ContributePopup from "../components/UI/ContributePopup";
 import SignInRequiredModal from "../components/UI/SignInRequiredModal";
+import SignInReminderModal from "../components/UI/SignInReminderModal";
 
 export const Home = () => {
   const navigate = useNavigate();
@@ -27,7 +28,8 @@ export const Home = () => {
   const [showProPopup, setShowProPopup] = useState(false);
   const [showContributePopup, setShowContributePopup] = useState(false);
   const [showSignInModal, setShowSignInModal] = useState(false);
-  const signInTimerRef = useRef<number | null>(null);
+  const [showReminderModal, setShowReminderModal] = useState(false);
+  const reminderTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (user && localStorage.getItem("showWelcomeToast") === "true") {
@@ -43,6 +45,7 @@ export const Home = () => {
     }
   }, [user]);
 
+  // Show the Contribute popup 5 seconds after every page load
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowContributePopup(true);
@@ -50,14 +53,15 @@ export const Home = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  // Show sign-in reminder modal after 3 minutes if not signed in
   useEffect(() => {
     if (!user) {
-      signInTimerRef.current = setTimeout(() => {
-        setShowSignInModal(true);
-      }, 180000);
+      reminderTimerRef.current = setTimeout(() => {
+        setShowReminderModal(true);
+      }, 180000); // 3 minutes
     }
     return () => {
-      if (signInTimerRef.current) clearTimeout(signInTimerRef.current);
+      if (reminderTimerRef.current) clearTimeout(reminderTimerRef.current);
     };
   }, [user]);
 
@@ -273,6 +277,7 @@ export const Home = () => {
                 <StatCard value="85%" label="Noise Reduction" />
               </motion.div>
             </div>
+
             <motion.div
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
@@ -389,9 +394,12 @@ export const Home = () => {
         show={showSignInModal}
         onClose={() => setShowSignInModal(false)}
         onSignIn={() => {
-          if (signInTimerRef.current) clearTimeout(signInTimerRef.current);
           window.location.href = import.meta.env.VITE_APP_GOOGLE_AUTH_URL;
         }}
+      />
+      <SignInReminderModal
+        show={showReminderModal}
+        onClose={() => setShowReminderModal(false)}
       />
     </div>
   );
