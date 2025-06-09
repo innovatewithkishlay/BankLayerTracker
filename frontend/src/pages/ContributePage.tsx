@@ -14,7 +14,6 @@ export default function ContributePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] to-[#0d0d0d] text-white">
-      {/* Home icon absolutely fixed at the top-left */}
       <button
         onClick={() => navigate("/")}
         className="fixed left-2 top-2 z-50 p-2 rounded-lg bg-[#181a20]/80 border border-[#00ff9d]/30 text-[#00ff9d] hover:bg-[#00ff9d]/10 hover:border-[#00ff9d] transition-all shadow-lg"

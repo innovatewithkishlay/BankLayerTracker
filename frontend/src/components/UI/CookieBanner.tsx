@@ -111,19 +111,6 @@ export default function CookieBanner() {
             >
               Reject All
             </button>
-            <button
-              onClick={handleReset}
-              style={{
-                background: "none",
-                color: "#00ff9d",
-                border: "none",
-                textDecoration: "underline",
-                cursor: "pointer",
-                padding: "0.5rem 0.8rem",
-              }}
-            >
-              Reset Cookies
-            </button>
           </div>
         </motion.div>
       )}
