@@ -19,12 +19,14 @@ import {
 import { Navbar } from "../components/UI/Navbar";
 import Footer from "../components/UI/Footer";
 import ContributePopup from "../components/UI/ContributePopup";
+import SignInRequiredModal from "../components/UI/SignInRequiredModal";
 
 export const Home = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
   const [showProPopup, setShowProPopup] = useState(false);
   const [showContributePopup, setShowContributePopup] = useState(false);
+  const [showSignInModal, setShowSignInModal] = useState(false);
 
   useEffect(() => {
     if (user && localStorage.getItem("showWelcomeToast") === "true") {
@@ -40,13 +42,20 @@ export const Home = () => {
     }
   }, [user]);
 
-  // Show the Contribute popup 5 seconds after every page load
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowContributePopup(true);
     }, 5000);
     return () => clearTimeout(timer);
   }, []);
+
+  const handleSingleCaseClick = () => {
+    if (!user) {
+      setShowSignInModal(true);
+    } else {
+      navigate("/plugin");
+    }
+  };
 
   if (loading) {
     return (
@@ -135,7 +144,7 @@ export const Home = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-bold mb-6 sm:mb-8 px-4"
               >
-                <span className="text-[#00ff9d]">AML</span> Investigation
+                <span className="text-[#00ff9d]">Transaction</span> Analysis
                 <br />
                 Made <span className="text-[#00ff9d]">Precise</span>
               </motion.h1>
@@ -146,11 +155,9 @@ export const Home = () => {
                 transition={{ delay: 0.1 }}
                 className="text-lg sm:text-xl lg:text-2xl text-gray-400 max-w-4xl mx-auto mb-8 sm:mb-12 leading-relaxed px-4"
               >
-                A robust platform for financial crime detection, transaction
-                analysis, and regulatory compliance. Our advanced rule-based
-                algorithms identify suspicious transaction patterns with
-                forensic precision, helping you reduce investigation time by up
-                to 85%.
+                Powerful platform for advanced data analysis, transaction
+                review, and workflow automation. Identify unusual patterns with
+                forensic precision and reduce investigation time by up to 85%.
               </motion.p>
 
               <motion.div
@@ -161,7 +168,7 @@ export const Home = () => {
               >
                 <GlowingButton
                   variant="primary"
-                  onClick={() => navigate("/plugin")}
+                  onClick={handleSingleCaseClick}
                 >
                   <TerminalText text="Single Case Analysis" />
                 </GlowingButton>
@@ -226,12 +233,12 @@ export const Home = () => {
                           </span>
                         </div>
                         <div className="text-gray-300 leading-snug mb-1 text-xs sm:text-sm">
-                          For using this feature you need to purchase PRO.
+                          Advanced features require enterprise license.
                           <br />
-                          Contact owner:{" "}
+                          Contact:{" "}
                           <a
                             href="mailto:kishlay141@gmail.com"
-                            className="text-[#00ff9d] underline hover:text-[#00e0ff] transition-colors"
+                            className="text-[#00ff9d] underline"
                           >
                             kishlay141@gmail.com
                           </a>
@@ -249,9 +256,9 @@ export const Home = () => {
                 transition={{ delay: 0.3 }}
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-16 sm:mb-20 px-4"
               >
-                <StatCard value="99.7%" label="Detection Accuracy" />
+                <StatCard value="99.7%" label="Pattern Detection Accuracy" />
                 <StatCard value="<2min" label="Analysis Time" />
-                <StatCard value="85%" label="False Positive Reduction" />
+                <StatCard value="85%" label="Noise Reduction" />
               </motion.div>
             </div>
 
@@ -262,11 +269,11 @@ export const Home = () => {
               className="mb-16 sm:mb-20"
             >
               <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4 px-4">
-                <span className="text-[#00ff9d]">Core</span> Capabilities
+                <span className="text-[#00ff9d]">Core</span> Features
               </h2>
               <p className="text-gray-400 text-center mb-8 sm:mb-12 text-base sm:text-lg max-w-3xl mx-auto px-4">
-                Comprehensive AML investigation tools powered by machine
-                learning and advanced analytics
+                Comprehensive investigation tools for data-driven pattern
+                recognition and workflow automation.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 px-4">
                 <FeatureCard
@@ -277,27 +284,27 @@ export const Home = () => {
                 <FeatureCard
                   icon={<FiMapPin className="text-3xl sm:text-4xl" />}
                   title="Geographic Risk Analysis"
-                  description="Track fund movements across geographic boundaries, identify high-risk jurisdictions, and analyze cross-border transaction flows with integrated sanctions screening."
+                  description="Track fund movements across geographic boundaries, identify high-risk jurisdictions, and analyze cross-border transaction flows with integrated screening."
                 />
                 <FeatureCard
                   icon={<FiShield className="text-3xl sm:text-4xl" />}
-                  title="Behavioral Anomaly Detection"
+                  title="Behavioral Pattern Detection"
                   description="Establishes customer activity baselines and detects deviations that may indicate potential money laundering, terrorist financing, or fraud schemes."
                 />
                 <FeatureCard
                   icon={<FiUsers className="text-3xl sm:text-4xl" />}
                   title="Network & Entity Analysis"
-                  description="Visualize complex relationship networks between accounts, entities, and beneficial owners to uncover hidden connections and layered ownership structures."
+                  description="Visualize complex relationship networks between accounts and entities to uncover hidden connections and layered ownership structures."
                 />
                 <FeatureCard
                   icon={<FiDatabase className="text-3xl sm:text-4xl" />}
                   title="Multi-Source Data Integration"
-                  description="Seamlessly integrate transaction data, customer information, sanctions lists, and external databases for comprehensive risk assessment and due diligence."
+                  description="Integrate transaction data, customer information, lists, and external databases for comprehensive assessment and due diligence."
                 />
                 <FeatureCard
                   icon={<FiTrendingUp className="text-3xl sm:text-4xl" />}
-                  title="Predictive Risk Scoring"
-                  description="Advanced analytics engine that calculates dynamic risk scores based on transaction patterns, customer behavior, and external risk factors."
+                  title="Dynamic Risk Scoring"
+                  description="Calculate dynamic risk scores based on transaction patterns, customer behavior, and external risk factors."
                 />
               </div>
             </motion.div>
@@ -309,11 +316,11 @@ export const Home = () => {
               className="mb-16 sm:mb-20"
             >
               <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4 px-4">
-                Investigation <span className="text-[#00ff9d]">Excellence</span>
+                Investigation <span className="text-[#00ff9d]">Workflows</span>
               </h2>
               <p className="text-gray-400 text-center mb-8 sm:mb-12 text-base sm:text-lg max-w-3xl mx-auto px-4">
                 Streamlined investigation workflows with automated case
-                management and reporting
+                management and reporting.
               </p>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 px-4">
                 <InvestigationFeature
@@ -329,11 +336,11 @@ export const Home = () => {
                 <InvestigationFeature
                   icon={<FiBarChart className="text-2xl sm:text-3xl" />}
                   title="Advanced Analytics Dashboard"
-                  description="Interactive visualizations and comprehensive reporting tools for investigators, compliance officers, and regulatory reporting requirements."
+                  description="Interactive visualizations and comprehensive reporting tools for investigators and compliance officers."
                   features={[
                     "Real-time dashboards",
                     "Custom report generation",
-                    "Regulatory compliance tracking",
+                    "Compliance tracking",
                   ]}
                 />
                 <InvestigationFeature
@@ -349,9 +356,9 @@ export const Home = () => {
                 <InvestigationFeature
                   icon={<FiCheck className="text-2xl sm:text-3xl" />}
                   title="Compliance Automation"
-                  description="Automated SAR filing, regulatory reporting, and audit trail maintenance ensuring consistent compliance with AML regulations and standards."
+                  description="Automated reporting and audit trail maintenance ensuring consistent compliance with regulations and standards."
                   features={[
-                    "SAR automation",
+                    "Reporting automation",
                     "Audit trails",
                     "Regulatory reporting",
                   ]}
@@ -362,10 +369,17 @@ export const Home = () => {
         </div>
         <Footer />
       </div>
-      {/* Contribute Popup - always rendered, responsive */}
+      {/* Popups */}
       <ContributePopup
         show={showContributePopup}
         onClose={() => setShowContributePopup(false)}
+      />
+      <SignInRequiredModal
+        show={showSignInModal}
+        onClose={() => setShowSignInModal(false)}
+        onSignIn={() => {
+          window.location.href = import.meta.env.VITE_APP_GOOGLE_AUTH_URL;
+        }}
       />
     </div>
   );
