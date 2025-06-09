@@ -29,6 +29,7 @@ export const App = () => {
           <Route path="/contribute" element={<ContributePage />} />
         </Routes>
         <CyberToast />
+        <CookieBanner />
       </Router>
     </AuthProvider>
   );
