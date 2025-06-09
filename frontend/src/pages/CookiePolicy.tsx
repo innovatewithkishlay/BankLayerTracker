@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { FiCookie, FiInfo, FiSettings, FiMail, FiLink } from "react-icons/fi";
+import { MdCookie } from "react-icons/md";
+import { FiInfo, FiSettings, FiMail, FiLink } from "react-icons/fi";
 import { Link, useLocation } from "react-router-dom";
 import Navbar from "../components/UI/Navbar";
 import Footer from "../components/UI/Footer";
@@ -25,7 +26,7 @@ export default function CookiePolicy() {
           <div className="space-y-8">
             <section className="space-y-4">
               <h2 className="text-xl font-bold mb-3 flex items-center gap-2">
-                <FiCookie className="text-[#00ff9d] text-xl" />
+                <MdCookie className="text-[#00ff9d] text-xl" />
                 What Are Cookies?
               </h2>
               <p className="text-gray-300">
@@ -120,9 +121,9 @@ export default function CookiePolicy() {
               </h2>
               <p className="text-gray-300 mb-4">
                 You can change cookie settings at any time via our{" "}
-                <Link to="/cookie-banner" className="text-[#00ff9d] underline">
+                <span className="text-[#00ff9d] underline cursor-pointer">
                   consent banner
-                </Link>
+                </span>
                 .
               </p>
               <div className="space-y-2 text-gray-400">
@@ -140,7 +141,7 @@ export default function CookiePolicy() {
               <p className="text-gray-300">
                 For cookie-related inquiries:{" "}
                 <a
-                  href="mailto:cookies@threatlens.com"
+                  href="mailto:kishlay141@gmail.com"
                   className="text-[#00ff9d] underline"
                 >
                   kishlay141@gmail.com
