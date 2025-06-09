@@ -79,7 +79,6 @@ export const CompareResults = () => {
     );
   }
 
-  // Helper functions
   const getMetadataItems = (items: string[], icon: React.ReactNode) => (
     <div className="space-y-2">
       {items.map((item, i) => (
@@ -98,7 +97,6 @@ export const CompareResults = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] to-[#151515] text-[#00ff9d] p-8">
-      {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -112,9 +110,7 @@ export const CompareResults = () => {
         </p>
       </motion.div>
 
-      {/* Main Content */}
       <div className="max-w-7xl mx-auto space-y-8">
-        {/* Risk Overview Card */}
         <Section title="Risk Overview" icon={<FiActivity />}>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="col-span-1">
@@ -158,10 +154,8 @@ export const CompareResults = () => {
           </div>
         </Section>
 
-        {/* Connection Map */}
         <Section title="Connection Map" icon={<FiLink />}>
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-            {/* Shared Accounts */}
             <div className="bg-[#0d0d0d] p-6 rounded-2xl border border-[#00ff9d]/20">
               <h3 className="text-lg font-bold mb-4 flex items-center space-x-2">
                 <FiUser className="text-[#00ff9d]" />
@@ -186,7 +180,6 @@ export const CompareResults = () => {
               )}
             </div>
 
-            {/* Shared Metadata */}
             <div className="bg-[#0d0d0d] p-6 rounded-2xl border border-[#00ff9d]/20">
               <h3 className="text-lg font-bold mb-4 flex items-center space-x-2">
                 <FiServer className="text-[#00ff9d]" />
@@ -219,10 +212,8 @@ export const CompareResults = () => {
           </div>
         </Section>
 
-        {/* Transaction Network */}
         <Section title="Transaction Network" icon={<FiGlobe />}>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Bridge Transactions */}
             <div className="bg-[#0d0d0d] p-6 rounded-2xl border border-[#00ff9d]/20">
               <h3 className="text-lg font-bold mb-4">Bridge Transactions</h3>
               <div className="space-y-3">
@@ -247,7 +238,6 @@ export const CompareResults = () => {
               </div>
             </div>
 
-            {/* Temporal Patterns */}
             <div className="bg-[#0d0d0d] p-6 rounded-2xl border border-[#00ff9d]/20">
               <h3 className="text-lg font-bold mb-4">Temporal Patterns</h3>
               {comparisonData.comparison.temporalAnalysis.overlap ? (
@@ -282,7 +272,6 @@ export const CompareResults = () => {
   );
 };
 
-// Reusable Components
 const Section = ({
   title,
   icon,

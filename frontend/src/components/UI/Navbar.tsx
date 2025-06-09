@@ -31,7 +31,7 @@ export const Navbar = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const dropdownRef = useClickOutside(() => setIsProfileOpen(false));
   const navigate = useNavigate();
-
+  console.log("User object:", user);
   const brandText = "Threatlens";
 
   return (
@@ -134,7 +134,8 @@ export const Navbar = () => {
                   <img
                     src={user.avatar}
                     className="w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 border-[#00ff9d]/50"
-                    alt="Profile"
+                    alt={user.name}
+                    referrerPolicy="no-referrer"
                   />
                 ) : (
                   <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-[#0d0d0d] border-2 border-[#00ff9d]/50 flex items-center justify-center">
