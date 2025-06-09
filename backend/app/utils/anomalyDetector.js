@@ -20,7 +20,7 @@ const detectAnomalies = async (caseId) => {
       rapidMovement: [],
       newAccountLargeTxn: [],
       frequentTransactions: [],
-      network: { nodes: [], edges: [] }, // Explicit initialization
+      network: { nodes: [], edges: [] },
     };
 
     // 1. High-Value Transactions
@@ -216,7 +216,6 @@ const detectAnomalies = async (caseId) => {
       }
     });
 
-    // Network Analysis
     anomalies.network.nodes = accounts.map((acc) => ({
       account: acc.accountNumber,
       riskScore: calculateRiskScore(acc, transactions),
@@ -229,7 +228,6 @@ const detectAnomalies = async (caseId) => {
       transactionCount: 1,
     }));
 
-    // Merge duplicate edges
     const edgeMap = anomalies.network.edges.reduce((acc, edge) => {
       const key = `${edge.from}-${edge.to}`;
       if (acc[key]) {
@@ -275,7 +273,6 @@ const detectAnomalies = async (caseId) => {
   }
 };
 
-// Helper function
 const calculateRiskScore = (account, transactions) => {
   let score = 50;
   const accTxns = transactions.filter(
@@ -298,19 +295,16 @@ const calculateRiskScore = (account, transactions) => {
   return Math.min(score, 100);
 };
 
-// Detect circular transactions (A→B→C→A)
 const detectCircularTransactions = (transactions) => {
   const graph = {};
   const visited = new Set();
   const circularPaths = new Set();
 
-  // 1. Build transaction graph
   transactions.forEach((txn) => {
     if (!graph[txn.fromAccount]) graph[txn.fromAccount] = [];
     graph[txn.fromAccount].push(txn.toAccount);
   });
 
-  // 2. Depth-First Search (DFS) to find cycles
   const dfs = (account, path = []) => {
     if (path.includes(account)) {
       const cycleStart = path.indexOf(account);
@@ -336,18 +330,15 @@ const detectCircularTransactions = (transactions) => {
     return cycles;
   };
 
-  // 3. Check cycles for all accounts
   return Object.keys(graph).reduce((acc, account) => {
     return acc.concat(dfs(account));
   }, []);
 };
 
-// Detect rapid fund movement (A→B→C in <1 hour)
 const detectRapidMovement = (transactions) => {
   const accountPaths = {};
   const anomalies = [];
 
-  // 1. Group transactions by initial account and sort by time
   transactions.forEach((txn) => {
     const key = txn.fromAccount;
     if (!accountPaths[key]) accountPaths[key] = [];
@@ -357,7 +348,6 @@ const detectRapidMovement = (transactions) => {
     });
   });
 
-  // 2. Check paths for rapid movement
   Object.entries(accountPaths).forEach(([startAccount, txns]) => {
     txns.sort((a, b) => a.timestamp - b.timestamp);
 

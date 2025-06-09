@@ -1,7 +1,6 @@
 const Case = require("../models/Case");
 const ANOMALY_THRESHOLDS = require("../../config/thresholds");
 
-// Helper: Find Common Metadata
 const findCommonMetadata = (case1, case2, field) => {
   const accounts1 = case1.accounts.map((a) => ({
     accountNumber: a.accountNumber,
@@ -28,7 +27,6 @@ const findCommonMetadata = (case1, case2, field) => {
   return [...new Set(shared)];
 };
 
-// Helper: Compare Circular Patterns
 const compareCircularPatterns = (circular1, circular2) => {
   const paths1 = circular1.map((c) => c.path.join("-"));
   const paths2 = circular2.map((c) => c.path.join("-"));
@@ -37,7 +35,6 @@ const compareCircularPatterns = (circular1, circular2) => {
   );
 };
 
-// Helper: Calculate time difference between two dates
 const timeDifference = (date1, date2) => {
   const d1 = new Date(date1);
   const d2 = new Date(date2);
@@ -46,7 +43,6 @@ const timeDifference = (date1, date2) => {
     (diffMs % 3600000) / 60000
   )}m`;
 };
-// Helper: Get overlapping period between two arrays of dates
 const getOverlappingPeriod = (datesA, datesB) => {
   if (!datesA.length || !datesB.length) return null;
 
@@ -64,13 +60,11 @@ const getOverlappingPeriod = (datesA, datesB) => {
     overlapEnd.toISOString().split("T")[0]
   }`;
 };
-// Helper: Find countries common to both cases
 const findCommonCountries = (case1, case2) => {
   const countries1 = case1.anomalies.geographic.map((g) => g.country) || [];
   const countries2 = case2.anomalies.geographic.map((g) => g.country) || [];
   return [...new Set(countries1.filter((c) => countries2.includes(c)))];
 };
-// Helper: Find new high-risk countries in case2 not present in case1
 const findNewHighRiskCountries = (case1, case2) => {
   const countries1 = case1.anomalies.geographic.map((g) => g.country) || [];
   const countries2 = case2.anomalies.geographic.map((g) => g.country) || [];
@@ -100,7 +94,6 @@ const compareCases = async (caseId1, caseId2) => {
   };
 };
 
-// 1. Direct Links Detection
 const findDirectLinks = async (case1, case2) => {
   const case1Accounts = new Set(case1.accounts.map((a) => a.accountNumber));
   const case2Accounts = new Set(case2.accounts.map((a) => a.accountNumber));
@@ -131,7 +124,6 @@ const findDirectLinks = async (case1, case2) => {
   return { sharedAccounts, sharedMetadata, transactionLinks };
 };
 
-// 2. Pattern Similarity Analysis
 const calculatePatternSimilarity = (case1, case2) => ({
   highValue: cosineSimilarity(
     case1.anomalies.highValue.map((hv) => hv.amount),
@@ -147,7 +139,6 @@ const calculatePatternSimilarity = (case1, case2) => ({
   ),
 });
 
-// 3. Network Analysis
 const performNetworkAnalysis = (case1, case2) => {
   const allNodes = [
     ...case1.anomalies.network.nodes,
@@ -173,9 +164,7 @@ const performNetworkAnalysis = (case1, case2) => {
   return { connectorAccounts, bridgeEdges };
 };
 
-// 4. Risk Assessment
 const assessCombinedRisk = (case1, case2) => {
-  // Helper to get unique countries from transactions
   const getCountries = (caseData) => [
     ...new Set(
       caseData.transactions
@@ -184,7 +173,6 @@ const assessCombinedRisk = (case1, case2) => {
     ),
   ];
 
-  // Get all countries from both cases
   const case1Countries = getCountries(case1);
   const case2Countries = getCountries(case2);
 
@@ -228,7 +216,6 @@ const assessCombinedRisk = (case1, case2) => {
   };
 };
 
-// 5. Temporal Analysis
 const compareTemporalPatterns = (case1, case2) => {
   const case1Hours = getHourlyDistribution(case1.transactions);
   const case2Hours = getHourlyDistribution(case2.transactions);
@@ -242,7 +229,6 @@ const compareTemporalPatterns = (case1, case2) => {
   };
 };
 
-// 6. Geographic Analysis
 const getTransactionCountries = (caseData) => [
   ...new Set(
     caseData.transactions
@@ -271,17 +257,13 @@ const compareGeographicData = (case1, case2) => {
   };
 };
 
-// Helper: Cosine Similarity Implementation
 const cosineSimilarity = (a, b) => {
-  // Handle empty vectors
   if (a.length === 0 || b.length === 0) return 0;
 
-  // Handle single-transaction comparisons
   if (a.length === 1 && b.length === 1) {
     return Math.abs(a[0] - b[0]) <= 0.2 * Math.max(a[0], b[0]) ? 1 : 0;
   }
 
-  // Normalize amounts between 0-1 for better comparison
   const maxAmount = Math.max(...a, ...b);
   const vecA = a.map((x) => x / maxAmount);
   const vecB = b.map((x) => (b.includes(x) ? x : 0) / maxAmount);
@@ -296,7 +278,6 @@ const cosineSimilarity = (a, b) => {
   return magnitudeA && magnitudeB ? dotProduct / (magnitudeA * magnitudeB) : 0;
 };
 
-// Helper: Hourly Distribution Calculation
 const getHourlyDistribution = (transactions) => {
   const distribution = Array(24).fill(0);
   transactions.forEach((t) => {
