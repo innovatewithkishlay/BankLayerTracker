@@ -9,6 +9,8 @@ import { CyberToast } from "./components/UI/CyberToast";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ProButtonDemo from "./pages/Test";
 import ContributePage from "./pages/ContributePage";
+import CookieBanner from "./components/UI/CookieBanner";
+
 export const App = () => {
   return (
     <AuthProvider>
@@ -26,7 +28,6 @@ export const App = () => {
           <Route path="/pro" element={<ProButtonDemo />} />
           <Route path="/contribute" element={<ContributePage />} />
         </Routes>
-
         <CyberToast />
       </Router>
     </AuthProvider>
