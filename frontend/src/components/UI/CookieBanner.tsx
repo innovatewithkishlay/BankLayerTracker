@@ -75,12 +75,12 @@ export default function CookieBanner() {
         >
           <div style={{ textAlign: "center" }}>
             We use cookies to enhance your experience.{" "}
-            <a
-              href="/cookie-policy"
+            <Link
+              to="/cookie-policy"
               style={{ color: "#00ff9d", textDecoration: "underline" }}
             >
               Learn more
-            </a>
+            </Link>
           </div>
           <div style={{ marginTop: "0.7rem", display: "flex", gap: "0.5rem" }}>
             <button
