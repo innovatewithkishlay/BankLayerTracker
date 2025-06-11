@@ -28,6 +28,10 @@ export const App = () => {
           <Route path="/pro" element={<ProButtonDemo />} />
           <Route path="/contribute" element={<ContributePage />} />
           <Route path="/cookie-policy" element={<CookiePolicy />} />
+
+          
+          {/* 404 route*/}
+          <Route path="*" element={<NotFound />} />
         </Routes>
         <CyberToast />
         <CookieBanner />
