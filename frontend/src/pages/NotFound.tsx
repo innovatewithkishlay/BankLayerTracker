@@ -1,26 +1,9 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from "../contexts/AuthContext";
-import { useEffect } from "react";
-import { toast } from "react-hot-toast";
-
 
 const NotFound = () => {
-    const { user, loading } = useAuth();
-
-    useEffect(() => {
-        if (user && localStorage.getItem("showWelcomeToast") === "true") {
-            toast.success(`Welcome back, ${user.name}`, {
-                icon: "👋",
-                style: {
-                    background: "#0d0d0d",
-                    color: "#00ff9d",
-                    border: "1px solid #00ff9d50",
-                },
-            });
-            localStorage.removeItem("showWelcomeToast");
-        }
-    }, [user]);
+    const { loading } = useAuth();
 
     if (loading) {
         return (
